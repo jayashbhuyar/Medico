@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add after Tailwind imports */
+
+.goog-te-gadget {
+  @apply font-sans !important;
+}
+
+.goog-te-gadget-simple {
+  @apply border-0 bg-transparent !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value {
+  @apply text-gray-700 font-medium !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value:hover {
+  @apply text-purple-600 !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value span {
+  @apply border-0 !important;
+}
+
+.VIpgJd-ZVi9od-l4eHX-hSRGPd {
+  @apply hidden;
+}
+
+@keyframes tilt {
+  0%, 50%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(0.5deg);
+  }
+  75% {
+    transform: rotate(-0.5deg);
+  }
+}
+
+.animate-tilt {
+  animation: tilt 10s infinite linear;
+}
