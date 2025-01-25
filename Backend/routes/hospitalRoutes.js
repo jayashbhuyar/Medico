@@ -7,9 +7,10 @@ const {
   updateProfile,
   deleteProfile,
 } = require("../controllers/hospitalRegcontroller");
-const authMiddleware = require("../middleware/authMiddleware");
+const {authMiddleware} = require("../middleware/authMiddleware");
 
 // Public routes
+// router.get("/validate",authMiddleware);
 router.post("/register", register);
 router.post("/login", login);
 

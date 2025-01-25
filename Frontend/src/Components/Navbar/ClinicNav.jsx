@@ -1,64 +1,43 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  FaHospital, FaUserMd, FaCalendarCheck, FaChartLine,
+  FaUserMd, FaCalendarCheck, FaChartLine, 
   FaBell, FaSearch, FaUserCircle, FaBars, FaTimes,
-  FaAmbulance, FaBed, FaStethoscope, FaUserNurse,
-  FaPlusCircle, FaList, FaClock, FaCheckCircle,
-  FaTimesCircle, FaCaretDown, FaUserPlus, FaCog,
-  FaSignOutAlt, FaFileMedical, FaUsers
+  FaPrescription, FaHospital, FaUserNurse, FaCaretDown,
+  FaCheckCircle, FaClock, FaTimesCircle, FaUserPlus
 } from 'react-icons/fa';
 
-const HospitalNavbar = () => {
+const ClinicNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showDoctorsDropdown, setShowDoctorsDropdown] = useState(false);
   const [showAppointmentsDropdown, setShowAppointmentsDropdown] = useState(false);
-  const [showDepartmentsDropdown, setShowDepartmentsDropdown] = useState(false);
   const location = useLocation();
   const dropdownRef = useRef(null);
 
   const navigation = [
-    { name: 'Dashboard', path: '/hospital/dashboard', icon: <FaChartLine /> },
-    { 
-      name: 'Doctors', 
-      icon: <FaUserNurse />,
-      dropdown: true,
-      items: [
-        { name: 'All Doctors', path: '/hospital/doctors', icon: <FaUserMd /> },
-        { name: 'Add Doctor', path: '/hospital/doctors/add', icon: <FaUserPlus /> }
-      ]
-    },
+    { name: 'Dashboard', path: '/clinic/dashboard', icon: <FaChartLine /> },
     { 
       name: 'Appointments', 
       icon: <FaCalendarCheck />,
       dropdown: true,
       items: [
-        { name: 'Pending', path: '/hospital/appointments/pending', icon: <FaClock /> },
-        { name: 'Completed', path: '/hospital/appointments/completed', icon: <FaCheckCircle /> },
-        { name: 'Cancelled', path: '/hospital/appointments/cancelled', icon: <FaTimesCircle /> }
+        { name: 'Completed', path: '/clinic/appointments/completed', icon: <FaCheckCircle /> },
+        { name: 'Pending', path: '/clinic/appointments/pending', icon: <FaClock /> },
+        { name: 'Cancelled', path: '/clinic/appointments/cancelled', icon: <FaTimesCircle /> }
       ]
     },
-    {
-      name: 'Departments',
-      icon: <FaHospital />,
+    { 
+      name: 'Doctors', 
+      icon: <FaUserNurse />,
       dropdown: true,
       items: [
-        { name: 'Emergency', path: '/hospital/departments/emergency', icon: <FaAmbulance /> },
-        { name: 'ICU', path: '/hospital/departments/icu', icon: <FaBed /> },
-        { name: 'OPD', path: '/hospital/departments/opd', icon: <FaStethoscope /> }
+        { name: 'All Doctors', path: '/clinic/doctors', icon: <FaUserMd /> },
+        { name: 'Add Doctor', path: '/clinic/doctors/add', icon: <FaUserPlus /> }
       ]
     },
-    {
-      name: 'Patients',
-      icon: <FaUsers />,
-      dropdown: true,
-      items: [
-        { name: 'All Patients', path: '/hospital/patients', icon: <FaUsers /> },
-        { name: 'Add Patient', path: '/hospital/patients/add', icon: <FaUserPlus /> },
-        { name: 'Medical Records', path: '/hospital/patients/records', icon: <FaFileMedical /> }
-      ]
-    }
+    { name: 'Patients', path: '/clinic/patients', icon: <FaUserMd /> },
+    { name: 'Prescriptions', path: '/clinic/prescriptions', icon: <FaPrescription /> }
   ];
 
   // Handle click outside
@@ -67,7 +46,6 @@ const HospitalNavbar = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDoctorsDropdown(false);
         setShowAppointmentsDropdown(false);
-        setShowDepartmentsDropdown(false);
       }
     };
 
@@ -76,9 +54,13 @@ const HospitalNavbar = () => {
   }, []);
 
   const toggleDropdown = (type) => {
-    setShowDoctorsDropdown(type === 'doctors' ? !showDoctorsDropdown : false);
-    setShowAppointmentsDropdown(type === 'appointments' ? !showAppointmentsDropdown : false);
-    setShowDepartmentsDropdown(type === 'departments' ? !showDepartmentsDropdown : false);
+    if (type === 'doctors') {
+      setShowDoctorsDropdown(!showDoctorsDropdown);
+      setShowAppointmentsDropdown(false);
+    } else {
+      setShowAppointmentsDropdown(!showAppointmentsDropdown);
+      setShowDoctorsDropdown(false);
+    }
   };
 
   return (
@@ -87,9 +69,9 @@ const HospitalNavbar = () => {
         <div className="flex justify-between h-16">
           {/* Logo/Brand */}
           <div className="flex items-center">
-            <Link to="/hospital/dashboard" className="flex items-center space-x-2">
+            <Link to="/clinic/dashboard" className="flex items-center space-x-2">
               <FaHospital className="h-8 w-8 text-blue-600" />
-              <span className="font-bold text-xl text-gray-800">HospitalCare</span>
+              <span className="font-bold text-xl text-gray-800">ClinicCare</span>
             </Link>
           </div>
 
@@ -99,7 +81,7 @@ const HospitalNavbar = () => {
             <div className="relative">
               <input 
                 type="text"
-                placeholder="Search patients, doctors..."
+                placeholder="Search..."
                 className="w-64 px-4 py-2 rounded-lg bg-gray-100 focus:outline-none"
               />
               <FaSearch className="absolute right-3 top-3 text-gray-400" />
@@ -120,19 +102,17 @@ const HospitalNavbar = () => {
                     <span className="mr-2">{item.icon}</span>
                     {item.name}
                     <FaCaretDown className={`ml-2 transform transition-transform duration-200 ${
-                      (item.name.toLowerCase() === 'doctors' && showDoctorsDropdown) || 
-                      (item.name.toLowerCase() === 'appointments' && showAppointmentsDropdown) ||
-                      (item.name.toLowerCase() === 'departments' && showDepartmentsDropdown)
+                      (item.name === 'Doctors' && showDoctorsDropdown) || 
+                      (item.name === 'Appointments' && showAppointmentsDropdown) 
                         ? 'rotate-180' 
                         : ''
                     }`} />
                   </button>
                   
                   {/* Dropdown Menu */}
-                  {((item.name.toLowerCase() === 'doctors' && showDoctorsDropdown) || 
-                    (item.name.toLowerCase() === 'appointments' && showAppointmentsDropdown) ||
-                    (item.name.toLowerCase() === 'departments' && showDepartmentsDropdown)) && (
-                    <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                  {((item.name === 'Doctors' && showDoctorsDropdown) || 
+                    (item.name === 'Appointments' && showAppointmentsDropdown)) && (
+                    <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 transition-all duration-200 ease-in-out">
                       {item.items.map((subItem) => (
                         <Link
                           key={subItem.name}
@@ -171,35 +151,24 @@ const HospitalNavbar = () => {
               </span>
             </button>
 
-            {/* Profile */}
+            {/* Profile Dropdown */}
             <div className="relative">
-              <button
+              <button 
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100"
+                className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-full"
               >
-                <img
-                  src="https://via.placeholder.com/32"
-                  alt="Profile"
-                  className="h-8 w-8 rounded-full border-2 border-blue-500"
-                />
+                <FaUserCircle className="h-6 w-6 text-gray-600" />
               </button>
 
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
-                  <div className="px-4 py-2 border-b">
-                    <p className="font-semibold">Hospital Admin</p>
-                    <p className="text-sm text-gray-500">admin@hospital.com</p>
-                  </div>
-                  <Link to="/hospital/profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    <FaUserCircle className="mr-2" />
+                  <Link to="/clinic/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     Profile
                   </Link>
-                  <Link to="/hospital/settings" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    <FaCog className="mr-2" />
+                  <Link to="/clinic/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     Settings
                   </Link>
-                  <button className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                    <FaSignOutAlt className="mr-2" />
+                  <button className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
                     Sign out
                   </button>
                 </div>
@@ -207,22 +176,11 @@ const HospitalNavbar = () => {
             </div>
           </div>
 
-          {/* Mobile Header Right */}
-          <div className="md:hidden flex items-center space-x-2">
-            <button
-              onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="p-2 rounded-full hover:bg-gray-100"
-            >
-              <img
-                src="https://via.placeholder.com/32"
-                alt="Profile"
-                className="h-8 w-8 rounded-full border-2 border-blue-500"
-              />
-            </button>
-
-            <button
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
+            <button 
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-md text-gray-600 hover:bg-gray-100"
+              className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             >
               {isOpen ? <FaTimes className="h-6 w-6" /> : <FaBars className="h-6 w-6" />}
             </button>
@@ -246,9 +204,8 @@ const HospitalNavbar = () => {
                       {item.name}
                       <FaCaretDown className="ml-2" />
                     </button>
-                    {((item.name.toLowerCase() === 'doctors' && showDoctorsDropdown) || 
-                      (item.name.toLowerCase() === 'appointments' && showAppointmentsDropdown) ||
-                      (item.name.toLowerCase() === 'departments' && showDepartmentsDropdown)) && (
+                    {((item.name === 'Doctors' && showDoctorsDropdown) || 
+                      (item.name === 'Appointments' && showAppointmentsDropdown)) && (
                       <div className="pl-6 space-y-1">
                         {item.items.map((subItem) => (
                           <Link
@@ -271,11 +228,7 @@ const HospitalNavbar = () => {
                   <Link
                     to={item.path}
                     onClick={() => setIsOpen(false)}
-                    className={`block px-3 py-2 rounded-md text-base font-medium
-                      ${location.pathname === item.path 
-                        ? 'text-blue-600 bg-blue-50' 
-                        : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-                      }`}
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                   >
                     <span className="mr-2">{item.icon}</span>
                     {item.name}
@@ -290,4 +243,4 @@ const HospitalNavbar = () => {
   );
 };
 
-export default HospitalNavbar;
+export default ClinicNav;

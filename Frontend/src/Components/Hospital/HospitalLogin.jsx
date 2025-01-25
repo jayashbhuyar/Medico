@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaHospital } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -14,6 +14,32 @@ function HospitalLogin() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false); // State to handle loading
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const validateExistingToken = async () => {
+  //     const token = localStorage.getItem('hospitalToken');
+  //     console.log(token)
+  //     if (token) {
+  //       try {
+  //         const response = await axios.get('http://localhost:8000/api/hospitals/validate', {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`
+  //           }
+  //         });
+          
+  //         if (response.data.success) {
+  //           navigate('/hospital/dashboard');
+  //         }
+  //       } catch (error) {
+  //         // // Token invalid/expired - clear localStorage
+  //         // localStorage.removeItem('hospitalToken');
+  //         // localStorage.removeItem('hospitalData');
+  //       }
+  //     }
+  //   };
+
+  //   validateExistingToken();
+  // }, [navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

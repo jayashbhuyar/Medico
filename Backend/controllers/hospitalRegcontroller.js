@@ -102,20 +102,46 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { hospitalId: hospital._id },
       process.env.JWT_SECRET,
-      { expiresIn: "24h" }
+      { expiresIn: "24h" } // Token expires in 24 hours
     );
 
+    // Optionally, generate a refresh token (if needed)
+    // const refreshToken = jwt.sign(
+    //   { hospitalId: hospital._id },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "7d" } // Refresh token expires in 7 days
+    // );
+
     // Return the response with token and hospital info
-    res.json({
-      message: "Login successful",
-      token,
-      hospital: {
-        id: hospital._id,
-        name: hospital.hospitalName, // Ensure this is the correct field name in your database
-        email: hospital.email,
-      },
-    });
+    // In login controller:
+res.json({
+  success: true,
+  message: "Login successful",
+  token,
+  hospital: {
+    id: hospital._id,
+    hospitalName: hospital.hospitalName,
+    email: hospital.email,
+    phone: hospital.phone,
+    alternatePhone: hospital.alternatePhone,
+    state: hospital.state,
+    city: hospital.city,
+    pincode: hospital.pincode,
+    address: hospital.address,
+    establishedYear: hospital.establishedYear,
+    website: hospital.website,
+    description: hospital.description,
+    image: hospital.image,
+    latitude: hospital.latitude,
+    longitude: hospital.longitude,
+    createdAt: hospital.createdAt,
+    updatedAt: hospital.updatedAt,
+    role: 'hospital'
+  }
+});
   } catch (error) {
+    // Log the error for debugging
+    console.error(error);
     res.status(500).json({ message: "Login failed", error: error.message });
   }
 };

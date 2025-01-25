@@ -31,6 +31,7 @@ mongoose
 
 // Routes
 app.use('/api/hospitals', hospitalRoutes);
+// app.use('/api/hospitals', hospitalRoutes);
 app.use('/api/clinics', clinicRoutes);
 // app.use('/api/clinics', clinicRoutes);
 // app.use('/api/consultants', consultantRoutes);

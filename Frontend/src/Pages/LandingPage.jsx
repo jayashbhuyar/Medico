@@ -38,7 +38,7 @@ const Landingpage = () => {
     
               {/* Patient Card */}
               <Link 
-                to="/patientre"
+                to="/patientpage"
                 className="w-full md:w-1/2 max-w-sm transform transition-all duration-300 hover:scale-105"
               >
                 <div className="bg-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-shadow">

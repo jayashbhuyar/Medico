@@ -1,43 +1,35 @@
-const jwt = require('jsonwebtoken');
-const Hospital = require('../models/hospitalReg');
-
+const jwt = require("jsonwebtoken");
 const authMiddleware = async (req, res, next) => {
   try {
-    // Get token from header
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    
+    // const token = req.header('Authorization')?.replace('Bearer ', '');
+    // console.log(token);  // Debugging
+   console.log('Headers:', req.headers); // Debugging: Log all headers
+
+    // Extract token from Authorization header
+    const token =
+      req.header('Authorization')?.replace('Bearer ', '') ||
+      req.header('authorization')?.replace('Bearer ', '');
+
+    console.log('Token:', token); // Debugging: Log the extracted token
+
+
+
     if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'No authentication token, access denied' 
-      });
+      return res.status(401).json({ success: false, message: 'No authentication token, access denied' });
     }
 
-    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Get hospital from database
     const hospital = await Hospital.findById(decoded.hospitalId).select('-password');
-    
     if (!hospital) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Hospital not found' 
-      });
+      return res.status(404).json({ success: false, message: 'Hospital not found' });
     }
 
-    // Attach hospital to request object
     req.hospital = hospital;
     req.token = token;
-    
     next();
   } catch (error) {
-    console.error('Auth Middleware Error:', error);
-    res.status(401).json({ 
-      success: false, 
-      message: 'Token is invalid or expired' 
-    });
+    res.status(401).json({ success: false, message: 'Token is invalid or expired' });
   }
 };
 
-module.exports = authMiddleware;
+module.exports = { authMiddleware };
