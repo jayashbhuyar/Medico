@@ -45,8 +45,10 @@
 }
 
 .input-field {
-  @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 
-         focus:ring-blue-500 focus:border-transparent transition duration-200;
+  @apply w-full px-4 py-2 border border-white/30 rounded-lg 
+         bg-white/50 backdrop-blur-sm text-gray-800 
+         focus:ring-2 focus:ring-blue-400 focus:border-transparent 
+         placeholder-gray-500 transition duration-200;
 }
 
 .btn-primary {
@@ -57,4 +59,16 @@
 .btn-secondary {
   @apply px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 
          transition duration-200;
+}
+.select-field {
+  @apply w-full px-4 py-2 border border-white/30 rounded-lg 
+         bg-white/50 backdrop-blur-sm text-gray-800 
+         focus:ring-2 focus:ring-blue-400 focus:border-transparent 
+         transition duration-200;
+}
+
+.checkbox-field {
+  @apply h-5 w-5 rounded border-white/30 
+         text-blue-600 focus:ring-blue-400 
+         bg-white/50 transition duration-200;
 }

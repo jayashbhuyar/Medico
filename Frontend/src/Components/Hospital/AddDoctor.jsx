@@ -1,18 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { FaUserMd, FaGraduationCap, FaClock, FaKey } from 'react-icons/fa';
+import { FaUserMd, FaGraduationCap, FaClock, FaKey, FaEnvelope, FaMoneyBill } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 
+// Update InputField component
+const InputField = React.memo(({ icon, label, error, ...props }) => (
+  <div className="space-y-2">
+    <div className="flex items-center text-gray-600 mb-1">
+      {icon && React.cloneElement(icon, { className: "mr-2 text-blue-500" })}
+      <label>{label}</label>
+    </div>
+    <input
+      {...props}
+      className={`w-full px-4 py-3 rounded-lg border 
+        ${error ? "border-red-500" : "border-gray-300"} 
+        focus:outline-none focus:ring-2 focus:ring-blue-500`}
+    />
+    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+  </div>
+));
+
 const AddDoctor = () => {
-  // Get hospital data from localStorage
-  const hospitalData = JSON.parse(localStorage.getItem('hospitalData'));
+  const hospitalData = useMemo(() => JSON.parse(localStorage.getItem('hospitalData')), []);
 
   const [currentStep, setCurrentStep] = useState(1);
+  const [errors, setErrors] = useState({}); // Add error state
   const [formData, setFormData] = useState({
-    // Hospital data from localStorage
-    hospitalId: hospitalData.id,
-    hospitalName: hospitalData.hospitalName,
-    hospitalEmail: hospitalData.email,
+    // Organization data from localStorage
+    organizationId: hospitalData.id,
+    organizationType: hospitalData.role, // Add role from localStorage
+    organizationName: hospitalData.hospitalName,
+    organizationEmail: hospitalData.email,
     state: hospitalData.state,
     city: hospitalData.city,
     address: hospitalData.address,
@@ -50,13 +68,20 @@ const AddDoctor = () => {
     'Friday', 'Saturday', 'Sunday'
   ];
 
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-  };
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  }, [errors]);
 
   const handleMultiSelect = (e, field) => {
     const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
@@ -114,35 +139,120 @@ const AddDoctor = () => {
     return errors;
   };
 
-  const handleSubmit = async (e) => {
+  const validateFields = () => {
+    const requiredFields = {
+      name: "Doctor's Name",
+      email: "Doctor's Email",
+      degrees: "Degrees",
+      experience: "Years of Experience",
+      specialties: "Specialties",
+      consultationFees: "Consultation Fees",
+      availableDays: "Available Days",
+      timeSlots: {
+        start: "Start Time",
+        end: "End Time"
+      },
+      userId: "User ID",
+      password: "Password",
+      confirmPassword: "Confirm Password"
+    };
+  
+    const missingFields = [];
+  
+    // Check basic fields
+    Object.entries(requiredFields).forEach(([key, label]) => {
+      if (key === 'degrees' || key === 'specialties' || key === 'availableDays') {
+        if (!formData[key].length) {
+          missingFields.push(label);
+        }
+      } else if (key === 'timeSlots') {
+        if (!formData.timeSlots.start) missingFields.push('Start Time');
+        if (!formData.timeSlots.end) missingFields.push('End Time');
+      } else if (!formData[key]) {
+        missingFields.push(label);
+      }
+    });
+  
+    if (missingFields.length > 0) {
+      toast.error(`Missing required fields: ${missingFields.join(', ')}`);
+      console.log(missingFields.join(', '));
+      return false;
+    }
+  
+    return true;
+  };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+    
+//     if (!validateFields()) {
+//       return;
+//     }
+//     else{
+//         console.log("Form validated");
+//     }
+    
+//     const hospitalToken = localStorage.getItem('hospitalToken');
+//     console.log(hospitalToken);
+//     console.log(formData);
+//     try {
+//       const response = await fetch('http://localhost:8000/api/doctors/add', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Bearer ${hospitalToken}`
+//         },
+//         body: JSON.stringify({
+//           ...formData,
+//         //   organizationType: localStorage.getItem('hospitalData.role') // Ensure role is included
+//         })
+//       });
+
+//       const data = await response.json();
+
+//       if (data.success) {
+//         toast.success('Doctor added successfully!');
+//         // Redirect or reset form
+//       } else {
+//         toast.error(data.message || 'Failed to add doctor');
+//       }
+//     } catch (error) {
+//       toast.error('Something went wrong. Please try again.');
+//       console.error(error);
+//     }
+//   };
+
+const handleSubmit = async (e) => {
     e.preventDefault();
-    const errors = validateForm();
-
-    if (errors.length > 0) {
-      errors.forEach(error => toast.error(error));
+  
+    if (!validateFields()) {
       return;
+    } else {
+      console.log("Form validated");
     }
-
-    if (currentStep < 4) {
-      setCurrentStep(curr => curr + 1);
-      return;
-    }
-
+  
+    const hospitalToken = localStorage.getItem('hospitalToken');
+    console.log("Hospital Token:", hospitalToken);
+  
+    console.log("Form Data to be sent:", formData);
+  
     try {
-      const response = await fetch('/api/hospital/add-doctor', {
+      const response = await fetch('http://localhost:8000/api/doctors/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${hospitalToken}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+        })
       });
-
+  
       const data = await response.json();
-
+      console.log("Response Data:", data);
+  
       if (data.success) {
         toast.success('Doctor added successfully!');
-        // Redirect or reset form
       } else {
         toast.error(data.message || 'Failed to add doctor');
       }
@@ -151,7 +261,7 @@ const AddDoctor = () => {
       console.error(error);
     }
   };
-
+  
   const FormSteps = () => (
     <div className="flex justify-center mb-8">
       {[1, 2, 3, 4].map((step) => (
@@ -177,90 +287,157 @@ const AddDoctor = () => {
     </div>
   );
 
-  const BasicInfo = () => (
+  const BasicInfo = useMemo(() => (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       className="space-y-4"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input
-          type="text"
+        <InputField
+          icon={<FaUserMd />}
+          label="Doctor's Name"
           name="name"
-          placeholder="Doctor's Name"
-          className="input-field"
+          type="text"
           value={formData.name}
           onChange={handleInputChange}
+          error={errors.name}
+          required
         />
-        <input
-          type="email"
+        <InputField
+          icon={<FaEnvelope />}
+          label="Doctor's Email"
           name="email"
-          placeholder="Doctor's Email"
-          className="input-field"
+          type="email"
           value={formData.email}
           onChange={handleInputChange}
+          error={errors.email}
+          required
         />
       </div>
     </motion.div>
-  );
+  ), [formData.name, formData.email, handleInputChange, errors]);
 
-  const EducationExperience = () => (
+  const MultiSelect = ({ options, selected, onChange, label }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+      <div className="relative">
+        <label className="block text-lg font-medium text-gray-700 mb-2">
+          {label}
+        </label>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            className="w-full bg-white/50 border border-gray-300 rounded-lg px-4 py-2 text-left 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <span className="block truncate">
+              {selected.length > 0
+                ? `${selected.length} selected`
+                : "Select options"}
+            </span>
+          </button>
+
+          {/* Selected items tags */}
+          {selected.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {selected.map((item) => (
+                <span
+                  key={item}
+                  className="inline-flex items-center bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full"
+                >
+                  {item}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onChange(selected.filter((i) => i !== item));
+                    }}
+                    className="ml-1 text-blue-600 hover:text-blue-800"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Dropdown */}
+          {isOpen && (
+            <div className="absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg max-h-60 overflow-auto">
+              <div className="p-2 space-y-1">
+                {options.map((option) => (
+                  <label
+                    key={option}
+                    className="flex items-center px-3 py-2 hover:bg-blue-50 rounded-md cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selected.includes(option)}
+                      onChange={(e) => {
+                        const newSelected = e.target.checked
+                          ? [...selected, option]
+                          : selected.filter((i) => i !== option);
+                        onChange(newSelected);
+                      }}
+                      className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-gray-700">{option}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Update EducationExperience component
+  const EducationExperience = useMemo(() => (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="space-y-4"
+      className="space-y-6"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="relative">
-          <select
-            multiple
-            name="degrees"
-            className="input-field h-32"
-            value={formData.degrees}
-            onChange={(e) => handleMultiSelect(e, 'degrees')}
-          >
-            {degrees.map(degree => (
-              <option key={degree} value={degree}>{degree}</option>
-            ))}
-          </select>
-          <label className="text-sm text-gray-500">Hold Ctrl to select multiple degrees</label>
-        </div>
-        
-        <div className="relative">
-          <select
-            multiple
-            name="specialties"
-            className="input-field h-32"
-            value={formData.specialties}
-            onChange={(e) => handleMultiSelect(e, 'specialties')}
-          >
-            {specialties.map(specialty => (
-              <option key={specialty} value={specialty}>{specialty}</option>
-            ))}
-          </select>
-          <label className="text-sm text-gray-500">Hold Ctrl to select multiple specialties</label>
-        </div>
-        
-        <input
-          type="number"
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <MultiSelect
+          label="Select Degrees"
+          options={degrees}
+          selected={formData.degrees}
+          onChange={(selected) => setFormData(prev => ({ ...prev, degrees: selected }))}
+        />
+        <MultiSelect
+          label="Select Specialties"
+          options={specialties}
+          selected={formData.specialties}
+          onChange={(selected) => setFormData(prev => ({ ...prev, specialties: selected }))}
+        />
+        <InputField
+          icon={<FaGraduationCap />}
+          label="Years of Experience"
           name="experience"
-          placeholder="Years of Experience"
-          className="input-field"
+          type="number"
           value={formData.experience}
           onChange={handleInputChange}
+          error={errors.experience}
+          required
         />
-        
-        <input
-          type="number"
+        <InputField
+          icon={<FaMoneyBill />}
+          label="Consultation Fees (₹)"
           name="consultationFees"
-          placeholder="Consultation Fees (₹)"
-          className="input-field"
+          type="number"
           value={formData.consultationFees}
           onChange={handleInputChange}
+          error={errors.consultationFees}
+          required
         />
       </div>
     </motion.div>
-  );
+  ), [formData.degrees, formData.specialties, formData.experience, formData.consultationFees, handleInputChange, errors]);
 
   const Availability = () => (
     <motion.div
@@ -270,9 +447,11 @@ const AddDoctor = () => {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Available Days</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Available Days
+          </label>
           <div className="grid grid-cols-2 gap-2">
-            {weekDays.map(day => (
+            {weekDays.map((day) => (
               <label key={day} className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -286,23 +465,25 @@ const AddDoctor = () => {
             ))}
           </div>
         </div>
-        
+
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Time Slots</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Time Slots
+          </label>
           <div className="flex space-x-4">
             <input
               type="time"
               name="start"
               className="input-field"
               value={formData.timeSlots.start}
-              onChange={(e) => handleTimeChange(e, 'start')}
+              onChange={(e) => handleTimeChange(e, "start")}
             />
             <input
               type="time"
               name="end"
               className="input-field"
               value={formData.timeSlots.end}
-              onChange={(e) => handleTimeChange(e, 'end')}
+              onChange={(e) => handleTimeChange(e, "end")}
             />
           </div>
         </div>
@@ -310,90 +491,157 @@ const AddDoctor = () => {
     </motion.div>
   );
 
-  const AccountSetup = () => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="space-y-4"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input
-          type="text"
-          name="userId"
-          placeholder="Set User ID"
-          className="input-field"
-          value={formData.userId}
-          onChange={handleInputChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Set Password"
-          className="input-field"
-          value={formData.password}
-          onChange={handleInputChange}
-        />
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          className="input-field"
-          value={formData.confirmPassword}
-          onChange={handleInputChange}
-        />
-      </div>
-    </motion.div>
-  );
+const AccountSetup = useMemo(() => (
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <InputField
+      type="text"
+      name="userId"
+      value={formData.userId}
+      onChange={handleInputChange}
+      placeholder="Enter user ID (alphanumeric)"
+      label="User ID"
+    />
+    
+    <InputField
+      type="password"
+      name="password"
+      value={formData.password}
+      onChange={handleInputChange}
+      placeholder="Enter password"
+      label="Password"
+    />
+    
+    <InputField
+      type="password"
+      name="confirmPassword"
+      value={formData.confirmPassword}
+      onChange={handleInputChange}
+      placeholder="Confirm password"
+      label="Confirm Password"
+    />
+  </div>
+), [formData.userId, formData.password, formData.confirmPassword, handleInputChange]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
+    <div
+      className="min-h-screen py-12 px-4 sm:px-6 lg:px-8"
+      style={{
+        backgroundImage: `url('https://i.pinimg.com/736x/05/61/6b/05616b208ff9c38393e4debca000137e.jpg')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 to-blue-600/40" />
+
+      <div className="relative max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="backdrop-blur-md bg-white/30 rounded-2xl shadow-2xl p-8 border border-white/20"
+        >
+          <h2 className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
             Add New Doctor
           </h2>
-          
+
           <FormSteps />
-          
+
           <form onSubmit={handleSubmit} className="space-y-8">
-            {currentStep === 1 && <BasicInfo />}
-            {currentStep === 2 && <EducationExperience />}
-            {currentStep === 3 && <Availability />}
-            {currentStep === 4 && <AccountSetup />}
-            
-            <div className="flex justify-between pt-4">
+            {currentStep === 1 && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="bg-white/40 backdrop-blur-md rounded-xl p-6 shadow-lg"
+              >
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                  Basic Information
+                </h3>
+                {BasicInfo}
+              </motion.div>
+            )}
+
+            {currentStep === 2 && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="bg-white/40 backdrop-blur-md rounded-xl p-6 shadow-lg"
+              >
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                  Education & Experience
+                </h3>
+                {EducationExperience}
+              </motion.div>
+            )}
+
+            {currentStep === 3 && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="bg-white/40 backdrop-blur-md rounded-xl p-6 shadow-lg"
+              >
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                  Availability
+                </h3>
+                <Availability />
+              </motion.div>
+            )}
+
+            {currentStep === 4 && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="bg-white/40 backdrop-blur-md rounded-xl p-6 shadow-lg"
+              >
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                  Account Setup
+                </h3>
+                {AccountSetup}
+              </motion.div>
+            )}
+
+            <div className="flex justify-between pt-6">
               {currentStep > 1 && (
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
-                  onClick={() => setCurrentStep(curr => curr - 1)}
-                  className="btn-secondary"
+                  onClick={() => setCurrentStep((curr) => curr - 1)}
+                  className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 
+                           transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   Previous
-                </button>
+                </motion.button>
               )}
-              
+
               {currentStep < 4 ? (
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
-                  onClick={() => setCurrentStep(curr => curr + 1)}
-                  className="btn-primary"
+                  onClick={() => setCurrentStep((curr) => curr + 1)}
+                  className="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-400 
+                           text-white rounded-lg hover:from-blue-700 hover:to-blue-500 
+                           transition-all duration-200 shadow-lg hover:shadow-xl ml-auto"
                 >
                   Next
-                </button>
+                </motion.button>
               ) : (
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="btn-primary"
+                  className="px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-400 
+                           text-white rounded-lg hover:from-blue-700 hover:to-blue-500 
+                           transition-all duration-200 shadow-lg hover:shadow-xl ml-auto"
                 >
                   Submit
-                </button>
+                </motion.button>
               )}
             </div>
           </form>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
 };
 
-export default AddDoctor;
+export default React.memo(AddDoctor);

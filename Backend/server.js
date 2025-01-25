@@ -7,6 +7,7 @@ require("dotenv").config();
 // Import Routes
 const hospitalRoutes = require('./routes/hospitalRoutes');
 const clinicRoutes = require('./routes/clinicRoutes');
+const doctorRoutes = require("./routes/doctorRoutes");
 // const clinicRoutes = require('./routes/clinicRoutes');
 // const consultantRoutes = require('./routes/consultantRoutes');
 
@@ -15,10 +16,12 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(fileUpload({
-  useTempFiles: true,
-  tempFileDir: '/tmp/'
-}));
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+  })
+);
 
 // MongoDB Connection
 mongoose
@@ -29,8 +32,10 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
+  app.use("/api/doctors", doctorRoutes);
 // Routes
-app.use('/api/hospitals', hospitalRoutes);
+app.use("/api/hospitals", hospitalRoutes);
+// Add to existing routes
 // app.use('/api/hospitals', hospitalRoutes);
 app.use('/api/clinics', clinicRoutes);
 // app.use('/api/clinics', clinicRoutes);

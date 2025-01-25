@@ -136,7 +136,7 @@ res.json({
     longitude: hospital.longitude,
     createdAt: hospital.createdAt,
     updatedAt: hospital.updatedAt,
-    role: 'hospital'
+    role: 'Hospital'
   }
 });
   } catch (error) {
