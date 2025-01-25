@@ -12,74 +12,31 @@ import {
 const HospitalNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [showDoctorsDropdown, setShowDoctorsDropdown] = useState(false);
-  const [showAppointmentsDropdown, setShowAppointmentsDropdown] = useState(false);
-  const [showDepartmentsDropdown, setShowDepartmentsDropdown] = useState(false);
+  const [dropdownStates, setDropdownStates] = useState({
+    doctors: false,
+    appointments: false,
+    departments: false,
+    patients: false
+  });
   const location = useLocation();
   const dropdownRef = useRef(null);
-
-  const navigation = [
-    { name: 'Dashboard', path: '/hospital/dashboard', icon: <FaChartLine /> },
-    { 
-      name: 'Doctors', 
-      icon: <FaUserNurse />,
-      dropdown: true,
-      items: [
-        { name: 'All Doctors', path: '/hospital/doctors', icon: <FaUserMd /> },
-        { name: 'Add Doctor', path: '/hospital/doctors/add', icon: <FaUserPlus /> }
-      ]
-    },
-    { 
-      name: 'Appointments', 
-      icon: <FaCalendarCheck />,
-      dropdown: true,
-      items: [
-        { name: 'Pending', path: '/hospital/appointments/pending', icon: <FaClock /> },
-        { name: 'Completed', path: '/hospital/appointments/completed', icon: <FaCheckCircle /> },
-        { name: 'Cancelled', path: '/hospital/appointments/cancelled', icon: <FaTimesCircle /> }
-      ]
-    },
-    {
-      name: 'Departments',
-      icon: <FaHospital />,
-      dropdown: true,
-      items: [
-        { name: 'Emergency', path: '/hospital/departments/emergency', icon: <FaAmbulance /> },
-        { name: 'ICU', path: '/hospital/departments/icu', icon: <FaBed /> },
-        { name: 'OPD', path: '/hospital/departments/opd', icon: <FaStethoscope /> }
-      ]
-    },
-    {
-      name: 'Patients',
-      icon: <FaUsers />,
-      dropdown: true,
-      items: [
-        { name: 'All Patients', path: '/hospital/patients', icon: <FaUsers /> },
-        { name: 'Add Patient', path: '/hospital/patients/add', icon: <FaUserPlus /> },
-        { name: 'Medical Records', path: '/hospital/patients/records', icon: <FaFileMedical /> }
-      ]
-    }
-  ];
 
   // Handle click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDoctorsDropdown(false);
-        setShowAppointmentsDropdown(false);
-        setShowDepartmentsDropdown(false);
+        setDropdownStates({
+          doctors: false,
+          appointments: false,
+          departments: false,
+          patients: false
+        });
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const toggleDropdown = (type) => {
-    setShowDoctorsDropdown(type === 'doctors' ? !showDoctorsDropdown : false);
-    setShowAppointmentsDropdown(type === 'appointments' ? !showAppointmentsDropdown : false);
-    setShowDepartmentsDropdown(type === 'departments' ? !showDepartmentsDropdown : false);
-  };
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -105,63 +62,181 @@ const HospitalNavbar = () => {
               <FaSearch className="absolute right-3 top-3 text-gray-400" />
             </div>
 
-            {/* Navigation Links */}
-            {navigation.map((item) => (
-              item.dropdown ? (
-                <div 
-                  key={item.name}
-                  ref={dropdownRef}
-                  className="relative"
-                >
-                  <button 
-                    onClick={() => toggleDropdown(item.name.toLowerCase())}
-                    className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+            {/* Dashboard Link */}
+            <Link
+              to="/hospital/dashboard"
+              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium
+                ${location.pathname === '/hospital/dashboard' 
+                  ? 'text-blue-600 bg-blue-50' 
+                  : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`}
+            >
+              <FaChartLine className="mr-2" />
+              Dashboard
+            </Link>
+
+            {/* Doctors Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => setDropdownStates(prev => ({...prev, doctors: !prev.doctors}))}
+                className="flex items-center px-3 py-2 rounded-md text-sm font-medium 
+                         text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+              >
+                <FaUserNurse className="mr-2" />
+                Doctors
+                <FaCaretDown className={`ml-2 transition-transform duration-200 
+                  ${dropdownStates.doctors ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {dropdownStates.doctors && (
+                <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                  <Link
+                    to="/hospital/doctors"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 
+                             hover:bg-blue-50 hover:text-blue-600"
                   >
-                    <span className="mr-2">{item.icon}</span>
-                    {item.name}
-                    <FaCaretDown className={`ml-2 transform transition-transform duration-200 ${
-                      (item.name.toLowerCase() === 'doctors' && showDoctorsDropdown) || 
-                      (item.name.toLowerCase() === 'appointments' && showAppointmentsDropdown) ||
-                      (item.name.toLowerCase() === 'departments' && showDepartmentsDropdown)
-                        ? 'rotate-180' 
-                        : ''
-                    }`} />
-                  </button>
-                  
-                  {/* Dropdown Menu */}
-                  {((item.name.toLowerCase() === 'doctors' && showDoctorsDropdown) || 
-                    (item.name.toLowerCase() === 'appointments' && showAppointmentsDropdown) ||
-                    (item.name.toLowerCase() === 'departments' && showDepartmentsDropdown)) && (
-                    <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                      {item.items.map((subItem) => (
-                        <Link
-                          key={subItem.name}
-                          to={subItem.path}
-                          onClick={() => toggleDropdown(item.name.toLowerCase())}
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                        >
-                          <span className="mr-2">{subItem.icon}</span>
-                          {subItem.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+                    <FaUserMd className="mr-2" />
+                    All Doctors
+                  </Link>
+                  <Link
+                    to="/adddoctor"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 
+                             hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    <FaUserPlus className="mr-2" />
+                    Add Doctor
+                  </Link>
                 </div>
-              ) : (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium
-                    ${location.pathname === item.path 
-                      ? 'text-blue-600 bg-blue-50' 
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-                    }`}
-                >
-                  <span className="mr-2">{item.icon}</span>
-                  {item.name}
-                </Link>
-              )
-            ))}
+              )}
+            </div>
+
+            {/* Appointments Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => setDropdownStates(prev => ({...prev, appointments: !prev.appointments}))}
+                className="flex items-center px-3 py-2 rounded-md text-sm font-medium 
+                         text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+              >
+                <FaCalendarCheck className="mr-2" />
+                Appointments
+                <FaCaretDown className={`ml-2 transition-transform duration-200 
+                  ${dropdownStates.appointments ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {dropdownStates.appointments && (
+                <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                  <Link
+                    to="/hospital/appointments/pending"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 
+                             hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    <FaClock className="mr-2" />
+                    Pending
+                  </Link>
+                  <Link
+                    to="/hospital/appointments/completed"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 
+                             hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    <FaCheckCircle className="mr-2" />
+                    Completed
+                  </Link>
+                  <Link
+                    to="/hospital/appointments/cancelled"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 
+                             hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    <FaTimesCircle className="mr-2" />
+                    Cancelled
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Departments Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => setDropdownStates(prev => ({...prev, departments: !prev.departments}))}
+                className="flex items-center px-3 py-2 rounded-md text-sm font-medium 
+                         text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+              >
+                <FaHospital className="mr-2" />
+                Departments
+                <FaCaretDown className={`ml-2 transition-transform duration-200 
+                  ${dropdownStates.departments ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {dropdownStates.departments && (
+                <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                  <Link
+                    to="/hospital/departments/emergency"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 
+                             hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    <FaAmbulance className="mr-2" />
+                    Emergency
+                  </Link>
+                  <Link
+                    to="/hospital/departments/icu"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 
+                             hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    <FaBed className="mr-2" />
+                    ICU
+                  </Link>
+                  <Link
+                    to="/hospital/departments/opd"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 
+                             hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    <FaStethoscope className="mr-2" />
+                    OPD
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Patients Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => setDropdownStates(prev => ({...prev, patients: !prev.patients}))}
+                className="flex items-center px-3 py-2 rounded-md text-sm font-medium 
+                         text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+              >
+                <FaUsers className="mr-2" />
+                Patients
+                <FaCaretDown className={`ml-2 transition-transform duration-200 
+                  ${dropdownStates.patients ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {dropdownStates.patients && (
+                <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                  <Link
+                    to="/hospital/patients"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 
+                             hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    <FaUsers className="mr-2" />
+                    All Patients
+                  </Link>
+                  <Link
+                    to="/hospital/patients/add"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 
+                             hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    <FaUserPlus className="mr-2" />
+                    Add Patient
+                  </Link>
+                  <Link
+                    to="/hospital/patients/records"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 
+                             hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    <FaFileMedical className="mr-2" />
+                    Medical Records
+                  </Link>
+                </div>
+              )}
+            </div>
 
             {/* Notifications */}
             <button className="relative p-2 hover:bg-gray-100 rounded-full">
@@ -246,18 +321,13 @@ const HospitalNavbar = () => {
                       {item.name}
                       <FaCaretDown className="ml-2" />
                     </button>
-                    {((item.name.toLowerCase() === 'doctors' && showDoctorsDropdown) || 
-                      (item.name.toLowerCase() === 'appointments' && showAppointmentsDropdown) ||
-                      (item.name.toLowerCase() === 'departments' && showDepartmentsDropdown)) && (
+                    {dropdownStates[item.name.toLowerCase()] && (
                       <div className="pl-6 space-y-1">
                         {item.items.map((subItem) => (
                           <Link
                             key={subItem.name}
                             to={subItem.path}
-                            onClick={() => {
-                              toggleDropdown(item.name.toLowerCase());
-                              setIsOpen(false);
-                            }}
+                            onClick={() => setIsOpen(false)} // Only close mobile menu
                             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                           >
                             <span className="mr-2">{subItem.icon}</span>
