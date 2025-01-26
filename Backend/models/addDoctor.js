@@ -35,6 +35,20 @@ const doctorSchema = new mongoose.Schema(
       required: true,
     },
 
+    // Add location fields
+    latitude: {
+      type: Number,
+      required: true,
+      min: -90,
+      max: 90
+    },
+    longitude: {
+      type: Number,
+      required: true,
+      min: -180,
+      max: 180
+    },
+
     // Doctor Personal Info
     name: {
       type: String,
@@ -47,6 +61,15 @@ const doctorSchema = new mongoose.Schema(
       // unique: true,
       trim: true,
       lowercase: true,
+    },
+    phone: {
+      type: String,
+      required: [true, "Phone number is required"],
+      match: [/^[0-9]{10}$/, "Phone number must be 10 digits"],
+    },
+    alternatePhone: {
+      type: String,
+      match: [/^[0-9]{10}$/, "Phone number must be 10 digits"],
     },
     degrees: [
       {
@@ -150,6 +173,10 @@ const doctorSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Add geospatial index
+doctorSchema.index({ location: '2dsphere' });
+
 doctorSchema.pre('save', async function (next) {
   const user = this;
 

@@ -1,138 +1,203 @@
 import React, { useState, useEffect, useCallback, memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { FaUserMd, FaGraduationCap, FaClock, FaKey, FaEnvelope, FaMoneyBill } from 'react-icons/fa';
+import { FaUserMd, FaGraduationCap, FaClock, FaKey, FaEnvelope, FaPhone, FaMoneyBill } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from "react-router-dom";
 
-// Update InputField component
-const InputField = React.memo(({ icon, label, error, ...props }) => (
+const InputField = React.memo(({ 
+  icon, 
+  label, 
+  error, 
+  required, 
+  ...props 
+}) => (
   <div className="space-y-2">
     <div className="flex items-center text-gray-600 mb-1">
       {icon && React.cloneElement(icon, { className: "mr-2 text-blue-500" })}
-      <label>{label}</label>
+      <label>
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
     </div>
     <input
       {...props}
       className={`w-full px-4 py-3 rounded-lg border 
         ${error ? "border-red-500" : "border-gray-300"} 
-        focus:outline-none focus:ring-2 focus:ring-blue-500`}
+        focus:outline-none focus:ring-2 focus:ring-blue-500
+        bg-white/50 backdrop-blur-sm`}
     />
     {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
   </div>
 ));
 
 const AddDoctor = () => {
-  const hospitalData = useMemo(() => JSON.parse(localStorage.getItem('hospitalData')), []);
+  const navigate = useNavigate();
+
+  // Move all hooks inside component
+  const hospitalData = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("hospitalData"));
+    } catch (error) {
+      console.error("Error parsing hospital data:", error);
+      return null;
+    }
+  }, []);
+
+  // Protect against null hospitalData
+  useEffect(() => {
+    if (!hospitalData) {
+      navigate('/login');
+    }
+  }, [hospitalData, navigate]);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({}); // Add error state
   const [formData, setFormData] = useState({
     // Organization data from localStorage
-    organizationId: hospitalData.id,
-    organizationType: hospitalData.role, // Add role from localStorage
-    organizationName: hospitalData.hospitalName,
-    organizationEmail: hospitalData.email,
-    state: hospitalData.state,
-    city: hospitalData.city,
-    address: hospitalData.address,
-    
+    organizationId: hospitalData?.id || '',
+    organizationType: hospitalData?.role || '', // Add role from localStorage
+    organizationName: hospitalData?.hospitalName || '',
+    organizationEmail: hospitalData?.email || '',
+    state: hospitalData?.state || '',
+    city: hospitalData?.city || '',
+    address: hospitalData?.address || '',
+    latitude: hospitalData?.latitude || '',
+    longitude: hospitalData?.longitude || '',
+
     // User input data
-    name: '',
-    email: '',
+    name: "",
+    email: "",
+    phone: "",
+    alternatePhone: "",
     degrees: [],
-    experience: '',
+    experience: "",
     specialties: [],
-    consultationFees: '',
+    consultationFees: "",
     availableDays: [],
     timeSlots: {
-      start: '',
-      end: ''
+      start: "",
+      end: "",
     },
-    userId: '',
-    password: '',
-    confirmPassword: ''
+    userId: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const degrees = [
-    'MBBS', 'MD', 'MS', 'DNB', 'DM', 'MCh', 'BDS', 'MDS',
-    'BHMS', 'BAMS', 'BUMS', 'DHMS', 'PhD'
+    "MBBS",
+    "MD",
+    "MS",
+    "DNB",
+    "DM",
+    "MCh",
+    "BDS",
+    "MDS",
+    "BHMS",
+    "BAMS",
+    "BUMS",
+    "DHMS",
+    "PhD",
   ];
 
   const specialties = [
-    'Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics',
-    'Gynecology', 'Dermatology', 'ENT', 'Ophthalmology',
-    'Psychiatry', 'Dental', 'General Medicine'
+    "Cardiology",
+    "Neurology",
+    "Orthopedics",
+    "Pediatrics",
+    "Gynecology",
+    "Dermatology",
+    "ENT",
+    "Ophthalmology",
+    "Psychiatry",
+    "Dental",
+    "General Medicine",
   ];
 
   const weekDays = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday',
-    'Friday', 'Saturday', 'Sunday'
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
   ];
 
-  const handleInputChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when user types
-    if (errors[name]) {
-      setErrors(prev => ({
+  const handleInputChange = useCallback(
+    (e) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: value,
       }));
-    }
-  }, [errors]);
+      // Clear error when user types
+      if (errors[name]) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: "",
+        }));
+      }
+    },
+    [errors]
+  );
 
   const handleMultiSelect = (e, field) => {
-    const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
-    setFormData(prev => ({
+    const selectedOptions = Array.from(e.target.selectedOptions).map(
+      (option) => option.value
+    );
+    setFormData((prev) => ({
       ...prev,
-      [field]: selectedOptions
+      [field]: selectedOptions,
     }));
   };
 
   const handleDaySelect = (e) => {
     const day = e.target.value;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      availableDays: e.target.checked 
+      availableDays: e.target.checked
         ? [...prev.availableDays, day]
-        : prev.availableDays.filter(d => d !== day)
+        : prev.availableDays.filter((d) => d !== day),
     }));
   };
 
   const handleTimeChange = (e, timeType) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       timeSlots: {
         ...prev.timeSlots,
-        [timeType]: e.target.value
-      }
+        [timeType]: e.target.value,
+      },
     }));
   };
 
   const validateForm = () => {
     const errors = [];
-    
-    switch(currentStep) {
+
+    switch (currentStep) {
       case 1:
         if (!formData.name) errors.push("Doctor's name is required");
         if (!formData.email) errors.push("Doctor's email is required");
         break;
       case 2:
-        if (formData.degrees.length === 0) errors.push("Select at least one degree");
-        if (formData.specialties.length === 0) errors.push("Select at least one specialty");
+        if (formData.degrees.length === 0)
+          errors.push("Select at least one degree");
+        if (formData.specialties.length === 0)
+          errors.push("Select at least one specialty");
         if (!formData.experience) errors.push("Experience is required");
-        if (!formData.consultationFees) errors.push("Consultation fees is required");
+        if (!formData.consultationFees)
+          errors.push("Consultation fees is required");
         break;
       case 3:
-        if (formData.availableDays.length === 0) errors.push("Select available days");
-        if (!formData.timeSlots.start || !formData.timeSlots.end) errors.push("Time slots are required");
+        if (formData.availableDays.length === 0)
+          errors.push("Select available days");
+        if (!formData.timeSlots.start || !formData.timeSlots.end)
+          errors.push("Time slots are required");
         break;
       case 4:
         if (!formData.userId) errors.push("User ID is required");
         if (!formData.password) errors.push("Password is required");
-        if (formData.password !== formData.confirmPassword) errors.push("Passwords don't match");
+        if (formData.password !== formData.confirmPassword)
+          errors.push("Passwords don't match");
         break;
     }
 
@@ -150,129 +215,138 @@ const AddDoctor = () => {
       availableDays: "Available Days",
       timeSlots: {
         start: "Start Time",
-        end: "End Time"
+        end: "End Time",
       },
       userId: "User ID",
       password: "Password",
-      confirmPassword: "Confirm Password"
+      confirmPassword: "Confirm Password",
     };
-  
+
     const missingFields = [];
-  
+
     // Check basic fields
     Object.entries(requiredFields).forEach(([key, label]) => {
-      if (key === 'degrees' || key === 'specialties' || key === 'availableDays') {
+      if (
+        key === "degrees" ||
+        key === "specialties" ||
+        key === "availableDays"
+      ) {
         if (!formData[key].length) {
           missingFields.push(label);
         }
-      } else if (key === 'timeSlots') {
-        if (!formData.timeSlots.start) missingFields.push('Start Time');
-        if (!formData.timeSlots.end) missingFields.push('End Time');
+      } else if (key === "timeSlots") {
+        if (!formData.timeSlots.start) missingFields.push("Start Time");
+        if (!formData.timeSlots.end) missingFields.push("End Time");
       } else if (!formData[key]) {
         missingFields.push(label);
       }
     });
-  
+
     if (missingFields.length > 0) {
-      toast.error(`Missing required fields: ${missingFields.join(', ')}`);
-      console.log(missingFields.join(', '));
+      toast.error(`Missing required fields: ${missingFields.join(", ")}`);
+      console.log(missingFields.join(", "));
       return false;
     }
-  
+
     return true;
   };
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-    
-//     if (!validateFields()) {
-//       return;
-//     }
-//     else{
-//         console.log("Form validated");
-//     }
-    
-//     const hospitalToken = localStorage.getItem('hospitalToken');
-//     console.log(hospitalToken);
-//     console.log(formData);
-//     try {
-//       const response = await fetch('http://localhost:8000/api/doctors/add', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': `Bearer ${hospitalToken}`
-//         },
-//         body: JSON.stringify({
-//           ...formData,
-//         //   organizationType: localStorage.getItem('hospitalData.role') // Ensure role is included
-//         })
-//       });
+  //   const handleSubmit = async (e) => {
+  //     e.preventDefault();
 
-//       const data = await response.json();
+  //     if (!validateFields()) {
+  //       return;
+  //     }
+  //     else{
+  //         console.log("Form validated");
+  //     }
 
-//       if (data.success) {
-//         toast.success('Doctor added successfully!');
-//         // Redirect or reset form
-//       } else {
-//         toast.error(data.message || 'Failed to add doctor');
-//       }
-//     } catch (error) {
-//       toast.error('Something went wrong. Please try again.');
-//       console.error(error);
-//     }
-//   };
+  //     const hospitalToken = localStorage.getItem('hospitalToken');
+  //     console.log(hospitalToken);
+  //     console.log(formData);
+  //     try {
+  //       const response = await fetch('http://localhost:8000/api/doctors/add', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Bearer ${hospitalToken}`
+  //         },
+  //         body: JSON.stringify({
+  //           ...formData,
+  //         //   organizationType: localStorage.getItem('hospitalData.role') // Ensure role is included
+  //         })
+  //       });
 
-const handleSubmit = async (e) => {
+  //       const data = await response.json();
+
+  //       if (data.success) {
+  //         toast.success('Doctor added successfully!');
+  //         // Redirect or reset form
+  //       } else {
+  //         toast.error(data.message || 'Failed to add doctor');
+  //       }
+  //     } catch (error) {
+  //       toast.error('Something went wrong. Please try again.');
+  //       console.error(error);
+  //     }
+  //   };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!validateFields()) {
       return;
     } else {
       console.log("Form validated");
     }
-  
-    const hospitalToken = localStorage.getItem('hospitalToken');
+
+    const hospitalToken = localStorage.getItem("hospitalToken");
     console.log("Hospital Token:", hospitalToken);
-  
+
     console.log("Form Data to be sent:", formData);
-  
+
     try {
-      const response = await fetch('http://localhost:8000/api/doctors/add', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8000/api/doctors/add", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${hospitalToken}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${hospitalToken}`,
         },
         body: JSON.stringify({
           ...formData,
-        })
+        }),
       });
-  
+
       const data = await response.json();
       console.log("Response Data:", data);
-  
+
       if (data.success) {
-        toast.success('Doctor added successfully!');
+        toast.success("Doctor added successfully!");
+        alert("Doctor added successfully!");
+        navigate("/hospital/dashboard");
+        // navigate
       } else {
-        toast.error(data.message || 'Failed to add doctor');
+        toast.error(data.message || "Failed to add doctor");
       }
     } catch (error) {
-      toast.error('Something went wrong. Please try again.');
+      toast.error("Something went wrong. Please try again.");
       console.error(error);
     }
   };
-  
+
   const FormSteps = () => (
     <div className="flex justify-center mb-8">
       {[1, 2, 3, 4].map((step) => (
         <motion.div
           key={step}
-          className={`flex items-center ${step !== 4 ? 'w-32' : ''}`}
+          className={`flex items-center ${step !== 4 ? "w-32" : ""}`}
         >
           <motion.div
             whileHover={{ scale: 1.1 }}
             className={`w-10 h-10 rounded-full flex items-center justify-center
-              ${currentStep >= step ? 'bg-blue-600' : 'bg-gray-300'} text-white`}
+              ${
+                currentStep >= step ? "bg-blue-600" : "bg-gray-300"
+              } text-white`}
           >
             {step === 1 && <FaUserMd />}
             {step === 2 && <FaGraduationCap />}
@@ -280,43 +354,76 @@ const handleSubmit = async (e) => {
             {step === 4 && <FaKey />}
           </motion.div>
           {step !== 4 && (
-            <div className={`h-1 w-full ${currentStep > step ? 'bg-blue-600' : 'bg-gray-300'}`} />
+            <div
+              className={`h-1 w-full ${
+                currentStep > step ? "bg-blue-600" : "bg-gray-300"
+              }`}
+            />
           )}
         </motion.div>
       ))}
     </div>
   );
 
-  const BasicInfo = useMemo(() => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="space-y-4"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <InputField
-          icon={<FaUserMd />}
-          label="Doctor's Name"
-          name="name"
-          type="text"
-          value={formData.name}
-          onChange={handleInputChange}
-          error={errors.name}
-          required
-        />
-        <InputField
-          icon={<FaEnvelope />}
-          label="Doctor's Email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          error={errors.email}
-          required
-        />
-      </div>
-    </motion.div>
-  ), [formData.name, formData.email, handleInputChange, errors]);
+  const BasicInfo = useMemo(
+    () => (
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="space-y-4"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InputField
+            icon={<FaUserMd />}
+            label="Doctor's Name"
+            name="name"
+            type="text"
+            value={formData.name}
+            onChange={handleInputChange}
+            error={errors.name}
+            required
+          />
+          
+          <InputField
+            icon={<FaPhone />}
+            label="Phone Number"
+            name="phone"
+            type="tel"
+            pattern="[0-9]{10}"
+            maxLength="10"
+            value={formData.phone}
+            onChange={handleInputChange}
+            error={errors.phone}
+            required
+          />
+
+          <InputField
+            icon={<FaPhone />}
+            label="Alternate Phone"
+            name="alternatePhone"
+            type="tel"
+            pattern="[0-9]{10}"
+            maxLength="10"
+            value={formData.alternatePhone}
+            onChange={handleInputChange}
+            error={errors.alternatePhone}
+          />
+
+          <InputField
+            icon={<FaEnvelope />}
+            label="Doctor's Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            error={errors.email}
+            required
+          />
+        </div>
+      </motion.div>
+    ),
+    [formData.name, formData.email, formData.phone, formData.alternatePhone, handleInputChange, errors]
+  );
 
   const MultiSelect = ({ options, selected, onChange, label }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -396,48 +503,62 @@ const handleSubmit = async (e) => {
   };
 
   // Update EducationExperience component
-  const EducationExperience = useMemo(() => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="space-y-6"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <MultiSelect
-          label="Select Degrees"
-          options={degrees}
-          selected={formData.degrees}
-          onChange={(selected) => setFormData(prev => ({ ...prev, degrees: selected }))}
-        />
-        <MultiSelect
-          label="Select Specialties"
-          options={specialties}
-          selected={formData.specialties}
-          onChange={(selected) => setFormData(prev => ({ ...prev, specialties: selected }))}
-        />
-        <InputField
-          icon={<FaGraduationCap />}
-          label="Years of Experience"
-          name="experience"
-          type="number"
-          value={formData.experience}
-          onChange={handleInputChange}
-          error={errors.experience}
-          required
-        />
-        <InputField
-          icon={<FaMoneyBill />}
-          label="Consultation Fees (₹)"
-          name="consultationFees"
-          type="number"
-          value={formData.consultationFees}
-          onChange={handleInputChange}
-          error={errors.consultationFees}
-          required
-        />
-      </div>
-    </motion.div>
-  ), [formData.degrees, formData.specialties, formData.experience, formData.consultationFees, handleInputChange, errors]);
+  const EducationExperience = useMemo(
+    () => (
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="space-y-6"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <MultiSelect
+            label="Select Degrees"
+            options={degrees}
+            selected={formData.degrees}
+            onChange={(selected) =>
+              setFormData((prev) => ({ ...prev, degrees: selected }))
+            }
+          />
+          <MultiSelect
+            label="Select Specialties"
+            options={specialties}
+            selected={formData.specialties}
+            onChange={(selected) =>
+              setFormData((prev) => ({ ...prev, specialties: selected }))
+            }
+          />
+          <InputField
+            icon={<FaGraduationCap />}
+            label="Years of Experience"
+            name="experience"
+            type="number"
+            value={formData.experience}
+            onChange={handleInputChange}
+            error={errors.experience}
+            required
+          />
+          <InputField
+            icon={<FaMoneyBill />}
+            label="Consultation Fees (₹)"
+            name="consultationFees"
+            type="number"
+            value={formData.consultationFees}
+            onChange={handleInputChange}
+            error={errors.consultationFees}
+            required
+          />
+        </div>
+      </motion.div>
+    ),
+    [
+      formData.degrees,
+      formData.specialties,
+      formData.experience,
+      formData.consultationFees,
+      handleInputChange,
+      errors,
+    ]
+  );
 
   const Availability = () => (
     <motion.div
@@ -491,36 +612,44 @@ const handleSubmit = async (e) => {
     </motion.div>
   );
 
-const AccountSetup = useMemo(() => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <InputField
-      type="text"
-      name="userId"
-      value={formData.userId}
-      onChange={handleInputChange}
-      placeholder="Enter user ID (alphanumeric)"
-      label="User ID"
-    />
-    
-    <InputField
-      type="password"
-      name="password"
-      value={formData.password}
-      onChange={handleInputChange}
-      placeholder="Enter password"
-      label="Password"
-    />
-    
-    <InputField
-      type="password"
-      name="confirmPassword"
-      value={formData.confirmPassword}
-      onChange={handleInputChange}
-      placeholder="Confirm password"
-      label="Confirm Password"
-    />
-  </div>
-), [formData.userId, formData.password, formData.confirmPassword, handleInputChange]);
+  const AccountSetup = useMemo(
+    () => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <InputField
+          type="text"
+          name="userId"
+          value={formData.userId}
+          onChange={handleInputChange}
+          placeholder="Enter user ID (alphanumeric)"
+          label="User ID"
+        />
+
+        <InputField
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleInputChange}
+          placeholder="Enter password"
+          label="Password"
+        />
+
+        <InputField
+          type="password"
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleInputChange}
+          placeholder="Confirm password"
+          label="Confirm Password"
+        />
+      </div>
+    ),
+    [
+      formData.userId,
+      formData.password,
+      formData.confirmPassword,
+      handleInputChange,
+    ]
+  );
 
   return (
     <div
@@ -644,4 +773,5 @@ const AccountSetup = useMemo(() => (
   );
 };
 
-export default React.memo(AddDoctor);
+// Export with memo
+export default memo(AddDoctor);

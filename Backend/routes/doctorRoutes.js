@@ -5,6 +5,6 @@ const { addDoctor, getAllDoctors } = require('../controllers/doctorcontroller');
 
 // Routes
 router.post('/add', addDoctor);
-// router.get('/organization/:organizationId', protect, getAllDoctors);
+router.get('/organization/:organizationId', getAllDoctors);
 
 module.exports = router;

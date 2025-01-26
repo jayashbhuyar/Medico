@@ -14,6 +14,7 @@ import ClinicNav from './Components/Navbar/ClinicNav'
 import HealthcareSearch from './Components/Patient/Mainpage'
 import UserNav from './Components/Navbar/UserNav'
 import AddDoctor from './Components/Hospital/AddDoctor'
+import AllDoctors from './Components/Hospital/AllDoctor'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/patientpage" element={<HealthcareSearch />} />
         <Route path="/usernav" element={<UserNav />} />
         <Route path="/adddoctor" element={<AddDoctor />} />
+        <Route path="/alldoctors" element={<AllDoctors />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>
