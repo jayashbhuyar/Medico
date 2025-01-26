@@ -156,7 +156,7 @@ const UserNav = () => {
             {/* Login Button */}
             <motion.div whileHover={{ scale: 1.05 }}>
               <Link
-                to="/login"
+                to="/userlogin"
                 className="px-6 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 
                          text-white hover:from-blue-500 hover:to-blue-300 transition-all duration-300
                          shadow-md hover:shadow-lg"
@@ -169,7 +169,7 @@ const UserNav = () => {
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-4">
             <Link
-              to="/login"
+              to="/userlogin"
               className="px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 
                        text-white text-sm hover:from-blue-500 hover:to-blue-300"
             >

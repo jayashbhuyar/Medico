@@ -15,6 +15,11 @@ import HealthcareSearch from './Components/Patient/Mainpage'
 import UserNav from './Components/Navbar/UserNav'
 import AddDoctor from './Components/Hospital/AddDoctor'
 import AllDoctors from './Components/Hospital/AllDoctor'
+import SpecialtyResults from './Components/Patient/Results/SpecialityResult'
+import DoctorResults from './Components/Patient/Results/DoctorResult'
+import HospitalResults from './Components/Patient/Results/HospitalResult'
+import ClinicResults from './Components/Patient/Results/ClinicResult'
+import UserLogin from './Components/Patient/Login'
 
 function App() {
   return (
@@ -36,6 +41,11 @@ function App() {
         <Route path="/usernav" element={<UserNav />} />
         <Route path="/adddoctor" element={<AddDoctor />} />
         <Route path="/alldoctors" element={<AllDoctors />} />
+        <Route path="/specialtyresults" element={<SpecialtyResults />} />
+        <Route path="/doctorresults" element={<DoctorResults />} />
+        <Route path="/hospitalresults" element={<HospitalResults />} />
+        <Route path="/clinicresults" element={<ClinicResults />} />
+        <Route path="/userlogin" element={<UserLogin />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>
