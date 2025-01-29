@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { FaUserMd, FaGraduationCap, FaClock, FaKey, FaEnvelope, FaPhone, FaMoneyBill } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
-
+import axios from 'axios';
 const InputField = React.memo(({ 
   icon, 
   label, 
@@ -29,58 +29,44 @@ const InputField = React.memo(({
   </div>
 ));
 
-const AddDoctor = () => {
+const ClinicAddDoctor = () => {
   const navigate = useNavigate();
+  const clinicData = JSON.parse(localStorage.getItem('clinicData'));
 
-  // Move all hooks inside component
-  const hospitalData = useMemo(() => {
-    try {
-      return JSON.parse(localStorage.getItem("hospitalData"));
-    } catch (error) {
-      console.error("Error parsing hospital data:", error);
-      return null;
-    }
-  }, []);
+  const [formData, setFormData] = useState({
+    // Organization Details
+    
+    organizationId: clinicData?.id || '',
+    organizationType: 'Clinic',
+    organizationName: clinicData?.clinicName || '',
+    organizationEmail: clinicData?.email || '',
+    state: clinicData?.state || '',
+    city: clinicData?.city || '',
+    address: clinicData?.address || '',
+    latitude: clinicData?.latitude || '',
+    longitude: clinicData?.longitude || '',
 
-  // Protect against null hospitalData
-  useEffect(() => {
-    if (!hospitalData) {
-      navigate('/login');
-    }
-  }, [hospitalData, navigate]);
+    // Doctor Details
+    name: '',
+    email: '',
+    phone: '',
+    alternatePhone: '',
+    degrees: [],
+    experience: '',
+    specialties: [],
+    consultationFees: '',
+    availableDays: [],
+    timeSlots: {
+      start: '',
+      end: ''
+    },
+    userId: '',
+    password: '',
+    confirmPassword: ''
+  });
 
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({}); // Add error state
-  const [formData, setFormData] = useState({
-    // Organization data from localStorage
-    organizationId: hospitalData?.id || '',
-    organizationType: hospitalData?.role || '', // Add role from localStorage
-    organizationName: hospitalData?.hospitalName || '',
-    organizationEmail: hospitalData?.email || '',
-    state: hospitalData?.state || '',
-    city: hospitalData?.city || '',
-    address: hospitalData?.address || '',
-    latitude: hospitalData?.latitude || '',
-    longitude: hospitalData?.longitude || '',
-
-    // User input data
-    name: "",
-    email: "",
-    phone: "",
-    alternatePhone: "",
-    degrees: [],
-    experience: "",
-    specialties: [],
-    consultationFees: "",
-    availableDays: [],
-    timeSlots: {
-      start: "",
-      end: "",
-    },
-    userId: "",
-    password: "",
-    confirmPassword: "",
-  });
 
   const degrees = [
     "MBBS",
@@ -170,127 +156,80 @@ const AddDoctor = () => {
     }));
   };
 
-  const validateForm = () => {
-    const errors = [];
-
-    switch (currentStep) {
-      case 1:
-        if (!formData.name) errors.push("Doctor's name is required");
-        if (!formData.email) errors.push("Doctor's email is required");
-        break;
-      case 2:
-        if (formData.degrees.length === 0)
-          errors.push("Select at least one degree");
-        if (formData.specialties.length === 0)
-          errors.push("Select at least one specialty");
-        if (!formData.experience) errors.push("Experience is required");
-        if (!formData.consultationFees)
-          errors.push("Consultation fees is required");
-        break;
-      case 3:
-        if (formData.availableDays.length === 0)
-          errors.push("Select available days");
-        if (!formData.timeSlots.start || !formData.timeSlots.end)
-          errors.push("Time slots are required");
-        break;
-      case 4:
-        if (!formData.userId) errors.push("User ID is required");
-        if (!formData.password) errors.push("Password is required");
-        if (formData.password !== formData.confirmPassword)
-          errors.push("Passwords don't match");
-        break;
-    }
-
-    return errors;
-  };
-
   const validateFields = () => {
-    const requiredFields = {
-      name: "Doctor's Name",
-      email: "Doctor's Email",
-      degrees: "Degrees",
-      experience: "Years of Experience",
-      specialties: "Specialties",
-      consultationFees: "Consultation Fees",
-      availableDays: "Available Days",
-      timeSlots: {
-        start: "Start Time",
-        end: "End Time",
-      },
-      userId: "User ID",
-      password: "Password",
-      confirmPassword: "Confirm Password",
-    };
-
-    const missingFields = [];
-
-    // Check basic fields
-    Object.entries(requiredFields).forEach(([key, label]) => {
-      if (
-        key === "degrees" ||
-        key === "specialties" ||
-        key === "availableDays"
-      ) {
-        if (!formData[key].length) {
-          missingFields.push(label);
-        }
-      } else if (key === "timeSlots") {
-        if (!formData.timeSlots.start) missingFields.push("Start Time");
-        if (!formData.timeSlots.end) missingFields.push("End Time");
-      } else if (!formData[key]) {
-        missingFields.push(label);
-      }
-    });
-
-    if (missingFields.length > 0) {
-      toast.error(`Missing required fields: ${missingFields.join(", ")}`);
-      console.log(missingFields.join(", "));
-      return false;
-    }
-
-    return true;
+    const errors = [];
+    
+    if (!formData.name?.trim()) errors.push('Name is required');
+    if (!formData.email?.trim()) errors.push('Email is required');
+    if (!formData.phone?.trim()) errors.push('Phone is required');
+    if (!formData.experience || isNaN(formData.experience)) errors.push('Valid experience is required');
+    if (!formData.consultationFees || isNaN(formData.consultationFees)) errors.push('Valid consultation fee is required');
+    if (!formData.degrees?.length) errors.push('At least one degree is required');
+    if (!formData.specialties?.length) errors.push('At least one specialty is required');
+    if (!formData.availableDays?.length) errors.push('Available days are required');
+    if (!formData.timeSlots?.start || !formData.timeSlots?.end) errors.push('Time slots are required');
+    if (!formData.userId?.trim()) errors.push('User ID is required');
+    if (!formData.password?.trim()) errors.push('Password is required');
+    
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateFields()) {
-      return;
-    } else {
-      console.log("Form validated");
-    }
-
-    const hospitalToken = localStorage.getItem("hospitalToken");
-    console.log("Hospital Token:", hospitalToken);
-
-    console.log("Form Data to be sent:", formData);
-
+    
     try {
-      const response = await fetch("http://localhost:8000/api/doctors/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${hospitalToken}`,
-        },
-        body: JSON.stringify({
-          ...formData,
-        }),
+      // Validate and format data
+      const formattedData = {
+        ...formData,
+        organizationId: clinicData.id,
+        organizationType: 'Clinic',
+        organizationName: clinicData.clinicName,
+        organizationEmail: clinicData.email,
+        state: clinicData.state,
+        city: clinicData.city,
+        address: clinicData.address,
+        latitude: parseFloat(clinicData.latitude),
+        longitude: parseFloat(clinicData.longitude),
+        experience: parseInt(formData.experience),
+        consultationFees: parseInt(formData.consultationFees),
+        degrees: formData.degrees || [],
+        specialties: formData.specialties || [],
+        availableDays: formData.availableDays || [],
+        timeSlots: {
+          start: formData.timeSlots.start,
+          end: formData.timeSlots.end
+        }
+      };
+
+      console.log('Formatted doctor data:', formattedData);
+
+      const response = await axios.post(
+        'http://localhost:8000/api/doctors/add',
+        formattedData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.data.success) {
+        toast.success('Doctor added successfully');
+        navigate('/clinic/dashboard');
+      }
+
+    } catch (error) {
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
       });
 
-      const data = await response.json();
-      console.log("Response Data:", data);
-
-      if (data.success) {
-        toast.success("Doctor added successfully!");
-        alert("Doctor added successfully!");
-        navigate("/hospital/dashboard");
-        // navigate
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
       } else {
-        toast.error(data.message || "Failed to add doctor");
+        toast.error('Failed to add doctor. Please try again.');
       }
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.");
-      console.error(error);
     }
   };
 
@@ -734,4 +673,4 @@ const AddDoctor = () => {
 };
 
 // Export with memo
-export default memo(AddDoctor);
+export default memo(ClinicAddDoctor);

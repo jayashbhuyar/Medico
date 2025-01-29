@@ -33,7 +33,7 @@ const ClinicNav = () => {
       dropdown: true,
       items: [
         { name: 'All Doctors', path: '/clinic/doctors', icon: <FaUserMd /> },
-        { name: 'Add Doctor', path: '/clinic/doctors/add', icon: <FaUserPlus /> }
+        { name: 'Add Doctor', path: '/clinicadddoctor', icon: <FaUserPlus /> }
       ]
     },
     { name: 'Patients', path: '/clinic/patients', icon: <FaUserMd /> },
