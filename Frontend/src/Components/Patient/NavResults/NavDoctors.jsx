@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { FaUserMd, FaMapMarkerAlt, FaHospital, FaClinicMedical, 
-         FaClock, FaStar, FaRupeeSign, FaFilter, FaSearch, FaSliders } from 'react-icons/fa';
+         FaClock, FaStar, FaRupeeSign, FaFilter, FaSearch, FaBars } from 'react-icons/fa';
 
 import DoctorProfile from './DoctorProfile';
 
