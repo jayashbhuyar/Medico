@@ -4,16 +4,20 @@ import {
   FaUserMd, FaCalendarCheck, FaChartLine, 
   FaBell, FaSearch, FaUserCircle, FaBars, FaTimes,
   FaPrescription, FaHospital, FaUserNurse, FaCaretDown,
-  FaCheckCircle, FaClock, FaTimesCircle, FaUserPlus
+  FaCheckCircle, FaClock, FaTimesCircle, FaUserPlus,FaUsers, 
 } from 'react-icons/fa';
 
 const ClinicNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showDoctorsDropdown, setShowDoctorsDropdown] = useState(false);
+  const [showPatientsDropdown, setShowPatientsDropdown] = useState(false);
   const [showAppointmentsDropdown, setShowAppointmentsDropdown] = useState(false);
   const location = useLocation();
   const dropdownRef = useRef(null);
+  const doctorsRef = useRef(null);
+  const patientsRef = useRef(null);
+  const appointmentsRef = useRef(null);
 
   const navigation = [
     { name: 'Dashboard', path: '/clinic/dashboard', icon: <FaChartLine /> },
@@ -32,20 +36,33 @@ const ClinicNav = () => {
       icon: <FaUserNurse />,
       dropdown: true,
       items: [
-        { name: 'All Doctors', path: '/clinic/doctors', icon: <FaUserMd /> },
+        { name: 'All Doctors', path: '/clinicalldoctors', icon: <FaUserMd /> },
         { name: 'Add Doctor', path: '/clinicadddoctor', icon: <FaUserPlus /> }
       ]
     },
-    { name: 'Patients', path: '/clinic/patients', icon: <FaUserMd /> },
+    { 
+      name: 'Patients', 
+      icon: <FaUsers />,
+      dropdown: true,
+      items: [
+        { name: 'All Patients', path: '/clinic/patients/all', icon: <FaUsers /> },
+        { name: 'Add Patient', path: '/clinic/patients/add', icon: <FaUserPlus /> }
+      ]
+    },
     { name: 'Prescriptions', path: '/clinic/prescriptions', icon: <FaPrescription /> }
   ];
 
   // Handle click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDoctorsDropdown(false);
+      if (appointmentsRef.current && !appointmentsRef.current.contains(event.target)) {
         setShowAppointmentsDropdown(false);
+      }
+      if (doctorsRef.current && !doctorsRef.current.contains(event.target)) {
+        setShowDoctorsDropdown(false);
+      }
+      if (patientsRef.current && !patientsRef.current.contains(event.target)) {
+        setShowPatientsDropdown(false);
       }
     };
 
@@ -54,12 +71,24 @@ const ClinicNav = () => {
   }, []);
 
   const toggleDropdown = (type) => {
-    if (type === 'doctors') {
-      setShowDoctorsDropdown(!showDoctorsDropdown);
-      setShowAppointmentsDropdown(false);
-    } else {
-      setShowAppointmentsDropdown(!showAppointmentsDropdown);
-      setShowDoctorsDropdown(false);
+    switch(type) {
+      case 'doctors':
+        setShowDoctorsDropdown(!showDoctorsDropdown);
+        setShowAppointmentsDropdown(false);
+        setShowPatientsDropdown(false);
+        break;
+      case 'appointments':
+        setShowAppointmentsDropdown(!showAppointmentsDropdown);
+        setShowDoctorsDropdown(false);
+        setShowPatientsDropdown(false);
+        break;
+      case 'patients':
+        setShowPatientsDropdown(!showPatientsDropdown);
+        setShowDoctorsDropdown(false);
+        setShowAppointmentsDropdown(false);
+        break;
+      default:
+        break;
     }
   };
 
@@ -89,58 +118,58 @@ const ClinicNav = () => {
 
             {/* Navigation Links */}
             {navigation.map((item) => (
-              item.dropdown ? (
-                <div 
-                  key={item.name}
-                  ref={dropdownRef}
-                  className="relative"
-                >
-                  <button 
+              <div key={item.name} className="relative">
+                {item.dropdown ? (
+                  <button
                     onClick={() => toggleDropdown(item.name.toLowerCase())}
-                    className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                    className="flex items-center px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50"
                   >
-                    <span className="mr-2">{item.icon}</span>
-                    {item.name}
-                    <FaCaretDown className={`ml-2 transform transition-transform duration-200 ${
-                      (item.name === 'Doctors' && showDoctorsDropdown) || 
-                      (item.name === 'Appointments' && showAppointmentsDropdown) 
-                        ? 'rotate-180' 
-                        : ''
-                    }`} />
+                    {item.icon}
+                    <span className="ml-2">{item.name}</span>
                   </button>
-                  
-                  {/* Dropdown Menu */}
-                  {((item.name === 'Doctors' && showDoctorsDropdown) || 
-                    (item.name === 'Appointments' && showAppointmentsDropdown)) && (
-                    <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 transition-all duration-200 ease-in-out">
-                      {item.items.map((subItem) => (
-                        <Link
-                          key={subItem.name}
-                          to={subItem.path}
-                          onClick={() => toggleDropdown(item.name.toLowerCase())}
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                        >
-                          <span className="mr-2">{subItem.icon}</span>
-                          {subItem.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium
-                    ${location.pathname === item.path 
-                      ? 'text-blue-600 bg-blue-50' 
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-                    }`}
-                >
-                  <span className="mr-2">{item.icon}</span>
-                  {item.name}
-                </Link>
-              )
+                ) : (
+                  <Link
+                    to={item.path}
+                    className="flex items-center px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                  >
+                    {item.icon}
+                    <span className="ml-2">{item.name}</span>
+                  </Link>
+                )}
+                
+                {/* Dropdown for each type */}
+                {item.dropdown && (
+                  <div
+                    ref={
+                      item.name.toLowerCase() === 'appointments' 
+                        ? appointmentsRef 
+                        : item.name.toLowerCase() === 'doctors'
+                          ? doctorsRef
+                          : patientsRef
+                    }
+                    className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 
+                      ${(item.name.toLowerCase() === 'appointments' && showAppointmentsDropdown) ||
+                        (item.name.toLowerCase() === 'doctors' && showDoctorsDropdown) ||
+                        (item.name.toLowerCase() === 'patients' && showPatientsDropdown)
+                          ? 'block'
+                          : 'hidden'
+                      }`}
+                  >
+                    {item.items.map((subItem) => (
+                      <Link
+                        key={subItem.name}
+                        to={subItem.path}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50"
+                      >
+                        <div className="flex items-center">
+                          {subItem.icon}
+                          <span className="ml-2">{subItem.name}</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
 
             {/* Notifications */}
@@ -205,7 +234,8 @@ const ClinicNav = () => {
                       <FaCaretDown className="ml-2" />
                     </button>
                     {((item.name === 'Doctors' && showDoctorsDropdown) || 
-                      (item.name === 'Appointments' && showAppointmentsDropdown)) && (
+                      (item.name === 'Appointments' && showAppointmentsDropdown) ||
+                      (item.name === 'Patients' && showPatientsDropdown)) && (
                       <div className="pl-6 space-y-1">
                         {item.items.map((subItem) => (
                           <Link
