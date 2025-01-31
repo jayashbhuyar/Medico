@@ -86,15 +86,19 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log("📩 Received login request:", email);
+
     // Find hospital by email
     const hospital = await Hospital.findOne({ email });
     if (!hospital) {
+      console.warn("⚠️ Hospital not found:", email);
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
     // Check if the password matches
     const isMatch = await bcrypt.compare(password, hospital.password);
     if (!isMatch) {
+      console.warn("⚠️ Password does not match for:", email);
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
@@ -105,43 +109,119 @@ exports.login = async (req, res) => {
       { expiresIn: "24h" } // Token expires in 24 hours
     );
 
-    // Optionally, generate a refresh token (if needed)
-    // const refreshToken = jwt.sign(
-    //   { hospitalId: hospital._id },
-    //   process.env.JWT_SECRET,
-    //   { expiresIn: "7d" } // Refresh token expires in 7 days
-    // );
+    console.log("🔐 Generated token:", token);
 
-    // Return the response with token and hospital info
-    // In login controller:
-res.json({
-  success: true,
-  message: "Login successful",
-  token,
-  hospital: {
-    id: hospital._id,
-    hospitalName: hospital.hospitalName,
-    email: hospital.email,
-    phone: hospital.phone,
-    alternatePhone: hospital.alternatePhone,
-    state: hospital.state,
-    city: hospital.city,
-    pincode: hospital.pincode,
-    address: hospital.address,
-    establishedYear: hospital.establishedYear,
-    website: hospital.website,
-    description: hospital.description,
-    image: hospital.image,
-    latitude: hospital.latitude,
-    longitude: hospital.longitude,
-    createdAt: hospital.createdAt,
-    updatedAt: hospital.updatedAt,
-    role: 'Hospital'
-  }
-});
+    // Set HTTP-only cookie for token storage
+    res.cookie('hospitalToken', token, {
+      httpOnly: true, // Prevent JavaScript access for security
+      secure: process.env.NODE_ENV === 'production', // Secure in production
+      sameSite: 'strict', // Prevent CSRF attacks
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
+    console.log("✅ Cookie set successfully!");
+
+    // Return response with token & hospital details
+    res.json({
+      success: true,
+      message: "Login successful",
+      token, // Include token in response
+      hospital: {
+        id: hospital._id,
+        hospitalName: hospital.hospitalName,
+        email: hospital.email,
+        phone: hospital.phone,
+        alternatePhone: hospital.alternatePhone,
+        state: hospital.state,
+        city: hospital.city,
+        pincode: hospital.pincode,
+        address: hospital.address,
+        establishedYear: hospital.establishedYear,
+        website: hospital.website,
+        description: hospital.description,
+        image: hospital.image,
+        latitude: hospital.latitude,
+        longitude: hospital.longitude,
+        createdAt: hospital.createdAt,
+        updatedAt: hospital.updatedAt,
+        role: 'Hospital'
+      }
+    });
+
   } catch (error) {
-    // Log the error for debugging
-    console.error(error);
+    console.error("❌ Login error:", error);
     res.status(500).json({ message: "Login failed", error: error.message });
   }
 };
+
+// exports.login = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     // Find hospital by email
+//     const hospital = await Hospital.findOne({ email });
+//     if (!hospital) {
+//       return res.status(401).json({ message: "Invalid credentials" });
+//     }
+
+//     // Check if the password matches
+//     const isMatch = await bcrypt.compare(password, hospital.password);
+//     if (!isMatch) {
+//       return res.status(401).json({ message: "Invalid credentials" });
+//     }
+
+//     // Generate JWT token
+//     const token = jwt.sign(
+//       { hospitalId: hospital._id },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "24h" } // Token expires in 24 hours
+//     );
+
+//     // Optionally, generate a refresh token (if needed)
+//     // const refreshToken = jwt.sign(
+//     //   { hospitalId: hospital._id },
+//     //   process.env.JWT_SECRET,
+//     //   { expiresIn: "7d" } // Refresh token expires in 7 days
+//     // );
+
+//     // Return the response with token and hospital info
+//     // In login controller:
+//     res.cookie('hospitalToken', token, {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === 'production',
+//       sameSite: 'strict',
+//       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+//     });
+
+
+// res.json({
+//   success: true,
+//   message: "Login successful",
+//   // token,
+//   hospital: {
+//     id: hospital._id,
+//     hospitalName: hospital.hospitalName,
+//     email: hospital.email,
+//     phone: hospital.phone,
+//     alternatePhone: hospital.alternatePhone,
+//     state: hospital.state,
+//     city: hospital.city,
+//     pincode: hospital.pincode,
+//     address: hospital.address,
+//     establishedYear: hospital.establishedYear,
+//     website: hospital.website,
+//     description: hospital.description,
+//     image: hospital.image,
+//     latitude: hospital.latitude,
+//     longitude: hospital.longitude,
+//     createdAt: hospital.createdAt,
+//     updatedAt: hospital.updatedAt,
+//     role: 'Hospital'
+//   }
+// });
+//   } catch (error) {
+//     // Log the error for debugging
+//     console.error(error);
+//     res.status(500).json({ message: "Login failed", error: error.message });
+//   }
+// };

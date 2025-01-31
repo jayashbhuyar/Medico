@@ -4,7 +4,7 @@ import { FaEnvelope, FaLock, FaHospital } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { toast, Toaster } from 'react-hot-toast';
 import axios from 'axios'; // Import Axios for API requests
-// import { set } from 'mongoose';
+import Cookies from 'js-cookie'; // Import Cookies for handling cookies
 
 function HospitalLogin() {
   const [formData, setFormData] = useState({
@@ -15,31 +15,45 @@ function HospitalLogin() {
   const [loading, setLoading] = useState(false); // State to handle loading
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const validateExistingToken = async () => {
-  //     const token = localStorage.getItem('hospitalToken');
-  //     console.log(token)
-  //     if (token) {
-  //       try {
-  //         const response = await axios.get('http://localhost:8000/api/hospitals/validate', {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`
-  //           }
-  //         });
-          
-  //         if (response.data.success) {
-  //           navigate('/hospital/dashboard');
-  //         }
-  //       } catch (error) {
-  //         // // Token invalid/expired - clear localStorage
-  //         // localStorage.removeItem('hospitalToken');
-  //         // localStorage.removeItem('hospitalData');
-  //       }
-  //     }
-  //   };
+  useEffect(() => {
+    const validateToken = async () => {
+      // Get the token from cookies
+      const token = Cookies.get('hospitalToken');
+      console.log("🔑 Token from cookies:", token);
 
-  //   validateExistingToken();
-  // }, [navigate]);
+      if (token) {
+        try {
+          // Send the token to the backend for validation
+          const response = await axios.get('http://localhost:8000/api/hospitals/validate', {
+            withCredentials: true // Make sure cookies are sent with the request
+          });
+
+          if (response.data.success) {
+            // Token is valid, navigate to the dashboard
+            console.log("✅ Token is valid");
+            navigate('/hospital/dashboard');
+          } else {
+            // Token is invalid, handle accordingly
+            console.warn("⚠️ Invalid token");
+            Cookies.remove('hospitalToken');
+            localStorage.removeItem('hospitalData');
+            navigate('/hospitallogin');  // Redirect to login if invalid token
+          }
+        } catch (error) {
+          console.error("❌ Token validation failed:", error);
+          // Handle invalid or expired token
+          Cookies.remove('hospitalToken');
+          localStorage.removeItem('hospitalData');
+          navigate('/hospitallogin');  // Redirect to login if token validation fails
+        }
+      } else {
+        console.log("⚠️ No token found");
+      }
+    };
+
+    validateToken();
+  }, [navigate]);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -57,44 +71,55 @@ function HospitalLogin() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      setLoading(true);
-      // Dismiss any existing toasts
-      toast.dismiss();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log("🔹 Form submitted"); // Check if function is being triggered
+
+  if (validateForm()) {
+    console.log("✅ Form validation passed"); // Check if validation is working
+    setLoading(true);
+    toast.dismiss();
+
+    try {
+      console.log("📡 Sending request to API...");
+      const response = await axios.post('http://localhost:8000/api/hospitals/login', formData);
       
-      try {
-        const response = await axios.post('http://localhost:8000/api/hospitals/login', formData);
-        const { message, token, hospital } = response.data;
+      console.log("✅ API Response received:", response);
+      
+      const { message, token, hospital } = response.data;
+      console.log("📦 Extracted data:", { message, token, hospital });
 
-        if (token) {
-          // Store data in localStorage
-          localStorage.setItem('hospitalToken', token);
-          localStorage.setItem('hospitalData', JSON.stringify(hospital));
+      if (token && hospital) {
+        console.log("🔐 Token received, storing in cookies and localStorage...");
+        Cookies.set('hospitalToken', token, { 
+          expires: 7, 
+          secure: true,
+          sameSite: 'Strict' 
+        });
 
-          // Show success message
-          toast.success('Login successful!', {
-            duration: 2000,
-            position: 'top-right',
-          });
-          setTimeout(() => {  // Redirect after showing the toast message   
-            // Navigate to hospital dashboard
-            navigate('/hospital/dashboard');
-            // toast.dismiss();
-          }, 1000);
-          // navigate('/hospital/dashboard');
-        } else {
-          toast.error(message || 'Login failed!');
-        }
-      } catch (error) {
-        console.error('Login error:', error);
-        toast.error(error.response?.data?.message || 'Invalid credentials');
-      } finally {
-        setLoading(false);
+        // Store entire hospital data in localStorage
+        // localStorage.setItem('hospitalToken', token);
+        localStorage.setItem('hospitalData', JSON.stringify(hospital));
+
+        toast.success('Login successful!', { duration: 2000, position: 'top-right' });
+
+        console.log("🚀 Navigating to dashboard...");
+        navigate('/hospital/dashboard');
+      } else {
+        console.warn("⚠️ No token received:", message);
+        toast.error(message || 'Login failed!');
       }
+    } catch (error) {
+      console.error("❌ Login error:", error);
+      toast.error(error.response?.data?.message || 'Invalid credentials');
+    } finally {
+      console.log("🔄 Setting loading to false");
+      setLoading(false);
     }
-  };
+  } else {
+    console.warn("⚠️ Form validation failed");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">

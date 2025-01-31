@@ -270,8 +270,9 @@ const AddDoctor = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${hospitalToken}`,
+          // Authorization: `Bearer ${hospitalToken}`,
         },
+        credentials: "include",
         body: JSON.stringify({
           ...formData,
         }),

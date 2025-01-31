@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cookieParser = require('cookie-parser');
 const cors = require("cors");
 const fileUpload = require('express-fileupload');
 require("dotenv").config();
@@ -14,10 +15,19 @@ const searchRoutes = require('./routes/patientSearch');
 const usernavRoutes=require('./routes/usernavRoutes')
 const nearbyRoutes = require('./routes/nearbyRoutes');
 
+const{validateToken,authenticateToken}=require('./middleware/authMiddleware');
+
 const app = express();
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:5173',  // Allow only your frontend origin
+  credentials: true,  // Allow credentials (cookies, headers, etc.)
+};
+
+app.use(cors(corsOptions));
+app.use(cookieParser());
+
 app.use(express.json());
 app.use(
   fileUpload({
@@ -34,16 +44,17 @@ mongoose
   })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
-  app.use('/api/search', nearbyRoutes);
-  app.use("/api/search", searchRoutes);
-  app.use("/api/doctors", doctorRoutes);
+  app.use('/api/hospitals/validate',validateToken)
+  app.use('/api/search',authenticateToken, nearbyRoutes);
+  app.use("/api/search",authenticateToken, searchRoutes);
+  app.use("/api/doctors",authenticateToken, doctorRoutes);
 // Routes
-app.use("/api/hospitals", hospitalRoutes);
-app.use('/api/user/v2', usernavRoutes);
-app.use("/api/user/hospitals", usernavRoutes);
+app.use("/api/hospitals",authenticateToken, hospitalRoutes);
+app.use('/api/user/v2',authenticateToken, usernavRoutes);
+app.use("/api/user/hospitals",authenticateToken, usernavRoutes);
 // Add to existing routes
 // app.use('/api/hospitals', hospitalRoutes);
-app.use('/api/clinics', clinicRoutes);
+app.use('/api/clinics',authenticateToken, clinicRoutes);
 // app.use('/api/clinics', clinicRoutes);
 // app.use('/api/consultants', consultantRoutes);
 
