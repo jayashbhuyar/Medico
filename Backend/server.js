@@ -12,6 +12,7 @@ const doctorRoutes = require("./routes/doctorRoutes");
 // const consultantRoutes = require('./routes/consultantRoutes');
 const searchRoutes = require('./routes/patientSearch');
 const usernavRoutes=require('./routes/usernavRoutes')
+const nearbyRoutes = require('./routes/nearbyRoutes');
 
 const app = express();
 
@@ -33,6 +34,7 @@ mongoose
   })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
+  app.use('/api/search', nearbyRoutes);
   app.use("/api/search", searchRoutes);
   app.use("/api/doctors", doctorRoutes);
 // Routes

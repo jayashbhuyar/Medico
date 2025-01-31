@@ -5,7 +5,7 @@ import {
   FaCalendarAlt, FaHospital, FaCheck, FaVideo,
   FaHeart, FaBrain, FaTooth, FaEye,
   FaAmbulance, FaQuoteRight, FaUserMd, FaClinicMedical,
-  FaChevronDown,
+  FaChevronDown, FaLocationArrow,
   FaLungs, FaSyringe, FaBaby, FaMicroscope, FaWeight, 
   FaHeadSideCough, FaFirstAid, FaHandHoldingHeart, FaShieldAlt, FaCapsules,FaHeartbeat
 } from 'react-icons/fa';
@@ -26,6 +26,8 @@ const HealthcareSearch = () => {
   const [clinicSearch, setClinicSearch] = useState("");
   const [userLocation, setUserLocation] = useState(null);
   const [locationPermission, setLocationPermission] = useState("prompt");
+  const [searchMode, setSearchMode] = useState('search'); // 'search' or 'nearme'
+  const [userCoordinates, setUserCoordinates] = useState(null);
   const navigate = useNavigate();
 
   // Debounce search to prevent multiple re-renders
@@ -213,6 +215,93 @@ const HealthcareSearch = () => {
     }
   };
 
+  const handleNearMeClick = async () => {
+    try {
+      const position = await getCurrentPosition();
+      setUserCoordinates({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      });
+      setSearchMode('nearme');
+    } catch (error) {
+      toast.error("Could not get your location. Please enable location services.");
+    }
+  };
+
+  const searchNearMe = async () => {
+    if (!userCoordinates) return;
+    
+    setIsLoading(true);
+    try {
+      const response = await fetch(`http://localhost:8000/api/${searchType}/nearby`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          latitude: userCoordinates.latitude,
+          longitude: userCoordinates.longitude,
+          radius: 5 // 5km radius
+        })
+      });
+      const data = await response.json();
+      // Handle results...
+    } catch (error) {
+      toast.error("Failed to find nearby results");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Add new handler function
+  const handleNearMeSearch = async () => {
+    if (!navigator.geolocation) {
+      toast.error("Location services not available");
+      return;
+    }
+  
+    setIsLoading(true);
+    toast.loading("Finding nearby...");
+  
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+  
+      const { latitude, longitude } = position.coords;
+  
+      // API endpoints based on search type
+      const endpoints = {
+        doctor: "/api/search/doctors/nearby",
+        hospital: "/api/search/hospitals/nearby",
+        clinic: "/api/search/clinics/nearby"
+      };
+  
+      const endpoint = endpoints[searchType];
+      if (!endpoint) return;
+  
+      const response = await fetch(`http://localhost:8000${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latitude, longitude, radius: 10 })
+      });
+  
+      const data = await response.json();
+      if (data.success) {
+        navigate(`/${searchType}results`, {
+          state: {
+            results: data.results,
+            isNearMe: true,
+            coordinates: { latitude, longitude }
+          }
+        });
+      }
+    } catch (error) {
+      toast.error("Could not find nearby locations");
+    } finally {
+      setIsLoading(false);
+      toast.dismiss();
+    }
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCount((prev) => ({
@@ -320,84 +409,65 @@ const HealthcareSearch = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       <UserNav />
-      <div className="relative h-screen">
-        <video
-          autoPlay
-          loop
-          muted
-          className="absolute w-full h-full object-cover"
-        >
+      
+      {/* Hero Section */}
+      <div className="relative min-h-[90vh]">
+        <video autoPlay loop muted className="absolute w-full h-full object-cover">
           <source src="/medical-background.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-blue-600/80" />
-
-        <div className="relative z-10 container mx-auto px-4 h-full flex items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-4xl mx-auto text-center text-white"
-          >
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Find Your Perfect Healthcare Match
+        
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 to-indigo-800/80" />
+        
+        <div className="relative z-10 container mx-auto px-4 py-20">
+          <div className="max-w-4xl mx-auto text-center text-white space-y-8">
+            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+              Find Your Perfect
+              <span className="text-blue-300"> Healthcare </span>
+              Match
             </h1>
-
-            <div className="flex flex-wrap justify-center mb-8 gap-2">
+            
+            {/* Search Type Selection */}
+            <div className="flex flex-wrap justify-center gap-4 p-4">
               {searchTypes.map((type) => (
                 <button
                   key={type.id}
                   onClick={() => handleSearchTypeChange(type.id)}
-                  className={`flex items-center px-6 py-3 rounded-full transition-all duration-300
-                    ${
-                      searchType === type.id
-                        ? "bg-white text-blue-600 shadow-lg"
-                        : "bg-white/20 text-white hover:bg-white/30"
-                    }`}
+                  className={`
+                    flex items-center px-8 py-4 rounded-xl
+                    transition-all duration-300 transform hover:-translate-y-1
+                    ${searchType === type.id 
+                      ? "bg-white text-blue-700 shadow-lg font-semibold"
+                      : "bg-white/10 text-white hover:bg-white/20"}
+                  `}
                 >
-                  <span className="mr-2">{type.icon}</span>
+                  <span className="text-2xl mr-3">{type.icon}</span>
                   <span className="font-medium">{type.label}</span>
                 </button>
               ))}
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 shadow-2xl max-w-4xl mx-auto">
+            {/* Search Box */}
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/20">
               <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1 min-w-[200px]">
+                <div className="flex-1">
                   <div className="relative">
-                    <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60" />
                     {searchType === "specialty" ? (
                       <div className="relative">
                         <button
-                          onClick={() =>
-                            setIsSpecialtyDropdownOpen(!isSpecialtyDropdownOpen)
-                          }
-                          className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 
-                                    bg-white text-gray-800 flex items-center justify-between
-                                    hover:bg-gray-50 focus:ring-2 focus:ring-blue-500"
+                          onClick={() => setIsSpecialtyDropdownOpen(!isSpecialtyDropdownOpen)}
+                          className="w-full pl-12 pr-4 py-4 rounded-xl text-left
+                                   bg-white/10 text-white border border-white/30
+                                   hover:bg-white/20 transition-all"
                         >
-                          <span className="flex items-center text-gray-700">
-                            {selectedSpecialty
-                              ? specialtyOptions.find(
-                                  (opt) => opt.value === selectedSpecialty
-                                )?.label
-                              : "Select Specialty"}
-                          </span>
-                          <FaChevronDown
-                            className={`text-gray-400 transition-transform duration-200 
-                            ${
-                              isSpecialtyDropdownOpen
-                                ? "transform rotate-180"
-                                : ""
-                            }`}
-                          />
+                          {selectedSpecialty || "Select Specialty"}
                         </button>
-
+                        
                         {isSpecialtyDropdownOpen && (
-                          <div
-                            className="absolute z-50 w-full mt-1 bg-white border border-gray-200 
-                                        rounded-lg shadow-lg max-h-60 overflow-y-auto"
-                          >
+                          <div className="absolute mt-2 w-full bg-white rounded-xl shadow-lg 
+                                        max-h-60 overflow-y-auto">
                             {specialtyOptions.map((specialty) => (
                               <button
                                 key={specialty.value}
@@ -405,12 +475,10 @@ const HealthcareSearch = () => {
                                   setSelectedSpecialty(specialty.value);
                                   setIsSpecialtyDropdownOpen(false);
                                 }}
-                                className="w-full px-4 py-2 text-left flex items-center 
-                                          text-gray-700 hover:bg-gray-50 transition-colors"
+                                className="w-full px-4 py-3 text-left flex items-center
+                                         text-gray-700 hover:bg-blue-50"
                               >
-                                <span className="mr-2 text-blue-600">
-                                  {specialty.icon}
-                                </span>
+                                <span className="mr-3 text-blue-600">{specialty.icon}</span>
                                 <span>{specialty.label}</span>
                               </button>
                             ))}
@@ -435,100 +503,45 @@ const HealthcareSearch = () => {
                             : setClinicSearch(e.target.value)
                         }
                         placeholder={`Search ${searchType}s...`}
-                        className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 
-                                   bg-white text-gray-800 placeholder-gray-500
-                                   focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                   shadow-sm transition duration-200"
+                        className="w-full pl-12 pr-4 py-4 rounded-xl
+                                 bg-white/10 text-white placeholder-white/60
+                                 border border-white/30 hover:bg-white/20
+                                 focus:ring-2 focus:ring-blue-400
+                                 transition-all"
                       />
                     )}
                   </div>
                 </div>
 
-                <div className="flex-1 min-w-[200px]">
-                  <div className="relative">
-                    <FaMapMarkerAlt className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      placeholder="Location"
-                      className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 
-                                 bg-white text-gray-800 placeholder-gray-500
-                                 focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                 shadow-sm transition duration-200"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <button
-                    onClick={debouncedSearch}
-                    disabled={isLoading}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg flex items-center gap-2 
-             hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Searching...
-                      </div>
-                    ) : (
-                      <>
-                        <FaSearch />
-                        Search
-                      </>
-                    )}
-                  </button>
-                  <button
-                    onClick={handleUseMyLocation}
-                    disabled={isLoading}
-                    className={`px-6 py-3 rounded-lg transition duration-300 shadow-lg hover:shadow-xl
-                               flex items-center justify-center
-                               ${
-                                 isLoading
-                                   ? "bg-gray-400 cursor-not-allowed text-gray-200"
-                                   : "bg-green-500 hover:bg-green-600 text-white"
-                               }`}
-                  >
-                    <FaMapMarkerAlt className="mr-2" />
-                    {isLoading ? "Getting Location..." : "Use My Location"}
-                  </button>
-                </div>
+                {/* Search Button */}
+                <button
+                  onClick={handleSearch}
+                  disabled={isLoading}
+                  className="px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500
+                           text-white rounded-xl flex items-center justify-center gap-2
+                           hover:from-blue-600 hover:to-indigo-600 transition-all
+                           disabled:opacity-50 shadow-lg hover:shadow-xl"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent 
+                                    rounded-full animate-spin" />
+                      <span>Searching...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <FaSearch className="text-xl" />
+                      <span className="font-medium">Search</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
-
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              {specialties.map((specialty) => (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  key={specialty.name}
-                  onClick={() => setSelectedSpecialty(specialty.name)}
-                  className={`flex items-center px-6 py-3 rounded-full 
-                    ${
-                      selectedSpecialty === specialty.name
-                        ? "bg-white text-blue-600"
-                        : "bg-white/20 text-white"
-                    } transition-all duration-300`}
-                >
-                  <span className="mr-2">{specialty.icon}</span>
-                  {specialty.name}
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
+          </div>
         </div>
-
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          className="fixed bottom-8 right-8 bg-red-500 text-white p-4 rounded-full 
-                     shadow-lg flex items-center space-x-2 z-50"
-        >
-          <FaAmbulance className="text-2xl" />
-          <span>Emergency</span>
-        </motion.button>
       </div>
 
+      {/* Rest of your existing sections with updated styling */}
       <div className="bg-blue-600 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
