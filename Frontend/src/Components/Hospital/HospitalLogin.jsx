@@ -19,13 +19,14 @@ function HospitalLogin() {
     const validateToken = async () => {
       // Get the token from cookies
       const token = Cookies.get('hospitalToken');
+      if(!token) {localStorage.removeItem('hospitalData');}
       console.log("🔑 Token from cookies:", token);
 
       if (token) {
         try {
           // Send the token to the backend for validation
           const response = await axios.get('http://localhost:8000/api/hospitals/validate', {
-            withCredentials: true // Make sure cookies are sent with the request
+            // withCredentials: true // Make sure cookies are sent with the request
           });
 
           if (response.data.success) {
