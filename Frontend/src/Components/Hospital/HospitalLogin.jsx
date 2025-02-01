@@ -25,8 +25,8 @@ function HospitalLogin() {
       if (token) {
         try {
           // Send the token to the backend for validation
-          const response = await axios.get('http://localhost:8000/api/hospitals/validate', {
-            // withCredentials: true // Make sure cookies are sent with the request
+          const response = await axios.get('http://localhost:8000/api/token/validate', {
+            withCredentials: true // Make sure cookies are sent with the request
           });
 
           if (response.data.success) {

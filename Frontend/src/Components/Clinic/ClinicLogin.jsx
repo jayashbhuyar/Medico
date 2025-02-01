@@ -1,12 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock, FaClinicMedical } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
+import Cookies from 'js-cookie';
 
-function ClinicLogin() {
+const ClinicLogin = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const validateToken = async () => {
+      const token = Cookies.get('clinicToken');
+      if(!token) {
+        localStorage.removeItem('clinicData');
+        return;
+      }
+
+      try {
+        const response = await axios.get('http://localhost:8000/api/token/validate', {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.data.success) {
+          console.log("✅ Token is valid");
+          navigate('/clinic/dashboard');
+        }
+      } catch (error) {
+        console.error("❌ Token validation failed:", error);
+        Cookies.remove('clinicToken');
+        localStorage.removeItem('clinicData');
+        toast.error('Session expired. Please login again.');
+        navigate('/cliniclogin');
+      }
+    };
+
+    validateToken();
+  }, [navigate]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",

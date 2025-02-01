@@ -86,12 +86,12 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    console.log("📩 Received login request:", email);
+    // console.log("📩 Received login request:", email);
 
     // Find hospital by email
     const hospital = await Hospital.findOne({ email });
     if (!hospital) {
-      console.warn("⚠️ Hospital not found:", email);
+      // console.warn("⚠️ Hospital not found:", email);
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
@@ -109,7 +109,7 @@ exports.login = async (req, res) => {
       { expiresIn: "24h" } // Token expires in 24 hours
     );
 
-    console.log("🔐 Generated token:", token);
+    // console.log("🔐 Generated token:", token);
 
     // Set HTTP-only cookie for token storage
     res.cookie('hospitalToken', token, {

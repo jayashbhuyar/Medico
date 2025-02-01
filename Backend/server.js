@@ -44,8 +44,8 @@ mongoose
   })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
-  app.use('/api/hospitals/validate',validateToken)
   app.use("/api/hospitals", hospitalRoutes);
+  app.use('/api/token/validate',validateToken)
   app.use('/api/search',authenticateToken, nearbyRoutes);
   app.use("/api/search",authenticateToken, searchRoutes);
   app.use("/api/doctors",authenticateToken, doctorRoutes);

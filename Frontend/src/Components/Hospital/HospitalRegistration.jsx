@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 import "leaflet/dist/leaflet.css";
 import {
   FaHospital,
@@ -61,6 +63,47 @@ function HospitalRegistration() {
     confirmPassword: "",
   });
 
+  const navigate = useNavigate();
+  useEffect(() => {
+    const validateToken = async () => {
+      // Get the token from cookies
+      const token = Cookies.get('hospitalToken');
+      if(!token) {localStorage.removeItem('hospitalData');}
+      console.log("🔑 Token from cookies:", token);
+
+      if (token) {
+        try {
+          // Send the token to the backend for validation
+          const response = await axios.get('http://localhost:8000/api/token/validate', {
+            withCredentials: true // Make sure cookies are sent with the request
+          });
+
+          if (response.data.success) {
+            // Token is valid, navigate to the dashboard
+            console.log("✅ Token is valid");
+            navigate('/hospital/dashboard');
+          } else {
+            // Token is invalid, handle accordingly
+            console.warn("⚠️ Invalid token");
+            Cookies.remove('hospitalToken');
+            localStorage.removeItem('hospitalData');
+            navigate('/hospitallogin');  // Redirect to login if invalid token
+          }
+        } catch (error) {
+          console.error("❌ Token validation failed:", error);
+          // Handle invalid or expired token
+          Cookies.remove('hospitalToken');
+          localStorage.removeItem('hospitalData');
+          navigate('/hospitallogin');  // Redirect to login if token validation fails
+        }
+      } else {
+        console.log("⚠️ No token found");
+      }
+    };
+
+    validateToken();
+  }, [navigate]);
+  
   // Validation Functions
   const validateStep = () => {
     const newErrors = {};
