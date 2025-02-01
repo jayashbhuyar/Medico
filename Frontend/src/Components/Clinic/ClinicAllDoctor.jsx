@@ -155,8 +155,9 @@ const ClinicAllDoctors = () => {
         const clinicData = JSON.parse(localStorage.getItem('clinicData'));
         const response = await fetch(`http://localhost:8000/api/doctors/organization/${clinicData.id}`, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('hospitalToken')}`
-          }
+            // 'Authorization': `Bearer ${localStorage.getItem('hospitalToken')}`
+          },
+          credentials: 'include'
         });
 
         if (!response.ok) throw new Error('Failed to fetch doctors');

@@ -85,8 +85,8 @@ const ClinicLogin = () => {
         console.log("✅ API response received:", response);
   
         if (response.data.success) {
-          const { id, name, email } = response.data.clinic;
-          console.log("📦 Extracted clinic data:", { id, name, email });
+          const clinicData= response.data.clinic;
+          console.log("📦 Extracted clinic data:", {clinic});
   
           console.log("🔐 Storing token in cookies...");
           Cookies.set("clinicToken", response.data.token, {
@@ -98,7 +98,7 @@ const ClinicLogin = () => {
           console.log("💾 Saving clinic data in localStorage...");
           localStorage.setItem(
             "clinicData",
-            JSON.stringify({ id, name, email })
+            JSON.stringify(clinicData)
           );
   
           toast.success("🎉 Login successful!");
