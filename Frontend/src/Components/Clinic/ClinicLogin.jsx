@@ -9,6 +9,11 @@ import Cookies from 'js-cookie';
 const ClinicLogin = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const validateToken = async () => {
@@ -22,73 +27,51 @@ const ClinicLogin = () => {
         const response = await axios.get('http://localhost:8000/api/token/validate', {
           withCredentials: true,
           headers: {
-            'Content-Type': 'application/json'
-          }
+            "Content-Type": "application/json",
+          },
         });
 
         if (response.data.success) {
-          console.log("✅ Token is valid");
-          navigate('/clinic/dashboard');
+          console.log("✅ Token is valid, navigating to dashboard.");
+          navigate("/clinic/dashboard");
         }
       } catch (error) {
         console.error("❌ Token validation failed:", error);
-        Cookies.remove('clinicToken');
+        Cookies.remove("clinicToken");
         localStorage.removeItem('clinicData');
-        toast.error('Session expired. Please login again.');
-        navigate('/cliniclogin');
       }
     };
 
     validateToken();
   }, [navigate]);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [errors, setErrors] = useState({});
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    }
-
+    if (!formData.email) newErrors.email = 'Email is required';
+    if (!formData.password) newErrors.password = 'Password is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("🔹 Form submitted"); // Debugging step
+  
     if (validateForm()) {
+      console.log("✅ Form validation passed");
+      setLoading(true);
+      toast.dismiss();
+  
       try {
-        console.log("Form data:", formData);
-        setIsLoading(true);
-        const toastId = toast.loading("Logging in...");
-
+        console.log("📡 Sending login request...");
         const response = await axios.post(
           "http://localhost:8000/api/clinics/login",
           formData,
@@ -98,33 +81,52 @@ const ClinicLogin = () => {
             },
           }
         );
-
-        toast.dismiss(toastId);
-
+  
+        console.log("✅ API response received:", response);
+  
         if (response.data.success) {
-          toast.success("Login successful!");
-          localStorage.setItem("clinicToken", response.data.token);
-          localStorage.setItem("clinicData", JSON.stringify(response.data.clinic));
+          const { id, name, email } = response.data.clinic;
+          console.log("📦 Extracted clinic data:", { id, name, email });
+  
+          console.log("🔐 Storing token in cookies...");
+          Cookies.set("clinicToken", response.data.token, {
+            expires: 7,
+            // secure: true,
+            sameSite: "Strict",
+          });
+  
+          console.log("💾 Saving clinic data in localStorage...");
+          localStorage.setItem(
+            "clinicData",
+            JSON.stringify({ id, name, email })
+          );
+  
+          toast.success("🎉 Login successful!");
+          console.log("🚀 Navigating to dashboard...");
           navigate("/clinic/dashboard");
+        } else {
+          console.warn("⚠️ Login failed:", response.data.message);
+          toast.error(response.data.message || "Login failed");
         }
       } catch (error) {
-        toast.dismiss();
-        const errorMessage =
-          error.response?.data?.message || "Something went wrong. Please try again.";
-        toast.error(errorMessage);
+        console.error("❌ Login error:", error);
+        toast.error(error.response?.data?.message || "Login failed");
       } finally {
-        setIsLoading(false);
+        console.log("🔄 Setting loading to false");
+        setLoading(false);
       }
+    } else {
+      console.warn("⚠️ Form validation failed");
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-blue-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-lg p-8 rounded-2xl shadow-xl border border-white/20"
+        className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg"
       >
         <div>
           <motion.div
@@ -195,14 +197,14 @@ const ClinicLogin = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            disabled={isLoading}
+            disabled={loading}
             className={`w-full flex justify-center py-3 px-4 rounded-lg text-white ${
-              isLoading
+              loading
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800"
             } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transform transition-all duration-150`}
           >
-            {isLoading ? (
+            {loading ? (
               <span className="flex items-center">
                 <svg
                   className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -244,6 +246,6 @@ const ClinicLogin = () => {
       <Toaster position="top-right" />
     </div>
   );
-}
+};
 
 export default ClinicLogin;

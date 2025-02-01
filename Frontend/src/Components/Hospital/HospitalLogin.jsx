@@ -94,7 +94,7 @@ const handleSubmit = async (e) => {
         console.log("🔐 Token received, storing in cookies and localStorage...");
         Cookies.set('hospitalToken', token, { 
           expires: 7, 
-          secure: true,
+          // secure: true,
           sameSite: 'Strict' 
         });
 

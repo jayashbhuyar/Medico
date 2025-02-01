@@ -45,6 +45,7 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
   app.use("/api/hospitals", hospitalRoutes);
+  app.use('/api/clinics', clinicRoutes);
   app.use('/api/token/validate',validateToken)
   app.use('/api/search',authenticateToken, nearbyRoutes);
   app.use("/api/search",authenticateToken, searchRoutes);
@@ -54,7 +55,6 @@ app.use('/api/user/v2',authenticateToken, usernavRoutes);
 app.use("/api/user/hospitals",authenticateToken, usernavRoutes);
 // Add to existing routes
 // app.use('/api/hospitals', hospitalRoutes);
-app.use('/api/clinics',authenticateToken, clinicRoutes);
 // app.use('/api/clinics', clinicRoutes);
 // app.use('/api/consultants', consultantRoutes);
 
