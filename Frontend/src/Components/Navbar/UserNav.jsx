@@ -14,9 +14,8 @@ import {
   FaHeartbeat,
   FaBars,
   FaTimes,
-  FaUserCircle,
-  FaChevronDown,
   FaSignInAlt,
+  FaChevronDown,
 } from "react-icons/fa";
 
 const UserNav = () => {
@@ -37,7 +36,7 @@ const UserNav = () => {
   }, []);
 
   const navItems = [
-    { name: "Home", path: "/", icon: <FaHome className="w-5 h-5" /> },
+    { name: "Home", path: "/patientpage", icon: <FaHome className="w-5 h-5" /> },
     {
       name: "Hospitals",
       path: "/usernavhospitals",
@@ -89,17 +88,21 @@ const UserNav = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-md border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-14">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <motion.span
+          <Link to="/" className="flex items-center gap-2">
+            <motion.div
               whileHover={{ scale: 1.05 }}
-              className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 
-                         bg-clip-text text-transparent hover:from-purple-600 hover:via-indigo-600 hover:to-blue-600
-                         transition-all duration-500"
+              className="flex items-center bg-white px-3 py-1.5 rounded-lg shadow-lg border border-gray-300"
             >
-              Medico
-            </motion.span>
+              {/* Logo Text */}
+              <span className="text-2xl font-bold text-[#2C3E50] tracking-wide">
+                Medico
+              </span>
+              <span className="ml-2 text-sm text-[#16A085] uppercase font-medium tracking-wider">
+                Healthcare
+              </span>
+            </motion.div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -113,7 +116,7 @@ const UserNav = () => {
                 {item.subItems ? (
                   <button
                     onClick={() => setActiveDropdown(activeDropdown === item.name ? null : item.name)}
-                    className={`flex items-center px-4 py-2.5 rounded-xl group relative
+                    className={`flex items-center px-4 py-2 rounded-xl group relative
                               ${location.pathname === item.path 
                                 ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md" 
                                 : "text-gray-700 hover:bg-gray-50"}
@@ -135,7 +138,7 @@ const UserNav = () => {
                 ) : (
                   <Link
                     to={item.path}
-                    className={`flex items-center px-4 py-2.5 rounded-xl relative
+                    className={`flex items-center px-4 py-2 rounded-xl relative
                               ${location.pathname === item.path 
                                 ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md" 
                                 : "text-gray-700 hover:bg-gray-50"}
@@ -185,28 +188,43 @@ const UserNav = () => {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 to="/userlogin"
-                className="ml-6 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 
-                           text-white rounded-xl shadow-md hover:shadow-lg
-                           transition-all duration-300 flex items-center font-medium"
+                className="ml-4 px-5 py-2 bg-gradient-to-r from-blue-700 to-blue-400 
+                         text-white rounded-xl shadow-md hover:shadow-lg
+                         transition-all duration-300 flex items-center font-medium"
               >
                 <FaSignInAlt className="mr-2" />
-                Login / Sign Up
+                Login 
               </Link>
             </motion.div>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 rounded-xl text-gray-700 hover:bg-blue-50 
-                       transition-all duration-200 hover:shadow-md"
-          >
-            {isOpen ? (
-              <FaTimes className="h-6 w-6" />
-            ) : (
-              <FaBars className="h-6 w-6" />
-            )}
-          </button>
+          <div className="lg:hidden flex items-center space-x-2">
+            {/* Mobile Login Button */}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to="/userlogin"
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 
+                         text-white rounded-xl shadow-md hover:shadow-lg
+                         transition-all duration-300 flex items-center font-medium"
+              >
+                <FaSignInAlt className="mr-2" />
+                Login
+              </Link>
+            </motion.div>
+
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 rounded-xl text-gray-700 hover:bg-gray-50 
+                         transition-all duration-200 hover:shadow-md"
+            >
+              {isOpen ? (
+                <FaTimes className="h-6 w-6" />
+              ) : (
+                <FaBars className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -274,17 +292,6 @@ const UserNav = () => {
                     </AnimatePresence>
                   </div>
                 ))}
-
-                {/* Mobile Login Button */}
-                <Link
-                  to="/userlogin"
-                  className="block mx-4 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 
-                           text-white rounded-lg text-center font-medium hover:shadow-lg 
-                           transition-all duration-200"
-                >
-                  <FaSignInAlt className="inline mr-2" />
-                  Login / Sign Up
-                </Link>
               </div>
             </motion.div>
           )}

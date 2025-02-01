@@ -188,120 +188,6 @@ const HealthcareSearch = () => {
     setClinicSearch("");
   }, []);
 
-  const handleUseMyLocation = async () => {
-    if ("geolocation" in navigator) {
-      toast.loading("Getting your location...");
-      try {
-        const position = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
-        });
-
-        setUserLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-
-        toast.dismiss();
-        toast.success("Location updated successfully");
-        setLocationPermission("granted");
-      } catch (error) {
-        toast.dismiss();
-        console.error("Location error:", error);
-        toast.error("Unable to get your location");
-        setLocationPermission("denied");
-      }
-    } else {
-      toast.error("Geolocation is not supported by your browser");
-    }
-  };
-
-  const handleNearMeClick = async () => {
-    try {
-      const position = await getCurrentPosition();
-      setUserCoordinates({
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude
-      });
-      setSearchMode('nearme');
-    } catch (error) {
-      toast.error("Could not get your location. Please enable location services.");
-    }
-  };
-
-  const searchNearMe = async () => {
-    if (!userCoordinates) return;
-    
-    setIsLoading(true);
-    try {
-      const response = await fetch(`http://localhost:8000/api/${searchType}/nearby`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          latitude: userCoordinates.latitude,
-          longitude: userCoordinates.longitude,
-          radius: 5 // 5km radius
-        })
-      });
-      const data = await response.json();
-      // Handle results...
-    } catch (error) {
-      toast.error("Failed to find nearby results");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Add new handler function
-  const handleNearMeSearch = async () => {
-    if (!navigator.geolocation) {
-      toast.error("Location services not available");
-      return;
-    }
-  
-    setIsLoading(true);
-    toast.loading("Finding nearby...");
-  
-    try {
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-  
-      const { latitude, longitude } = position.coords;
-  
-      // API endpoints based on search type
-      const endpoints = {
-        doctor: "/api/search/doctors/nearby",
-        hospital: "/api/search/hospitals/nearby",
-        clinic: "/api/search/clinics/nearby"
-      };
-  
-      const endpoint = endpoints[searchType];
-      if (!endpoint) return;
-  
-      const response = await fetch(`http://localhost:8000${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ latitude, longitude, radius: 10 })
-      });
-  
-      const data = await response.json();
-      if (data.success) {
-        navigate(`/${searchType}results`, {
-          state: {
-            results: data.results,
-            isNearMe: true,
-            coordinates: { latitude, longitude }
-          }
-        });
-      }
-    } catch (error) {
-      toast.error("Could not find nearby locations");
-    } finally {
-      setIsLoading(false);
-      toast.dismiss();
-    }
-  };
-
   useEffect(() => {
     const interval = setInterval(() => {
       setCount((prev) => ({
@@ -319,7 +205,7 @@ const HealthcareSearch = () => {
     { icon: <FaTooth />, name: "Dental" },
     { icon: <FaEye />, name: "Eye Care" },
     { icon: <FaStethoscope />, name: "General Medicine" },
-    { icon: <FaLungs />, name: "Pulmonology" },
+    // { icon: <FaLungs />, name: "Pulmonology" },
     // { icon: <FaSyringe />, name: 'Vaccination' },
     // { icon: <FaUserMd />, name: 'Internal Medicine' },
     // { icon: <FaBaby />, name: 'Pediatrics' },
@@ -407,15 +293,6 @@ const HealthcareSearch = () => {
       image: "https://via.placeholder.com/60",
     },
   ];
-  const VideoPlayer = () => {
-    const [currentVideo, setCurrentVideo] = useState('video1.mp4');
-    const videoRef = useRef(null);
-  
-    const handleEnd = () => {
-      // Switch to the next video when the current one ends
-      setCurrentVideo((prevVideo) => (prevVideo === 'video1.mp4' ? 'video2.mp4' : 'video1.mp4'));
-    };}
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <UserNav />
