@@ -28,6 +28,8 @@ import Help from './Components/Patient/NavResults/Help'
 import ClinicAddDoctor from './Components/Clinic/ClinicAddDoctor'
 import ClinicAllDoctors from './Components/Clinic/ClinicAllDoctor'
 import AddPatient from './Components/common/AddPatient'
+import UserFooter from './Components/Patient/Footer'
+import UserMainpage from './Components/Patient/UserMainpage'
 
 function App() {
   return (
@@ -62,6 +64,8 @@ function App() {
         <Route path="/clinicadddoctor" element={<ClinicAddDoctor />} />
         <Route path="/clinicalldoctors" element={<ClinicAllDoctors />} />
         <Route path="/addpatient" element={<AddPatient />} />
+        <Route path="/userfooter" element={<UserFooter />} />
+        <Route path="/usermainpage" element={<UserMainpage />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>

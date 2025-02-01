@@ -87,60 +87,62 @@ const UserNav = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-blue-100">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-md border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <span
-              className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 
-                           bg-clip-text text-transparent hover:from-indigo-600 hover:to-blue-600
-                           transition-all duration-300"
+            <motion.span
+              whileHover={{ scale: 1.05 }}
+              className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 
+                         bg-clip-text text-transparent hover:from-purple-600 hover:via-indigo-600 hover:to-blue-600
+                         transition-all duration-500"
             >
               Medico
-            </span>
+            </motion.span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-2">
             {navItems.map((item) => (
-              <div key={item.name} className="relative group">
+              <motion.div
+                key={item.name}
+                className="relative group"
+                whileHover={{ scale: 1.02 }}
+              >
                 {item.subItems ? (
                   <button
-                    onClick={() =>
-                      setActiveDropdown(
-                        activeDropdown === item.name ? null : item.name
-                      )
-                    }
-                    className={`flex items-center px-4 py-2.5 rounded-xl group 
-                              ${
-                                location.pathname === item.path
-                                  ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
-                                  : "text-gray-700 hover:bg-blue-50"
-                              }
-                              transition-all duration-200 hover:shadow-md`}
+                    onClick={() => setActiveDropdown(activeDropdown === item.name ? null : item.name)}
+                    className={`flex items-center px-4 py-2.5 rounded-xl group relative
+                              ${location.pathname === item.path 
+                                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md" 
+                                : "text-gray-700 hover:bg-gray-50"}
+                              transition-all duration-300`}
                   >
-                    <span className="mr-2 group-hover:scale-110 transition-transform">
+                    <span className="mr-2 text-blue-600 group-hover:text-indigo-600 
+                                   transition-colors duration-300">
                       {item.icon}
                     </span>
                     {item.name}
-                    <FaChevronDown
-                      className="ml-2 text-sm transition-transform duration-200 
-                                           group-hover:rotate-180"
-                    />
+                    <motion.span
+                      animate={{ rotate: activeDropdown === item.name ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="ml-2"
+                    >
+                      <FaChevronDown className="text-sm" />
+                    </motion.span>
                   </button>
                 ) : (
                   <Link
                     to={item.path}
-                    className={`flex items-center px-4 py-2.5 rounded-xl
-                              ${
-                                location.pathname === item.path
-                                  ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg"
-                                  : "text-gray-700 hover:bg-blue-50 hover:shadow-md"
-                              }
-                              transition-all duration-200`}
+                    className={`flex items-center px-4 py-2.5 rounded-xl relative
+                              ${location.pathname === item.path 
+                                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md" 
+                                : "text-gray-700 hover:bg-gray-50"}
+                              transition-all duration-300`}
                   >
-                    <span className="mr-2 group-hover:scale-110 transition-transform">
+                    <span className="mr-2 text-blue-600 group-hover:text-indigo-600 
+                                   transition-colors duration-300">
                       {item.icon}
                     </span>
                     {item.name}
@@ -148,39 +150,49 @@ const UserNav = () => {
                 )}
 
                 {/* Dropdown Menu */}
-                {item.subItems && activeDropdown === item.name && (
-                  <div
-                    className="absolute top-full right-0 w-56 mt-2 p-1
-                                bg-white/80 backdrop-blur-md rounded-xl shadow-xl 
-                                border border-blue-100"
-                  >
-                    {item.subItems.map((subItem) => (
-                      <Link
-                        key={subItem.name}
-                        to={subItem.path}
-                        className="flex items-center px-4 py-3 rounded-lg text-gray-700 
-                                 hover:bg-gradient-to-r hover:from-blue-500 hover:to-indigo-500
-                                 hover:text-white transition-all duration-200"
-                      >
-                        <span className="mr-2">{subItem.icon}</span>
-                        {subItem.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+                <AnimatePresence>
+                  {item.subItems && activeDropdown === item.name && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute top-full right-0 w-56 mt-2 p-1
+                               bg-white rounded-xl shadow-lg border border-gray-100"
+                    >
+                      {item.subItems.map((subItem) => (
+                        <motion.div
+                          key={subItem.name}
+                          whileHover={{ scale: 1.02, x: 5 }}
+                        >
+                          <Link
+                            to={subItem.path}
+                            className="flex items-center px-4 py-3 rounded-lg text-gray-700 
+                                     hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50
+                                     transition-all duration-300"
+                          >
+                            <span className="mr-2 text-blue-600">{subItem.icon}</span>
+                            {subItem.name}
+                          </Link>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             ))}
 
             {/* Login Button */}
-            <Link
-              to="/userlogin"
-              className="ml-6 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 
-                         text-white rounded-xl hover:shadow-xl hover:-translate-y-0.5 
-                         transition-all duration-200 flex items-center font-medium"
-            >
-              <FaSignInAlt className="mr-2" />
-              Login / Sign Up
-            </Link>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to="/userlogin"
+                className="ml-6 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 
+                           text-white rounded-xl shadow-md hover:shadow-lg
+                           transition-all duration-300 flex items-center font-medium"
+              >
+                <FaSignInAlt className="mr-2" />
+                Login / Sign Up
+              </Link>
+            </motion.div>
           </div>
 
           {/* Mobile Menu Button */}

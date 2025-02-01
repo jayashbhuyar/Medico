@@ -47,12 +47,12 @@ mongoose
   app.use("/api/hospitals", hospitalRoutes);
   app.use('/api/clinics', clinicRoutes);
   app.use('/api/token/validate',validateToken)
-  app.use('/api/search',authenticateToken, nearbyRoutes);
-  app.use("/api/search",authenticateToken, searchRoutes);
+  app.use('/api/search', nearbyRoutes);
+  app.use("/api/search", searchRoutes);
   app.use("/api/doctors",authenticateToken, doctorRoutes);
 // Routes
-app.use('/api/user/v2',authenticateToken, usernavRoutes);
-app.use("/api/user/hospitals",authenticateToken, usernavRoutes);
+app.use('/api/user/v2', usernavRoutes);
+app.use("/api/user/hospitals", usernavRoutes);
 // Add to existing routes
 // app.use('/api/hospitals', hospitalRoutes);
 // app.use('/api/clinics', clinicRoutes);

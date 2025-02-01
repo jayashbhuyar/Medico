@@ -407,6 +407,14 @@ const HealthcareSearch = () => {
       image: "https://via.placeholder.com/60",
     },
   ];
+  const VideoPlayer = () => {
+    const [currentVideo, setCurrentVideo] = useState('video1.mp4');
+    const videoRef = useRef(null);
+  
+    const handleEnd = () => {
+      // Switch to the next video when the current one ends
+      setCurrentVideo((prevVideo) => (prevVideo === 'video1.mp4' ? 'video2.mp4' : 'video1.mp4'));
+    };}
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -416,11 +424,13 @@ const HealthcareSearch = () => {
           autoPlay
           loop
           muted
+          playsInline
           className="absolute w-full h-full object-cover"
         >
-          <source src="/medical-background.mp4" type="video/mp4" />
+          <source src="/video.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-blue-600/80" />
+
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-700/90 to-gray-300/80" />
 
         <div className="relative z-10 container mx-auto px-4 h-full flex items-center">
           <motion.div
