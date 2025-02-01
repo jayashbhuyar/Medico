@@ -19,6 +19,10 @@ const ClinicNav = () => {
   const patientsRef = useRef(null);
   const appointmentsRef = useRef(null);
 
+
+  const clinicData=JSON.parse(localStorage.getItem('clinicData'));
+
+
   const navigation = [
     { name: 'Dashboard', path: '/clinic/dashboard', icon: <FaChartLine /> },
     { 
@@ -100,7 +104,7 @@ const ClinicNav = () => {
           <div className="flex items-center">
             <Link to="/clinic/dashboard" className="flex items-center space-x-2">
               <FaHospital className="h-8 w-8 text-blue-600" />
-              <span className="font-bold text-xl text-gray-800">ClinicCare</span>
+              <span className="font-bold text-xl text-gray-800">{clinicData.clinicName}  Clinic</span>
             </Link>
           </div>
 

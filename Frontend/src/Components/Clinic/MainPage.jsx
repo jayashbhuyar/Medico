@@ -27,7 +27,7 @@ const patientStats = [
   { name: 'Regular', value: 35, color: '#3B82F6' },
   { name: 'Follow-up', value: 20, color: '#F59E0B' }
 ];
-
+// const clinicData=JSON.parse(localStorage.getItem('clinicData'));
 function ClinicDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -40,7 +40,7 @@ function ClinicDashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-gray-800">Welcome back, Dr. Smith's Clinic</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Welcome back, Doctor</h1>
           <p className="text-gray-600">Here's your clinic overview for today</p>
         </motion.div>
 
