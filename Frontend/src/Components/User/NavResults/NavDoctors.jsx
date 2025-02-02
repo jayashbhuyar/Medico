@@ -96,29 +96,26 @@ const NavDoctors = () => {
 
   const deg2rad = (deg) => deg * (Math.PI / 180);
 
-  const sortedDoctors = [...doctors]
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "distance":
-          if (!userLocation) return 0;
-          return (
-            calculateDistance(a.latitude, a.longitude) -
-            calculateDistance(b.latitude, b.longitude)
-          );
-        case "fees":
-          return a.consultationFees - b.consultationFees;
-        case "experience":
-          return b.experience - a.experience;
-        default:
-          return 0;
-      }
-    })
-    .filter((doctor) => {
-      if (selectedDay) {
-        return doctor.availability.includes(selectedDay);
-      }
-      return true;
-    });
+  const sortedDoctors = [...doctors].sort((a, b) => {
+    switch(sortBy) {
+      case "distance":
+        if (!userLocation) return 0;
+        const distanceA = calculateDistance(a.latitude, a.longitude);
+        const distanceB = calculateDistance(b.latitude, b.longitude);
+        return distanceA - distanceB;
+      case "fees":
+        return a.consultationFees - b.consultationFees;
+      case "experience":
+        return b.experience - a.experience;
+      default:
+        return 0;
+    }
+  }).filter(doctor => {
+    if (selectedDay) {
+      return doctor.availableDays.includes(selectedDay);
+    }
+    return true;
+  });
 
   const handleViewProfile = (doctor) => {
     setSelectedDoctor(doctor);
