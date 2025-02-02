@@ -9,17 +9,24 @@ import {
 // Add these utility functions at the top of the file
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   if (!lat1 || !lon1 || !lat2 || !lon2) return null;
-  const R = 6371;
+  
+  // Convert to radians
+  const R = 6371; // Earth's radius in kilometers
+  const lat1Rad = deg2rad(lat1);
+  const lat2Rad = deg2rad(lat2);
   const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lat2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) *
-      Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return (R * c).toFixed(1);
+  const dLon = deg2rad(lon2 - lon1);
+
+  // Haversine formula
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1Rad) * Math.cos(lat2Rad) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+    
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const distance = R * c;
+
+  return distance.toFixed(1); // Return with 1 decimal place
 };
 
 const deg2rad = (deg) => deg * (Math.PI / 180);
@@ -185,12 +192,12 @@ const NavClinic = () => {
           // Replace table with a list of clinic cards
           <div className="space-y-4">
             {sortedClinics.map((clinic) => {
-              const distance = userLocation
+              const distance = userLocation 
                 ? calculateDistance(
-                    clinic.latitude,
-                    clinic.longitude,
-                    userLocation.lat,
-                    userLocation.lng
+                    parseFloat(clinic.latitude),
+                    parseFloat(clinic.longitude),
+                    parseFloat(userLocation.lat),
+                    parseFloat(userLocation.lng)
                   )
                 : null;
 

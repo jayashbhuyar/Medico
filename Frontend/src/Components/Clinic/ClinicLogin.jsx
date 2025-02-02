@@ -63,13 +63,13 @@ const ClinicLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("🔹 Form submitted"); // Debugging step
-  
+    console.log("🔹 Form submitted");
+
     if (validateForm()) {
       console.log("✅ Form validation passed");
       setLoading(true);
       toast.dismiss();
-  
+
       try {
         console.log("📡 Sending login request...");
         const response = await axios.post(
@@ -81,13 +81,13 @@ const ClinicLogin = () => {
             },
           }
         );
-  
+
         console.log("✅ API response received:", response);
-  
+
         if (response.data.success) {
-          const clinicData= response.data.clinic;
-          console.log("📦 Extracted clinic data:", {clinic});
-  
+          const clinicData = response.data.clinic;
+          console.log("📦 Extracted clinic data:", clinicData); // Fixed variable reference
+          
           console.log("🔐 Storing token in cookies...");
           Cookies.set("clinicToken", response.data.token, {
             expires: 7,

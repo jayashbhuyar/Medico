@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Add after Tailwind imports */
+/* Add after Tailwind imports
 
 .goog-te-gadget {
   @apply font-sans !important;
@@ -23,11 +23,14 @@
 .goog-te-gadget-simple .goog-te-menu-value span {
   @apply border-0 !important;
 }
+ */
 
+/* 
 .VIpgJd-ZVi9od-l4eHX-hSRGPd {
   @apply hidden;
 }
 
+*/
 @keyframes tilt {
   0%, 50%, 100% {
     transform: rotate(0deg);
@@ -39,6 +42,7 @@
     transform: rotate(-0.5deg);
   }
 }
+
 
 .animate-tilt {
   animation: tilt 10s infinite linear;
@@ -95,48 +99,3 @@ label {
   @apply block mb-2 text-sm font-medium text-gray-700;
 }
 
-/* *************************************************** */
-
-/* @layer base {
-
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
- 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
- 
-    --primary: 199 89% 48%;
-    --primary-foreground: 210 40% 98%;
- 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
- 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
-    --accent: 199 89% 48%;
-    --accent-foreground: 222.2 47.4% 11.2%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 199 89% 48%;
- 
-    --radius: 0.5rem;
-  }
-}
- 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-} */
