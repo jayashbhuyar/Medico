@@ -3,7 +3,7 @@ const Clinic = require('../models/clinicReg');
 // Get all clinics
 const getAllClinics =  async (req, res) => {
     try {
-      console.log("Get all clinics");
+      // console.log("Get all clinics");
       const clinic = await Clinic.find({});
       res.status(200).json({ success: true, data: clinic });
     } catch (error) {
