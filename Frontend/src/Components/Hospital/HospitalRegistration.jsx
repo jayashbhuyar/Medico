@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import "leaflet/dist/leaflet.css";
@@ -14,6 +14,8 @@ import {
   FaImage,
   FaCheckCircle,
   FaInfoCircle,
+  FaSearch,
+  FaCrosshairs,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast, Toaster } from "react-hot-toast";
@@ -36,6 +38,27 @@ const INDIA_STATES_CITIES = {
 
 const API_URL = 'http://localhost:8000/api/hospitals';
 
+const LocationMarker = ({ position, setPosition }) => {
+  const map = useMapEvents({
+    click(e) {
+      setPosition(e.latlng);
+      map.flyTo(e.latlng, map.getZoom());
+    },
+  });
+
+  return position ? (
+    <Marker 
+      position={position}
+      draggable={true}
+      eventHandlers={{
+        dragend: (e) => {
+          setPosition(e.target.getLatLng());
+        },
+      }}
+    />
+  ) : null;
+};
+
 function HospitalRegistration() {
   const [step, setStep] = useState(1);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -43,6 +66,7 @@ function HospitalRegistration() {
   const [cities, setCities] = useState([]);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [searchAddress, setSearchAddress] = useState('');
 
   const [formData, setFormData] = useState({
     hospitalName: "",
@@ -64,45 +88,45 @@ function HospitalRegistration() {
   });
 
   const navigate = useNavigate();
-  useEffect(() => {
-    const validateToken = async () => {
-      // Get the token from cookies
-      const token = Cookies.get('hospitalToken');
-      if(!token) {localStorage.removeItem('hospitalData');}
-      console.log("🔑 Token from cookies:", token);
+  // useEffect(() => {
+  //   const validateToken = async () => {
+  //     // Get the token from cookies
+  //     const token = Cookies.get('hospitalToken');
+  //     if(!token) {localStorage.removeItem('hospitalData');}
+  //     console.log("🔑 Token from cookies:", token);
 
-      if (token) {
-        try {
-          // Send the token to the backend for validation
-          const response = await axios.get('http://localhost:8000/api/token/validate', {
-            withCredentials: true // Make sure cookies are sent with the request
-          });
+  //     if (token) {
+  //       try {
+  //         // Send the token to the backend for validation
+  //         const response = await axios.get('http://localhost:8000/api/token/validate', {
+  //           withCredentials: true // Make sure cookies are sent with the request
+  //         });
 
-          if (response.data.success) {
-            // Token is valid, navigate to the dashboard
-            console.log("✅ Token is valid");
-            navigate('/hospital/dashboard');
-          } else {
-            // Token is invalid, handle accordingly
-            console.warn("⚠️ Invalid token");
-            Cookies.remove('hospitalToken');
-            localStorage.removeItem('hospitalData');
-            navigate('/hospitallogin');  // Redirect to login if invalid token
-          }
-        } catch (error) {
-          console.error("❌ Token validation failed:", error);
-          // Handle invalid or expired token
-          Cookies.remove('hospitalToken');
-          localStorage.removeItem('hospitalData');
-          navigate('/hospitallogin');  // Redirect to login if token validation fails
-        }
-      } else {
-        console.log("⚠️ No token found");
-      }
-    };
+  //         if (response.data.success) {
+  //           // Token is valid, navigate to the dashboard
+  //           console.log("✅ Token is valid");
+  //           navigate('/hospital/dashboard');
+  //         } else {
+  //           // Token is invalid, handle accordingly
+  //           console.warn("⚠️ Invalid token");
+  //           Cookies.remove('hospitalToken');
+  //           localStorage.removeItem('hospitalData');
+  //           navigate('/hospitallogin');  // Redirect to login if invalid token
+  //         }
+  //       } catch (error) {
+  //         console.error("❌ Token validation failed:", error);
+  //         // Handle invalid or expired token
+  //         Cookies.remove('hospitalToken');
+  //         localStorage.removeItem('hospitalData');
+  //         navigate('/hospitallogin');  // Redirect to login if token validation fails
+  //       }
+  //     } else {
+  //       console.log("⚠️ No token found");
+  //     }
+  //   };
 
-    validateToken();
-  }, [navigate]);
+  //   validateToken();
+  // }, [navigate]);
   
   // Validation Functions
   const validateStep = () => {
@@ -193,6 +217,20 @@ function HospitalRegistration() {
     } else {
       toast.dismiss();
       toast.error("Geolocation is not supported by your browser");
+    }
+  };
+
+  const searchLocation = async () => {
+    try {
+      const response = await axios.get(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${searchAddress}`
+      );
+      if (response.data.length > 0) {
+        const { lat, lon } = response.data[0];
+        setSelectedLocation({ lat: parseFloat(lat), lng: parseFloat(lon) });
+      }
+    } catch (error) {
+      console.error('Error searching location:', error);
     }
   };
 
@@ -390,41 +428,54 @@ function HospitalRegistration() {
             animate={{ opacity: 1 }}
             className="space-y-6"
           >
-            <div className="flex justify-center space-x-4 mb-4">
+            <div className="flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0">
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  value={searchAddress}
+                  onChange={(e) => setSearchAddress(e.target.value)}
+                  placeholder="Search location..."
+                  className="w-full px-4 py-3 pr-12 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                />
+                <button
+                  onClick={searchLocation}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500"
+                >
+                  <FaSearch className="w-5 h-5" />
+                </button>
+              </div>
+              
               <button
                 type="button"
                 onClick={getCurrentLocation}
-                className="flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                <FaMapMarkerAlt />
+                <FaCrosshairs className="w-5 h-5" />
                 <span>Use Current Location</span>
               </button>
             </div>
-            <div className="relative h-[400px] rounded-lg overflow-hidden border-2 border-gray-200">
+
+            <div className="relative h-[400px] rounded-lg overflow-hidden border-2 border-gray-200 shadow-lg">
               <MapContainer
-                center={selectedLocation || { lat: 20.5937, lng: 78.9629 }} // India's center
+                center={selectedLocation || { lat: 20.5937, lng: 78.9629 }}
                 zoom={selectedLocation ? 13 : 5}
                 style={{ height: "100%", width: "100%" }}
                 className="z-0"
               >
                 <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution="&copy; OpenStreetMap contributors"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
-                {selectedLocation && (
-                  <Marker position={selectedLocation}>
-                    <Popup>
-                      <div className="text-center">
-                        <b>Selected Location</b>
-                        <br />
-                        Lat: {selectedLocation.lat.toFixed(4)}
-                        <br />
-                        Lng: {selectedLocation.lng.toFixed(4)}
-                      </div>
-                    </Popup>
-                  </Marker>
-                )}
+                <LocationMarker position={selectedLocation} setPosition={setSelectedLocation} />
               </MapContainer>
+              
+              {selectedLocation && (
+                <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg">
+                  <p className="text-sm font-medium text-gray-700">
+                    Selected Location: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
+                  </p>
+                </div>
+              )}
             </div>
           </motion.div>
         );
