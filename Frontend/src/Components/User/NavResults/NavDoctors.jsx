@@ -8,11 +8,9 @@ import {
   FaClinicMedical,
   FaClock,
   FaRupeeSign,
-  FaFilter,
-  FaSearch,
-  FaBars,
 } from "react-icons/fa";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import DoctorProfile from "./DoctorProfile";
 
@@ -96,26 +94,28 @@ const NavDoctors = () => {
 
   const deg2rad = (deg) => deg * (Math.PI / 180);
 
-  const sortedDoctors = [...doctors].sort((a, b) => {
-    switch(sortBy) {
-      case "distance":
-        if (!userLocation) return 0;
-        const distanceA = calculateDistance(a.latitude, a.longitude);
-        const distanceB = calculateDistance(b.latitude, b.longitude);
-        return distanceA - distanceB;
-      case "fees":
-        return a.consultationFees - b.consultationFees;
-      case "experience":
-        return b.experience - a.experience;
-      default:
-        return 0;
-    }
-  }).filter(doctor => {
-    if (selectedDay) {
-      return doctor.availableDays.includes(selectedDay);
-    }
-    return true;
-  });
+  const sortedDoctors = [...doctors]
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "distance":
+          if (!userLocation) return 0;
+          const distanceA = calculateDistance(a.latitude, a.longitude);
+          const distanceB = calculateDistance(b.latitude, b.longitude);
+          return distanceA - distanceB;
+        case "fees":
+          return a.consultationFees - b.consultationFees;
+        case "experience":
+          return b.experience - a.experience;
+        default:
+          return 0;
+      }
+    })
+    .filter((doctor) => {
+      if (selectedDay) {
+        return doctor.availableDays.includes(selectedDay);
+      }
+      return true;
+    });
 
   const handleViewProfile = (doctor) => {
     setSelectedDoctor(doctor);
@@ -144,81 +144,122 @@ const NavDoctors = () => {
     toast.info("Please login to book an appointment");
   };
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-      </div>
-    );
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4">
-      {/* Filters & Sort Section */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-          <div className="flex items-center gap-4 w-full md:w-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <ToastContainer position="top-right" autoClose={3000} />
+
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-8">
+        <div className="max-w-7xl mx-auto px-4">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">
+            Find Your Doctor
+          </h1>
+          <p className="text-blue-100">
+            Connect with the best healthcare professionals
+          </p>
+        </div>
+      </div>
+
+      {/* Filters Section */}
+      <div className="sticky top-0 z-30 bg-white border-b shadow-md">
+        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-all"
+              className="px-2 py-1 text-xs md:text-sm rounded border border-gray-300 focus:border-blue-500 outline-none"
             >
               <option value="">Sort By</option>
               <option value="experience">Experience</option>
               <option value="fees">Consultation Fees</option>
               <option value="distance">Distance</option>
             </select>
+
             <select
               value={selectedDay}
               onChange={(e) => setSelectedDay(e.target.value)}
-              className="px-4 py-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-all"
+              className="px-2 py-1 text-xs md:text-sm rounded border border-gray-300 focus:border-blue-500 outline-none"
             >
               <option value="">Available Days</option>
               {daysOfWeek.map((day) => (
-                <option key={day} value={day}>{day}</option>
+                <option key={day} value={day}>
+                  {day}
+                </option>
               ))}
             </select>
           </div>
+
           <button
             onClick={handleNearMe}
-            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg 
-                     hover:bg-blue-700 transition-all w-full md:w-auto"
+            className="px-3 py-1 text-xs md:text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 
+                 transition-all flex items-center shadow-md hover:shadow-lg"
           >
-            <FaMapMarkerAlt />
-            <span>Near Me</span>
+            <FaMapMarkerAlt size={14} className="text-white" />
+            <span className="ml-1">Near Me</span>
           </button>
-        </div>
-
-        {/* Doctors Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedDoctors.map((doctor) => (
-            <DoctorCard
-              key={doctor._id}
-              doctor={doctor}
-              distance={calculateDistance(doctor.latitude, doctor.longitude)}
-              onViewProfile={() => {
-                setSelectedDoctor(doctor);
-                setShowProfile(true);
-              }}
-              onBooking={handleBooking}
-            />
-          ))}
         </div>
       </div>
 
-      {/* Doctor Profile Modal */}
-      {showProfile && selectedDoctor && (
-        <DoctorProfile
-          doctor={selectedDoctor}
-          distance={calculateDistance(
-            selectedDoctor.latitude,
-            selectedDoctor.longitude
-          )}
-          onClose={() => {
-            setShowProfile(false);
-            setSelectedDoctor(null);
-          }}
-        />
-      )}
+      {/* Results Section */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600"></div>
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-500 py-8">{error}</div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            <AnimatePresence>
+              {sortedDoctors.map((doctor) => (
+                <motion.div
+                  key={doctor._id}
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <DoctorCard
+                    doctor={doctor}
+                    distance={calculateDistance(
+                      doctor.latitude,
+                      doctor.longitude
+                    )}
+                    onViewProfile={() => {
+                      setSelectedDoctor(doctor);
+                      setShowProfile(true);
+                    }}
+                    onBooking={() =>
+                      toast.info("Please login to book appointment")
+                    }
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Profile Modal */}
+      <AnimatePresence>
+        {showProfile && selectedDoctor && (
+          <DoctorProfile
+            doctor={selectedDoctor}
+            distance={calculateDistance(
+              selectedDoctor.latitude,
+              selectedDoctor.longitude
+            )}
+            onClose={() => {
+              setShowProfile(false);
+              setSelectedDoctor(null);
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
