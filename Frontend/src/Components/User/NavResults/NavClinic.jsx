@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { 
   FaClinicMedical, FaMapMarkerAlt, FaPhone, FaSearch, 
-  FaFilter, FaGlobe, FaCalendar, FaDirections 
+  FaFilter, FaGlobe, FaCalendar, FaDirections, FaInfo 
 } from 'react-icons/fa';
 
 // Add these utility functions at the top of the file
@@ -11,43 +11,42 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   if (!lat1 || !lon1 || !lat2 || !lon2) return null;
   const R = 6371;
   const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const dLon = deg2rad(lat2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return (R * c).toFixed(1);
 };
 
-const deg2rad = (deg) => deg * (Math.PI/180);
+const deg2rad = (deg) => deg * (Math.PI / 180);
 
 // Replace 'year' with 'rating' in getSortedClinics
 const getSortedClinics = (clinics, sortBy, userLocation) => {
   return [...clinics].sort((a, b) => {
-    switch (sortBy) {
-      case "distance":
-        const distanceA = calculateDistance(
-          a.latitude,
-          a.longitude,
-          userLocation?.lat,
-          userLocation?.lng
-        ) || 0;
-        const distanceB = calculateDistance(
-          b.latitude,
-          b.longitude,
-          userLocation?.lat,
-          userLocation?.lng
-        ) || 0;
-        return distanceA - distanceB;
-      case "name":
-        return a.clinicName.localeCompare(b.clinicName);
-      case "rating":
-        // Mock rating comparison if rating field exists
-        return (b.rating || 0) - (a.rating || 0);
-      default:
-        return 0;
+    if (sortBy === "distance" && userLocation) {
+      const distanceA = calculateDistance(
+        a.latitude,
+        a.longitude,
+        userLocation.lat,
+        userLocation.lng
+      ) || 0;
+      const distanceB = calculateDistance(
+        b.latitude,
+        b.longitude,
+        userLocation.lat,
+        userLocation.lng
+      ) || 0;
+      return distanceA - distanceB;
+    } else if (sortBy === "name") {
+      return a.clinicName.localeCompare(b.clinicName);
+    } else if (sortBy === "rating") {
+      return (b.rating || 0) - (a.rating || 0);
     }
+    return 0;
   });
 };
 
@@ -62,7 +61,7 @@ const NavClinic = () => {
   });
   const [sortBy, setSortBy] = useState("distance");
   const [selectedClinic, setSelectedClinic] = useState(null);
-  const [showProfile, setShowProfile]  = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -70,6 +69,7 @@ const NavClinic = () => {
     fetchClinics();
   }, []);
 
+  // The getUserLocation function sets the user's current coordinates.
   const getUserLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -78,6 +78,8 @@ const NavClinic = () => {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           });
+          // Also sort by distance after location is set
+          setSortBy("distance");
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -100,8 +102,8 @@ const NavClinic = () => {
     }
   };
 
-  const sortedClinics = useMemo(() => 
-    getSortedClinics(clinics, sortBy, userLocation),
+  const sortedClinics = useMemo(
+    () => getSortedClinics(clinics, sortBy, userLocation),
     [clinics, sortBy, userLocation]
   );
 
@@ -124,111 +126,151 @@ const NavClinic = () => {
   // Update main component return
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-white">
-      {/* Enhanced Hero Section */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="relative bg-gradient-to-r from-green-600 to-teal-600 text-white py-16 px-4"
-      >
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-32 h-32 bg-white/10 rounded-full"
-              animate={{
-                x: [0, 100, 0],
-                y: [0, -100, 0],
-                scale: [1, 1.2, 1],
-                opacity: [0.1, 0.3, 0.1],
-              }}
-              transition={{
-                duration: 10 + i * 2,
-                repeat: Infinity,
-                repeatType: "reverse",
-              }}
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="max-w-7xl mx-auto text-center relative z-10">
-          {/* ... existing search bar ... */}
-          <div className="max-w-2xl mx-auto relative">
-            <input
-              type="text"
-              placeholder="Search clinics by name or location..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-6 py-4 rounded-full text-gray-800 
-                       focus:ring-4 focus:ring-green-300 outline-none text-lg pl-12"
-            />
-            <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Enhanced Controls Section */}
-      <div className="max-w-7xl mx-auto px-4 -mt-8 relative z-20">
-        <motion.div 
-          className="bg-white/80 backdrop-blur-md rounded-xl shadow-lg p-4 
-                     flex justify-between items-center gap-4"
-        >
-         
-
-          {/* Right: Near Me Button */}
-          <button
-            onClick={getUserLocation}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 
-                     text-white rounded-md hover:bg-green-700 
-                     transition-colors shadow-md text-sm"
-          >
-            <FaMapMarkerAlt />
-            Near Me
-          </button>
-           {/* Left: Sort Dropdown */}
-           <select
+      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-600/90 to-teal-600/90 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-[url('/api/placeholder/1920/400')] opacity-10 mix-blend-overlay" />
+                <div className="relative max-w-7xl mx-auto px-4 py-16">
+                  <motion.div
+                    initial={{ y: -20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="text-center"
+                  >
+                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                      Find Nearby Clinics
+                    </h1>
+                    <p className="text-emerald-50 text-lg max-w-2xl mx-auto">
+                      Discover and connect with healthcare facilities in your area. Get
+                      instant access to hospital information, directions, and contact
+                      details.
+                    </p>
+                  </motion.div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-emerald-50/90" />
+              </div>
+      {/* Top Controls */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="bg-white/80 backdrop-blur-md rounded-xl shadow-lg p-4 flex justify-between items-center gap-4">
+          {/* Sort Dropdown */}
+          <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="px-3 py-2 border border-green-200 rounded-md focus:ring-2 
-                     focus:ring-green-500 bg-white hover:bg-gray-50 text-sm text-gray-700"
+            className="px-3 py-2 border border-green-200 rounded-md focus:ring-2 focus:ring-green-500 bg-white hover:bg-gray-50 text-sm text-gray-700"
           >
             <option value="distance">Sort by Distance</option>
             <option value="name">Sort by Name</option>
             <option value="rating">Sort by Rating</option>
           </select>
-        </motion.div>
+
+          {/* Near Me Button */}
+          <button
+            onClick={getUserLocation}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors shadow-md text-sm"
+          >
+            <FaMapMarkerAlt />
+            Near Me
+          </button>
+        </div>
       </div>
 
-      {/* Enhanced Clinics Grid */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedClinics.map((clinic, index) => (
-            <motion.div
-              key={clinic._id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <ClinicCard 
-                clinic={clinic}
-                distance={calculateDistance(
-                  clinic.latitude, 
-                  clinic.longitude,
-                  userLocation?.lat,
-                  userLocation?.lng
-                )}
-                onViewProfile={() => {
-                  setSelectedClinic(clinic);
-                  setShowProfile(true);
-                }}
-              />
-            </motion.div>
-          ))}
-        </div>
+      {/* Table List of Clinics */}
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[50vh]">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-green-500" />
+          </div>
+        ) : error ? (
+          <div className="flex justify-center items-center min-h-[50vh]">
+            <div className="text-red-500">{error}</div>
+          </div>
+        ) : (
+          // Replace table with a list of clinic cards
+          <div className="space-y-4">
+            {sortedClinics.map((clinic) => {
+              const distance = userLocation
+                ? calculateDistance(
+                    clinic.latitude,
+                    clinic.longitude,
+                    userLocation.lat,
+                    userLocation.lng
+                  )
+                : null;
+
+              return (
+                <div
+                  key={clinic._id}
+                  className="bg-white rounded-xl p-5 flex flex-col md:flex-row items-center gap-5 
+                             border border-gray-200 shadow-sm transition-all duration-300"
+                >
+                  {/* Clinic Image */}
+                  <div className="relative flex-shrink-0">
+                    <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300 shadow">
+                      {clinic.image ? (
+                        <img
+                          src={clinic.image}
+                          alt={clinic.clinicName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                          <FaClinicMedical className="w-8 h-8 text-gray-500" />
+                        </div>
+                      )}
+                    </div>
+                    {distance && (
+                      <span
+                        className="absolute -bottom-2 -right-2 px-2 py-1 bg-green-500 text-white 
+                                   text-xs font-medium rounded-full shadow-md"
+                      >
+                        {distance} km
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Clinic Info */}
+                  <div className="flex-1 text-center md:text-left">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {clinic.clinicName}
+                    </h3>
+                    <div className="mt-2 space-y-1 text-sm text-gray-600">
+                      <p className="flex items-center justify-center md:justify-start">
+                        <FaPhone className="w-4 h-4 mr-2 text-green-500" />
+                        {clinic.phone || "N/A"}
+                      </p>
+                      <p className="flex items-center justify-center md:justify-start">
+                        <FaMapMarkerAlt className="w-4 h-4 mr-2 text-green-500" />
+                        {clinic.address}
+                      </p>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="mt-4 flex gap-3 justify-center md:justify-start">
+                      <button
+                        onClick={() => {
+                          setSelectedClinic(clinic);
+                          setShowProfile(true);
+                        }}
+                        className="flex items-center gap-1 px-4 py-1.5 bg-green-600 text-white text-sm font-medium 
+                                   rounded-full hover:bg-green-700 transition-all"
+                      >
+                        <FaInfo className="w-4 h-4" />
+                        Details
+                      </button>
+                      <a
+                        href={`https://www.google.com/maps?q=${clinic.latitude},${clinic.longitude}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 px-4 py-1.5 border border-gray-300 text-gray-700 text-sm font-medium 
+                                   rounded-full hover:bg-gray-100 transition-all"
+                      >
+                        <FaDirections className="w-4 h-4" />
+                        Directions
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Clinic Profile Modal */}
@@ -247,59 +289,68 @@ const NavClinic = () => {
   );
 };
 
-const ClinicCard = ({ clinic, distance, onViewProfile }) => (
+const ClinicCard = ({ clinic, distance, onViewDetails }) => (
   <motion.div
-    whileHover={{ y: -5 }}
-    className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl 
-               transition-all duration-300 border border-gray-100"
+    whileHover={{ scale: 1.02, boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
+    className="bg-white rounded-xl p-5 flex flex-col md:flex-row items-center gap-5 
+               border border-gray-200 shadow-sm transition-all duration-300"
   >
-    <div className="p-6">
-      <div className="flex items-center gap-4 mb-4">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-          <FaClinicMedical className="w-8 h-8 text-green-600" />
-        </div>
-        <div>
-          <h3 className="font-semibold text-lg">{clinic.clinicName}</h3>
-          <p className="text-sm text-gray-600">
-            Established {clinic.establishedYear}
-          </p>
-        </div>
-      </div>
-
-      <div className="space-y-2 text-sm">
-        <div className="flex items-center gap-2">
-          <FaMapMarkerAlt className="text-gray-400" />
-          <span>{clinic.address}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <FaPhone className="text-gray-400" />
-          <span>{clinic.phone}</span>
-        </div>
-        {distance && (
-          <div
-            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs 
-                        font-medium bg-green-100 text-green-800"
-          >
-            {distance} km away
+    {/* Clinic Image */}
+    <div className="relative flex-shrink-0">
+      <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300 shadow">
+        {clinic.image ? (
+          <img
+            src={clinic.image}
+            alt={clinic.clinicName}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+            <FaClinicMedical className="w-8 h-8 text-gray-500" />
           </div>
         )}
       </div>
+      {distance && (
+        <span className="absolute -bottom-2 -right-2 px-2 py-1 bg-blue-500 text-white 
+                        text-xs font-medium rounded-full shadow-md">
+          {distance} km
+        </span>
+      )}
+    </div>
 
-      <div className="mt-6 flex gap-2">
+    {/* Clinic Info */}
+    <div className="flex-1 text-center md:text-left">
+      <h3 className="text-lg font-semibold text-gray-800">{clinic.clinicName}</h3>
+      <div className="mt-2 space-y-1 text-sm text-gray-600">
+        <p className="flex items-center justify-center md:justify-start">
+          <FaPhone className="w-4 h-4 mr-2 text-blue-500" />
+          {clinic.phone || "N/A"}
+        </p>
+        <p className="flex items-center justify-center md:justify-start">
+          <FaMapMarkerAlt className="w-4 h-4 mr-2 text-blue-500" />
+          {clinic.address}
+        </p>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="mt-4 flex gap-3 justify-center md:justify-start">
         <button
-          onClick={onViewProfile}
-          className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg 
-                   hover:bg-green-700 transition duration-300"
+          onClick={onViewDetails}
+          className="flex items-center gap-1 px-4 py-1.5 bg-blue-500 text-white text-sm font-medium 
+                     rounded-full hover:bg-blue-600 transition-all"
         >
-          View Details
+          <FaInfo className="w-4 h-4" />
+          Details
         </button>
         <a
           href={`https://www.google.com/maps?q=${clinic.latitude},${clinic.longitude}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+          className="flex items-center gap-1 px-4 py-1.5 border border-gray-300 text-gray-700 text-sm font-medium 
+                     rounded-full hover:bg-gray-100 transition-all"
         >
-          <FaDirections className="w-5 h-5" />
+          <FaDirections className="w-4 h-4" />
+          Directions
         </a>
       </div>
     </div>
