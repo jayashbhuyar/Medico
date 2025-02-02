@@ -31,6 +31,7 @@ import AddPatient from './Components/common/AddPatient'
 import UserFooter from './Components/User/Footer'
 import UserMainpage from './Components/User/UserMainpage'
 import Appointments from './Components/Hospital/Appointments'
+import NavClinic from './Components/User/NavResults/NavClinic'
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
         <Route path="/addpatient" element={<AddPatient />} />
         <Route path="/userfooter" element={<UserFooter />} />
         <Route path="/usermainpage" element={<UserMainpage />} />
+        <Route path="/usernavclinic" element={<NavClinic />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>
