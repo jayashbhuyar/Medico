@@ -25,6 +25,27 @@ const DoctorProfile = ({ doctor, distance, onClose }) => {
             <button onClick={onClose} className="text-gray-500 hover:text-gray-700">×</button>
           </div>
 
+          {/* Contact Info */}
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <h3 className="font-semibold mb-3">Contact Information</h3>
+            <div className="space-y-2">
+              <p className="flex items-center text-gray-600">
+                <FaPhone className="mr-2 text-blue-600" />
+                Primary: {doctor.phone}
+              </p>
+              {doctor.alternatePhone && (
+                <p className="flex items-center text-gray-600">
+                  <FaPhone className="mr-2 text-blue-600" />
+                  Alternate: {doctor.alternatePhone}
+                </p>
+              )}
+              <p className="flex items-center text-gray-600">
+                <FaEnvelope className="mr-2 text-blue-600" />
+                {doctor.email}
+              </p>
+            </div>
+          </div>
+
           {/* Organization Info */}
           <div className="mb-6">
             <h3 className="font-semibold mb-2">Practice Location</h3>
