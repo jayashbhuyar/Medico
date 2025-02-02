@@ -206,8 +206,161 @@ const ClinicCard = ({ clinic, distance, onViewProfile }) => (
   </motion.div>
 );
 
-// const ClinicProfile = ({ clinic, onClose }) => (
-//   // ... Clinic Profile Modal Component ...
-// );
+const ClinicProfile = ({ clinic, onClose }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+    >
+      {/* Header */}
+      <div className="border-b p-6 flex justify-between items-start bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-t-lg">
+        <div className="flex items-center gap-4">
+          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg">
+            <FaClinicMedical className="w-10 h-10 text-green-600" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold">{clinic.clinicName}</h2>
+            <p>Established {clinic.establishedYear}</p>
+          </div>
+        </div>
+        <button onClick={onClose} className="text-white hover:text-gray-200">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="p-6 space-y-6">
+        {/* Contact Information */}
+        <div className="bg-green-50 rounded-lg p-4 shadow-md">
+          <h3 className="font-semibold mb-2 text-green-700">Contact Information</h3>
+          <div className="space-y-2">
+            <p className="flex items-center gap-2">
+              <FaPhone className="text-green-600" />
+              {clinic.phone}
+            </p>
+            {clinic.alternatePhone && (
+              <p className="flex items-center gap-2">
+                <FaPhone className="text-green-600" />
+                {clinic.alternatePhone}
+              </p>
+            )}
+            <p className="flex items-center gap-2">
+              <FaGlobe className="text-green-600" />
+              {clinic.website || 'Not available'}
+            </p>
+          </div>
+        </div>
+
+        {/* Location */}
+        <div>
+          <h3 className="font-semibold mb-2 text-green-700">Location</h3>
+          <div className="bg-gray-50 p-4 rounded-lg shadow-md">
+            <p className="flex items-center gap-2">
+              <FaMapMarkerAlt className="text-green-600" />
+              {clinic.address}, {clinic.city}, {clinic.state}, {clinic.pincode}
+            </p>
+          </div>
+        </div>
+
+        {/* Description */}
+        <div>
+          <h3 className="font-semibold mb-2 text-green-700">About Clinic</h3>
+          <p className="text-gray-600">{clinic.description}</p>
+        </div>
+
+        {/* Image */}
+        {clinic.image && (
+          <div>
+            <h3 className="font-semibold mb-2 text-green-700">Clinic Image</h3>
+            <img 
+              src={clinic.image} 
+              alt={clinic.clinicName} 
+              className="w-full rounded-lg shadow-lg"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="border-t p-6 bg-gradient-to-r from-green-500 to-teal-500 rounded-b-lg">
+        <div className="flex gap-4 justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-white text-green-600 rounded-lg hover:bg-green-50"
+          >
+            Close
+          </button>
+          <a
+            href={`https://www.google.com/maps?q=${clinic.latitude},${clinic.longitude}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+          >
+            Get Directions
+          </a>
+        </div>
+      </div>
+    </motion.div>
+  </div>
+);
+
+// Add Sorting Controls
+const SortingControls = ({ sortBy, setSortBy }) => (
+  <div className="flex items-center gap-4 p-4 bg-white rounded-lg shadow-md">
+    <span className="text-gray-600">Sort by:</span>
+    <button
+      onClick={() => setSortBy('distance')}
+      className={`px-4 py-2 rounded-lg ${
+        sortBy === 'distance' 
+          ? 'bg-green-600 text-white' 
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+      }`}
+    >
+      Distance
+    </button>
+    <button
+      onClick={() => setSortBy('name')}
+      className={`px-4 py-2 rounded-lg ${
+        sortBy === 'name' 
+          ? 'bg-green-600 text-white' 
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+      }`}
+    >
+      Name
+    </button>
+    <button
+      onClick={() => setSortBy('establishedYear')}
+      className={`px-4 py-2 rounded-lg ${
+        sortBy === 'establishedYear' 
+          ? 'bg-green-600 text-white' 
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+      }`}
+    >
+      Established Year
+    </button>
+  </div>
+);
+
+// Add sorting function
+const getSortedClinics = (clinics, sortBy, userLocation) => {
+  return [...clinics].sort((a, b) => {
+    switch(sortBy) {
+      case 'distance':
+        const distanceA = calculateDistance(a.latitude, a.longitude);
+        const distanceB = calculateDistance(b.latitude, b.longitude);
+        return distanceA - distanceB;
+      case 'name':
+        return a.clinicName.localeCompare(b.clinicName);
+      case 'establishedYear':
+        return b.establishedYear - a.establishedYear;
+      default:
+        return 0;
+    }
+  });
+};
 
 export default NavClinic;
