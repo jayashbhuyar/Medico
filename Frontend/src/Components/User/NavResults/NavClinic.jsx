@@ -28,7 +28,7 @@ const NavClinic = () => {
 
   const fetchClinics = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/user/clinics/all');
+      const response = await axios.get('http://localhost:8000/api/clinics/all');
       setClinics(response.data.data);
       setLoading(false);
     } catch (error) {
