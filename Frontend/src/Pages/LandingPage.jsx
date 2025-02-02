@@ -51,10 +51,10 @@ const Landingpage = () => {
                     />
                   </div>
                   <div className="text-center space-y-4">
-                    <h2 className="text-2xl font-bold text-green-600">Patient Portal</h2>
+                    <h2 className="text-2xl font-bold text-green-600">User Portal</h2>
                     <p className="text-gray-600">View your medical records, book appointments, and connect with doctors</p>
                     <div className="inline-block bg-green-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-green-600 transition-colors">
-                      Enter as Patient
+                      Enter as User
                     </div>
                   </div>
                 </div>
