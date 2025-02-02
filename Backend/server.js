@@ -21,7 +21,7 @@ const app = express();
 
 // Middleware
 const corsOptions = {
-  origin: 'http://localhost:5173',  // Allow only your frontend origin
+  origin: true,  // This will reflect the request origin
   credentials: true,  // Allow credentials (cookies, headers, etc.)
 };
 
@@ -49,7 +49,7 @@ mongoose
   app.use('/api/token/validate',validateToken)
   app.use('/api/search', nearbyRoutes);
   app.use("/api/search", searchRoutes);
-  app.use("/api/doctors",authenticateToken, doctorRoutes);
+  app.use("/api/doctors", doctorRoutes);
 // Routes
 app.use('/api/user/v2', usernavRoutes);
 app.use("/api/user/hospitals", usernavRoutes);

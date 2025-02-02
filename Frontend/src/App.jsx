@@ -4,7 +4,7 @@ import DoctorPage from './Pages/DoctorRegPage'
 import HospitalRegistration from './Components/Hospital/HospitalRegistration'
 import ClinicRegistration from './Components/Clinic/ClinicRegistration'
 import ConsultantRegistration from './Components/Consultant/ConsultantRegistration'
-import ConsultantLogin from './Components/Consultant/Consultantlogin'
+import ConsultantLogin from "./Components/Consultant/ConsultantLogin";
 import ClinicLogin from './Components/Clinic/ClinicLogin'
 import HospitalLogin from './Components/Hospital/HospitalLogin'
 import HospitalNavbar from './Components/Navbar/HospitalNav'
@@ -30,6 +30,7 @@ import ClinicAllDoctors from './Components/Clinic/ClinicAllDoctor'
 import AddPatient from './Components/common/AddPatient'
 import UserFooter from './Components/User/Footer'
 import UserMainpage from './Components/User/UserMainpage'
+import Appointments from './Components/Hospital/Appointments'
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
         <Route path="/hospitallogin" element={<HospitalLogin />} />
         <Route path="/hospitalnav" element={<HospitalNavbar />} />
         <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
+        <Route path="/hospital/appointments" element={<Appointments />} />
         <Route path="/clinic/dashboard" element={<ClinicDashboard />} />
         <Route path="/clinicnav" element={<ClinicNav />} />
         <Route path="/patientpage" element={<HealthcareSearch />} />
