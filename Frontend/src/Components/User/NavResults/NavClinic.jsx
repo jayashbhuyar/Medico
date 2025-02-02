@@ -26,9 +26,26 @@ const NavClinic = () => {
     getUserLocation();
   }, []);
 
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+        }
+      );
+    }
+  };
+
   const fetchClinics = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/clinics/all');
+        console.log("fetching clinics");
+      const response = await axios.get('http://localhost:8000/api/user/clinics/all');
       setClinics(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -37,7 +54,41 @@ const NavClinic = () => {
     }
   };
 
-  // ... similar location and distance calculation functions as NavHospital ...
+  const calculateDistance = (clinicLat, clinicLng) => {
+    if (!userLocation || !clinicLat || !clinicLng) return null;
+    
+    const R = 6371; // Earth's radius in km
+    const dLat = deg2rad(clinicLat - userLocation.lat);
+    const dLon = deg2rad(clinicLng - userLocation.lng);
+    
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(userLocation.lat)) * Math.cos(deg2rad(clinicLat)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return (R * c).toFixed(1);
+  };
+
+  const deg2rad = (deg) => {
+    return deg * (Math.PI/180);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-green-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-white">

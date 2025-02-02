@@ -44,7 +44,7 @@ const UserNav = () => {
     },
     {
       name: "Clinics",
-      path: "/clinics",
+      path: "/usernavclinic",
       icon: <FaClinicMedical className="w-5 h-5" />,
     },
     {

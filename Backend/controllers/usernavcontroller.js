@@ -3,6 +3,7 @@ const Doctor = require('../models/addDoctor');
 
 exports.getAllHospitals = async (req, res) => {
   try {
+    console.log('Get all hospitals');
     const hospitals = await Hospital.find({});
     res.status(200).json({ success: true, data: hospitals });
   } catch (error) {
