@@ -60,7 +60,7 @@ app.use("/api/user/hospitals", usernavRoutes);
 
 // Base route
 app.get("/", (req, res) => {
-  res.send("Nirogya API is running");
+  res.send("Medico API is running");
 });
 
 // Error handling middleware
