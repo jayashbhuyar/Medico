@@ -368,16 +368,7 @@ const Hospitals = () => {
         <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-emerald-100 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 py-2">
             <div className="flex justify-end items-center gap-3">
-              <button
-                onClick={getLocation}
-                className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 
-                       text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 
-                       transition-all shadow-sm hover:shadow flex items-center 
-                       justify-center gap-2 text-sm font-medium"
-              >
-                <MapPin className="w-4 h-4" />
-                Near Me
-              </button>
+              
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -389,6 +380,16 @@ const Hospitals = () => {
                 <option value="name">Name</option>
                 <option value="rating">Rating</option>
               </select>
+              <button
+                onClick={getLocation}
+                className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 
+                       text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 
+                       transition-all shadow-sm hover:shadow flex items-center 
+                       justify-center gap-2 text-sm font-medium"
+              >
+                <MapPin className="w-4 h-4" />
+                Near Me
+              </button>
             </div>
           </div>
         </div>
