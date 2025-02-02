@@ -71,16 +71,16 @@ const Hospitals = () => {
     }
   };
 
-  const calculateDistance = (hospitalLat, hospitalLng) => {
-    if (!userLocation || !hospitalLat || !hospitalLng) return null;
+  const calculateDistance = (hospitalLat, hospitalLng, userLoc) => {
+    if (!userLoc || !hospitalLat || !hospitalLng) return null;
 
     const R = 6371; // Earth's radius in km
-    const dLat = deg2rad(hospitalLat - userLocation.lat);
-    const dLon = deg2rad(hospitalLng - userLocation.lng);
+    const dLat = deg2rad(hospitalLat - userLoc.lat);
+    const dLon = deg2rad(hospitalLng - userLoc.lng);
 
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(userLocation.lat)) *
+      Math.cos(deg2rad(userLoc.lat)) *
         Math.cos(deg2rad(hospitalLat)) *
         Math.sin(dLon / 2) *
         Math.sin(dLon / 2);
@@ -218,6 +218,7 @@ const Hospitals = () => {
   //     </div>
   //   </motion.div>
   // );
+
   const HospitalCard = ({ hospital, distance }) => (
     <motion.div
       whileHover={{ scale: 1.02, boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
@@ -399,17 +400,21 @@ const Hospitals = () => {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
-            {sortHospitals(hospitals, sortBy, userLocation).map((hospital) => (
-              <HospitalCard
-                key={hospital._id}
-                hospital={hospital}
-                distance={calculateDistance(
-                  hospital.latitude,
-                  hospital.longitude,
-                  userLocation
-                )}
-              />
-            ))}
+            {sortHospitals(hospitals, sortBy, userLocation).map((hospital) => {
+              const distance = calculateDistance(
+                hospital.latitude,
+                hospital.longitude,
+                userLocation // Pass the entire userLocation object
+              );
+              
+              return (
+                <HospitalCard
+                  key={hospital._id}
+                  hospital={hospital}
+                  distance={distance} // Pass the calculated distance
+                />
+              );
+            })}
           </motion.div>
   
           {/* Load More Button */}
