@@ -4,8 +4,9 @@ const Hospital = require('../models/hospitalReg');
 exports.validateToken = async (req, res) => {
   try {
     const token = req.cookies.hospitalToken;
-
+    // console.log("🔐 Token from cookies:", token);
     if (!token) {
+
       return res.status(401).json({ success: false, message: "No token provided" });
     }
 
