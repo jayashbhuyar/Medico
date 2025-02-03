@@ -16,6 +16,10 @@ import {
   FaTimes,
   FaSignInAlt,
   FaChevronDown,
+  FaPhoneAlt,
+  FaShieldAlt,
+  FaFire,
+  FaPhoneVolume,
 } from "react-icons/fa";
 
 const UserNav = () => {
@@ -52,24 +56,50 @@ const UserNav = () => {
       path: "/usernavdoctors",
       icon: <FaUserMd className="w-5 h-5" />,
     },
+    // {
+    //   name: "Services",
+    //   icon: <FaStethoscope className="w-5 h-5" />,
+    //   subItems: [
+    //     {
+    //       name: "Emergency Care",
+    //       path: "/emergency",
+    //       icon: <FaAmbulance className="w-5 h-5" />,
+    //     },
+    //     {
+    //       name: "Pharmacy",
+    //       path: "/pharmacy",
+    //       icon: <FaPills className="w-5 h-5" />,
+    //     },
+    //     {
+    //       name: "Health Checkup",
+    //       path: "/checkup",
+    //       icon: <FaHeartbeat className="w-5 h-5" />,
+    //     },
+    //   ],
+    // },
     {
-      name: "Services",
-      icon: <FaStethoscope className="w-5 h-5" />,
+      name: "Emergency",
+      icon: <FaPhoneAlt className="w-5 h-5 text-red-500" />,
       subItems: [
         {
-          name: "Emergency Care",
-          path: "/emergency",
-          icon: <FaAmbulance className="w-5 h-5" />,
+          name: "Ambulance - 102",
+          phone: "102",
+          icon: <FaAmbulance className="w-5 h-5 text-red-500" />,
         },
         {
-          name: "Pharmacy",
-          path: "/pharmacy",
-          icon: <FaPills className="w-5 h-5" />,
+          name: "Police - 100",
+          phone: "100",
+          icon: <FaShieldAlt className="w-5 h-5 text-blue-600" />,
         },
         {
-          name: "Health Checkup",
-          path: "/checkup",
-          icon: <FaHeartbeat className="w-5 h-5" />,
+          name: "Fire - 101",
+          phone: "101",
+          icon: <FaFire className="w-5 h-5 text-orange-500" />,
+        },
+        {
+          name: "Women Helpline - 1091",
+          phone: "1091",
+          icon: <FaPhoneVolume className="w-5 h-5 text-purple-500" />,
         },
       ],
     },
@@ -88,12 +118,12 @@ const UserNav = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-md border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-14">
+        <div className="flex justify-between items-center h-14 -ml-10">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2 ">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="flex items-center bg-white px-3 py-1.5 rounded-lg shadow-lg border border-gray-300"
+              className="flex items-center bg-white px-3 py-1.5 rounded-lg shadow-lg border border-gray-300 mr-6"
             >
               {/* Logo Text */}
               <span className="text-2xl font-bold text-[#2C3E50] tracking-wide">
@@ -167,15 +197,28 @@ const UserNav = () => {
                           key={subItem.name}
                           whileHover={{ scale: 1.02, x: 5 }}
                         >
-                          <Link
-                            to={subItem.path}
-                            className="flex items-center px-4 py-3 rounded-lg text-gray-700 
-                                     hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50
-                                     transition-all duration-300"
-                          >
-                            <span className="mr-2 text-blue-600">{subItem.icon}</span>
-                            {subItem.name}
-                          </Link>
+                          {subItem.phone ? (
+                            <a
+                              href={`tel:${subItem.phone}`}
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                            >
+                              <span className="p-2 rounded-full bg-gray-100">{subItem.icon}</span>
+                              <div>
+                                <p className="font-medium text-gray-900">{subItem.name}</p>
+                                <p className="text-sm text-gray-500">Click to call</p>
+                              </div>
+                            </a>
+                          ) : (
+                            <Link
+                              to={subItem.path}
+                              className="flex items-center px-4 py-3 rounded-lg text-gray-700 
+                                       hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50
+                                       transition-all duration-300"
+                            >
+                              <span className="mr-2 text-blue-600">{subItem.icon}</span>
+                              {subItem.name}
+                            </Link>
+                          )}
                         </motion.div>
                       ))}
                     </motion.div>
