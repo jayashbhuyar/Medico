@@ -203,35 +203,35 @@ function ClinicRegistration() {
   };
 //  ***************************************
 
-useEffect(() => {
-  const validateToken = async () => {
-    const token = Cookies.get('clinicToken');
-    if(!token) {
-      localStorage.removeItem('clinicData');
-      return;
-    }
+// useEffect(() => {
+//   const validateToken = async () => {
+//     const token = Cookies.get('clinicToken');
+//     if(!token) {
+//       localStorage.removeItem('clinicData');
+//       return;
+//     }
 
-    try {
-      const response = await axios.get('http://localhost:8000/api/token/validate', {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+//     try {
+//       const response = await axios.get('http://localhost:8000/api/token/validate', {
+//         withCredentials: true,
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       });
 
-      if (response.data.success) {
-        console.log("✅ Token is valid, navigating to dashboard.");
-        navigate("/clinic/dashboard");
-      }
-    } catch (error) {
-      console.error("❌ Token validation failed:", error);
-      Cookies.remove("clinicToken");
-      localStorage.removeItem('clinicData');
-    }
-  };
+//       if (response.data.success) {
+//         console.log("✅ Token is valid, navigating to dashboard.");
+//         navigate("/clinic/dashboard");
+//       }
+//     } catch (error) {
+//       console.error("❌ Token validation failed:", error);
+//       Cookies.remove("clinicToken");
+//       localStorage.removeItem('clinicData');
+//     }
+//   };
 
-  validateToken();
-}, [navigate]);
+//   validateToken();
+// }, [navigate]);
 
 
 
