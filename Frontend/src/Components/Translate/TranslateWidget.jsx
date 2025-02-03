@@ -1,73 +1,76 @@
-import { useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { IoLanguage } from 'react-icons/io5';
+import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { IoLanguage } from "react-icons/io5";
 
 const TranslateWidget = () => {
   useEffect(() => {
-    const removeIframe = () => {
-      const iframe = document.querySelector('.goog-te-menu-frame');
-      if (iframe) iframe.remove();
+    const hideGoogleTranslateBanner = () => {
+      const banner = document.querySelector(".skiptranslate");
+      if (banner) {
+        banner.style.display = "none";
+        document.body.style.top = "0";
+      }
     };
 
-    window.addEventListener('load', removeIframe);
-    return () => window.removeEventListener('load', removeIframe);
-  }, []);
-
-  useEffect(() => {
-    // Apply styles after component mounts
-    const styleGoogleTranslate = () => {
-      const elements = {
-        '.goog-te-gadget': {
-          fontFamily: 'inherit',
-          border: 'none',
-          margin: '0',
-          padding: '0'
-        },
-        '.goog-te-gadget-simple': {
-          background: 'transparent',
-          border: 'none',
-          padding: '0',
-          margin: '0',
-          fontSize: '14px'
-        },
-        '.goog-te-menu-value': {
-          color: '#374151',
-          margin: '0',
-          padding: '0'
-        },
-        '.goog-te-menu-value span': {
-          border: 'none !important',
-          color: '#374151'
-        },
-        '.goog-te-menu-frame': {
-          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-          borderRadius: '0.5rem',
-          border: 'none'
-        }
-      };
-
-      Object.entries(elements).forEach(([selector, styles]) => {
-        const element = document.querySelector(selector);
-        if (element) {
-          Object.assign(element.style, styles);
-        }
-      });
+    const addGoogleTranslateScript = () => {
+      if (document.getElementById("google-translate-script")) return;
+      const script = document.createElement("script");
+      script.id = "google-translate-script";
+      script.src =
+        "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.body.appendChild(script);
     };
 
-    // Run style application
-    const timer = setInterval(styleGoogleTranslate, 100);
-    setTimeout(() => clearInterval(timer), 5000);
+    window.googleTranslateElementInit = () => {
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: "en",
+          includedLanguages: "hi,mr,gu,bn,ta,te,kn,ml,pa,ur,en",
+          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false,
+          multilanguagePage: true,
+        },
+        "google_translate_element"
+      );
+      setTimeout(hideGoogleTranslateBanner, 100);
+    };
 
-    return () => clearInterval(timer);
+    addGoogleTranslateScript();
+
+    // Observe dynamic changes
+    const observer = new MutationObserver(hideGoogleTranslateBanner);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
   }, []);
+
+  // Ensure dropdown opens on click
+  const handleWidgetClick = () => {
+    const translateContainer = document.querySelector(".goog-te-gadget-simple");
+    if (translateContainer) {
+      translateContainer.click(); // Simulate a click to open the dropdown
+    }
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed top-4 right-4 z-[9999]"
+      className="fixed top-4 right-4 z-[9999] md:top-6 md:right-6 lg:top-8 lg:right-8"
     >
+      <style jsx global>{`
+        .goog-te-banner-frame {
+          display: none !important;
+        }
+        .goog-te-menu-frame {
+          box-shadow: 0 0 12px rgba(0, 0, 0, 0.12) !important;
+        }
+        body {
+          top: 0 !important;
+        }
+      `}</style>
       <div className="relative group">
         {/* Gradient Background */}
         <div 
@@ -77,34 +80,16 @@ const TranslateWidget = () => {
         />
         
         {/* Main Container */}
-        <div 
+        <div
           className="relative flex items-center gap-3 bg-white/95 backdrop-blur-sm 
                      px-4 py-2.5 rounded-lg shadow-lg hover:shadow-xl 
-                     transition-all duration-300"
+                     transition-all duration-300 cursor-pointer"
+          onClick={handleWidgetClick} // Open dropdown on click
         >
           <IoLanguage className="text-2xl text-blue-600" />
-          
+
           {/* Google Translate Element */}
-          <div 
-            id="google_translate_element" 
-            className="min-w-[120px] hover:opacity-100 transition-opacity"
-            style={{
-              '& > div': { padding: 0 },
-              '& .goog-te-combo': {
-                border: 'none',
-                outline: 'none',
-                backgroundColor: 'transparent',
-                color: '#374151',
-                fontSize: '14px',
-                cursor: 'pointer',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                '&:hover': {
-                  backgroundColor: '#F3F4F6'
-                }
-              }
-            }}
-          />
+          <div id="google_translate_element" className="min-w-[120px]" />
 
           {/* Bottom Border Animation */}
           <motion.div
