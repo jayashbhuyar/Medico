@@ -497,14 +497,19 @@ const HealthcareSearch = () => {
           </motion.div>
         </div>
 
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          className="fixed bottom-8 right-8 bg-red-500 text-white p-4 rounded-full 
-                     shadow-lg flex items-center space-x-2 z-50"
-        >
-          <FaAmbulance className="text-2xl" />
-          <span>Emergency</span>
-        </motion.button>
+        <motion.a
+  href="tel:102"
+  whileHover={{ scale: 1.1 }}
+  className="fixed bottom-8 right-8 bg-red-600 text-white p-4 rounded-full 
+           shadow-lg flex items-center gap-2 z-50 hover:bg-red-700
+           transition-all duration-300 group animate-bounce hover:animate-none"
+  aria-label="Call Emergency Ambulance"
+>
+  <FaAmbulance className="text-2xl" />
+  <span className="hidden group-hover:inline whitespace-nowrap font-semibold">
+    Call: 102
+  </span>
+</motion.a>
       </div>
 
       <div className="bg-blue-600 text-white py-16">
