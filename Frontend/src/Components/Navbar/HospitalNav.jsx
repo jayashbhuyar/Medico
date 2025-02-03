@@ -17,18 +17,35 @@ const HospitalNavbar = () => {
     departments: false,
     patients: false
   });
+  
   const location = useLocation();
-  const dropdownRef = useRef(null);
+  const dropdownRefs = {
+    doctors: useRef(null),
+    departments: useRef(null),
+    patients: useRef(null),
+    profile: useRef(null)
+  };
 
-  // Handle click outside for dropdowns
+  const toggleDropdown = (key) => {
+    setDropdownStates(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownStates({
-          doctors: false,
-          departments: false,
-          patients: false
-        });
+      Object.entries(dropdownRefs).forEach(([key, ref]) => {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setDropdownStates(prev => ({
+            ...prev,
+            [key]: false
+          }));
+        }
+      });
+      
+      if (!dropdownRefs.profile.current?.contains(event.target)) {
+        setShowProfileMenu(false);
       }
     };
 
@@ -74,14 +91,9 @@ const HospitalNavbar = () => {
             </Link>
 
             {/* Doctors Dropdown */}
-            <div className="relative" ref={dropdownRef}>
+            <div ref={dropdownRefs.doctors} className="relative">
               <button
-                onClick={() =>
-                  setDropdownStates((prev) => ({
-                    ...prev,
-                    doctors: !prev.doctors,
-                  }))
-                }
+                onClick={() => toggleDropdown('doctors')}
                 className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50"
               >
                 <FaUserNurse className="mr-2" />
@@ -134,14 +146,9 @@ const HospitalNavbar = () => {
             </Link>
 
             {/* Departments Dropdown */}
-            <div className="relative" ref={dropdownRef}>
+            <div ref={dropdownRefs.departments} className="relative">
               <button
-                onClick={() =>
-                  setDropdownStates((prev) => ({
-                    ...prev,
-                    departments: !prev.departments,
-                  }))
-                }
+                onClick={() => toggleDropdown('departments')}
                 className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50"
               >
                 <FaHospital className="mr-2" />
@@ -192,14 +199,9 @@ const HospitalNavbar = () => {
             </div>
 
             {/* Patients Dropdown */}
-            <div className="relative" ref={dropdownRef}>
+            <div ref={dropdownRefs.patients} className="relative">
               <button
-                onClick={() =>
-                  setDropdownStates((prev) => ({
-                    ...prev,
-                    patients: !prev.patients,
-                  }))
-                }
+                onClick={() => toggleDropdown('patients')}
                 className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50"
               >
                 <FaUsers className="mr-2" />
@@ -258,7 +260,7 @@ const HospitalNavbar = () => {
             </button>
 
             {/* Profile */}
-            <div className="relative">
+            <div ref={dropdownRefs.profile} className="relative">
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
                 className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100"
