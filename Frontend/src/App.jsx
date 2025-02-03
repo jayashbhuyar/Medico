@@ -52,8 +52,8 @@ function App() {
         <Route path="/clinicnav" element={<ClinicNav />} />
         <Route path="/patientpage" element={<HealthcareSearch />} />
         <Route path="/usernav" element={<UserNav />} />
-        <Route path="/adddoctor" element={<AddDoctor />} />
-        <Route path="/alldoctors" element={<AllDoctors />} />
+        <Route path="/hospital/adddoctor" element={<AddDoctor />} />
+        <Route path="/hospital/alldoctors" element={<AllDoctors />} />
         <Route path="/specialtyresults" element={<SpecialtyResults />} />
         <Route path="/doctorresults" element={<DoctorResults />} />
         <Route path="/hospitalresults" element={<HospitalResults />} />
