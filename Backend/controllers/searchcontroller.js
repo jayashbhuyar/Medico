@@ -1,4 +1,5 @@
 const Doctor = require("../models/addDoctor");
+const HospitalReg = require('../models/hospitalReg');
 
 const createFuzzyPattern = (query) => {
   if (!query) return [];
@@ -157,9 +158,9 @@ exports.searchHospitals = async (req, res) => {
   const { query, lat, lng } = req.query;
   try {
     let searchQuery = { 
-      organizationType: "Hospital",
-      organizationName: { $regex: query, $options: "i" } 
+      hospitalName: { $regex: query, $options: "i" }
     };
+
     if (lat && lng) {
       searchQuery.location = {
         $near: {
@@ -171,10 +172,24 @@ exports.searchHospitals = async (req, res) => {
         }
       };
     }
-    const results = await Doctor.find(searchQuery).select("-password");
-    res.json({ success: true, results });
+
+    const results = await HospitalReg.find(searchQuery)
+      .select('hospitalName email phone address state city pincode image latitude longitude')
+      .lean();
+
+    res.json({ 
+      success: true, 
+      results,
+      count: results.length 
+    });
+
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Search error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Error searching hospitals",
+      error: error.message 
+    });
   }
 };
 
