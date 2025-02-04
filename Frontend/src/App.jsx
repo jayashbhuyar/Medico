@@ -32,6 +32,7 @@ import UserFooter from './Components/User/Footer'
 import UserMainpage from './Components/User/UserMainpage'
 import Appointments from './Components/Hospital/Appointments'
 import NavClinic from './Components/User/NavResults/NavClinic'
+import HospitalProfile from './Components/Hospital/HospitalProfile'
 
 function App() {
   return (
@@ -70,6 +71,7 @@ function App() {
         <Route path="/userfooter" element={<UserFooter />} />
         <Route path="/usermainpage" element={<UserMainpage />} />
         <Route path="/usernavclinic" element={<NavClinic />} />
+        <Route path="/hospital/profile" element={<HospitalProfile />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>
