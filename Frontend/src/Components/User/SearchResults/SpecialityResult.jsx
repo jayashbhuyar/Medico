@@ -2,101 +2,161 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FaUserMd, FaStar, FaMoneyBillWave, FaClock, FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { toast } from 'react-toastify';
 
 const SpecialtyResults = () => {
   const { state } = useLocation();
   const { results, specialty } = state;
   const [sortBy, setSortBy] = useState('rating');
+  const [userLocation, setUserLocation] = useState(null);
+
+  // Distance calculation function
+  const calculateDistance = (doctorLat, doctorLng) => {
+    if (!userLocation || !doctorLat || !doctorLng) return null;
+    
+    const R = 6371; // Earth's radius in km
+    const lat1 = parseFloat(userLocation.lat);
+    const lon1 = parseFloat(userLocation.lng);
+    const lat2 = parseFloat(doctorLat);
+    const lon2 = parseFloat(doctorLng);
+    
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return (R * c).toFixed(1);
+  };
+
+  const deg2rad = (deg) => deg * (Math.PI / 180);
+
+  const handleNearMe = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+          setSortBy('distance');
+          toast.success('Location updated successfully');
+        },
+        (error) => {
+          toast.error('Please enable location services');
+        }
+      );
+    }
+  };
 
   const sortedDoctors = [...results].sort((a, b) => {
     switch(sortBy) {
-      case 'rating': return (b.rating || 0) - (a.rating || 0);
-      case 'experience': return b.experience - a.experience;
-      case 'fee': return a.consultationFees - b.consultationFees;
-      default: return 0;
+      case 'rating': 
+        return (b.rating || 0) - (a.rating || 0);
+      case 'experience': 
+        return b.experience - a.experience;
+      case 'fee': 
+        return a.consultationFees - b.consultationFees;
+      case 'distance':
+        if (!userLocation) return 0;
+        const distanceA = calculateDistance(a.latitude, a.longitude);
+        const distanceB = calculateDistance(b.latitude, b.longitude);
+        return distanceA - distanceB;
+      default: 
+        return 0;
     }
   });
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex justify-between items-center mb-6">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <h1 className="text-2xl font-bold text-gray-800">
               {specialty} Specialists ({results.length})
             </h1>
-            <select 
-              className="border-2 rounded-md p-2"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="rating">Sort by Rating</option>
-              <option value="experience">Sort by Experience</option>
-              <option value="fee">Sort by Fee</option>
-            </select>
+            <div className="flex items-center gap-4">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="rating">Rating</option>
+                <option value="experience">Experience</option>
+                <option value="fee">Consultation Fee</option>
+                <option value="distance">Distance</option>
+              </select>
+              <button
+                onClick={handleNearMe}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                <FaMapMarkerAlt />
+                Near Me
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedDoctors.map((doctor) => (
-              <motion.div
-                key={doctor._id}
-                whileHover={{ y: -5 }}
-                className="bg-white rounded-lg shadow-lg overflow-hidden border"
-              >
-                <div className="p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                      <FaUserMd className="w-8 h-8 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg">{doctor.name}</h3>
-                      <p className="text-gray-600">{doctor.specialties.join(', ')}</p>
-                      <div className="flex items-center mt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <FaStar 
-                            key={i} 
-                            className={`w-4 h-4 ${i < (doctor.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`} 
-                          />
-                        ))}
-                        <span className="text-sm text-gray-600 ml-2">({doctor.reviews || 0} reviews)</span>
+          {/* Table View */}
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fees</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {sortedDoctors.map((doctor) => (
+                  <tr key={doctor._id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10">
+                          <FaUserMd className="h-10 w-10 text-gray-400" />
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">{doctor.name}</div>
+                          <div className="text-sm text-gray-500">{doctor.experience} years exp.</div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 text-sm text-gray-600">
-                    <p className="flex items-center">
-                      <FaMapMarkerAlt className="w-4 h-4 mr-2" />
-                      {doctor.location?.address || 'Location not specified'}
-                    </p>
-                    <p className="flex items-center">
-                      <FaMoneyBillWave className="w-4 h-4 mr-2" />
-                      ₹{doctor.consultationFees} Consultation Fee
-                    </p>
-                    <p className="flex items-center">
-                      <FaClock className="w-4 h-4 mr-2" />
-                      {doctor.experience} years experience
-                    </p>
-                    <p className="flex items-center">
-                      <FaPhone className="w-4 h-4 mr-2" />
-                      {doctor.phone}
-                    </p>
-                    <p className="flex items-center">
-                      <FaEnvelope className="w-4 h-4 mr-2" />
-                      {doctor.email}
-                    </p>
-                  </div>
-
-                  <div className="mt-6 flex gap-2">
-                    <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
-                      Book Appointment
-                    </button>
-                    <button className="flex-1 border border-blue-600 text-blue-600 py-2 px-4 rounded-md hover:bg-blue-50 transition duration-300">
-                      View Profile
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900">{doctor.specialization}</div>
+                      <div className="flex items-center">
+                        <FaStar className="text-yellow-400" />
+                        <span className="ml-1 text-sm text-gray-500">{doctor.rating || 'N/A'}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900">{doctor.city}</div>
+                      {userLocation && (
+                        <div className="text-sm text-blue-600">
+                          {calculateDistance(doctor.latitude, doctor.longitude)} km away
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900">₹{doctor.consultationFees}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <a
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${doctor.latitude},${doctor.longitude}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-900 mr-4"
+                      >
+                        <FaMapMarkerAlt />
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
