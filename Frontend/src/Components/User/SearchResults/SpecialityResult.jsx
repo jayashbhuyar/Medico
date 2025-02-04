@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { FaUserMd, FaStar, FaMoneyBillWave, FaClock, FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { FaUserMd, FaStar, FaMoneyBillWave, FaClock, FaMapMarkerAlt, FaPhone, FaEnvelope, FaEye, FaDirections } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
+import DoctorProfile from '../NavResults/DoctorProfile';
 
 const SpecialtyResults = () => {
   const { state } = useLocation();
   const { results, specialty } = state;
   const [sortBy, setSortBy] = useState('rating');
   const [userLocation, setUserLocation] = useState(null);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [showProfile, setShowProfile] = useState(false);
 
   // Distance calculation function
   const calculateDistance = (doctorLat, doctorLng) => {
@@ -144,14 +147,27 @@ const SpecialtyResults = () => {
                       <div className="text-sm text-gray-900">₹{doctor.consultationFees}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <a
-                        href={`https://www.google.com/maps/dir/?api=1&destination=${doctor.latitude},${doctor.longitude}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                      >
-                        <FaMapMarkerAlt />
-                      </a>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => {
+                            setSelectedDoctor(doctor);
+                            setShowProfile(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-900 flex items-center gap-1"
+                        >
+                          <FaEye className="w-4 h-4" />
+                          <span>View Profile</span>
+                        </button>
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${doctor.latitude},${doctor.longitude}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-green-600 hover:text-green-900 flex items-center gap-1"
+                        >
+                          <FaDirections className="w-4 h-4" />
+                          <span>Directions</span>
+                        </a>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -160,6 +176,20 @@ const SpecialtyResults = () => {
           </div>
         </div>
       </div>
+
+      {/* Doctor Profile Modal */}
+      <AnimatePresence>
+        {showProfile && selectedDoctor && (
+          <DoctorProfile
+            doctor={selectedDoctor}
+            distance={calculateDistance(selectedDoctor.latitude, selectedDoctor.longitude)}
+            onClose={() => {
+              setShowProfile(false);
+              setSelectedDoctor(null);
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
