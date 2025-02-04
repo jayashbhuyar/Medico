@@ -52,10 +52,14 @@ const HospitalResults = () => {
     try {
       setLoading(true);
       const response = await fetch(`http://localhost:8000/api/user/hospitals/${hospitalId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch hospital details');
+      }
       const data = await response.json();
       setSelectedHospital(data);
       setShowModal(true);
     } catch (error) {
+      console.error('Error:', error);
       toast.error('Failed to fetch hospital details');
     } finally {
       setLoading(false);
@@ -70,6 +74,80 @@ const HospitalResults = () => {
     }
     return 0;
   });
+
+  const renderHospitalCard = (hospital) => {
+    const distance = calculateDistance(hospital.latitude, hospital.longitude);
+    
+    return (
+      <motion.div
+        key={hospital._id}
+        whileHover={{ scale: 1.02 }}
+        className="bg-white rounded-xl p-6 flex flex-col md:flex-row items-center gap-6 
+                   border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300"
+      >
+        {/* Hospital Image/Logo */}
+        <div className="relative flex-shrink-0">
+          <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-100">
+            {hospital.image ? (
+              <img
+                src={hospital.image}
+                alt={hospital.hospitalName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 
+                           flex items-center justify-center">
+                <Building2 className="w-12 h-12 text-white" />
+              </div>
+            )}
+            {distance && (
+              <span className="absolute -bottom-2 -right-2 px-3 py-1 bg-blue-600 text-white 
+                             text-sm font-semibold rounded-full shadow-lg">
+                {distance} km
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Hospital Info */}
+        <div className="flex-1 text-center md:text-left space-y-3">
+          <h3 className="text-xl font-bold text-gray-900">{hospital.hospitalName}</h3>
+          <div className="space-y-2 text-gray-600">
+            <p className="flex items-center justify-center md:justify-start gap-2">
+              <Phone className="w-5 h-5 text-blue-600" />
+              {hospital.phone || "N/A"}
+            </p>
+            <p className="flex items-center justify-center md:justify-start gap-2">
+              <MapPin className="w-5 h-5 text-blue-600" />
+              {hospital.address}
+            </p>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-4 flex gap-3 justify-center md:justify-start">
+            <button
+              onClick={() => fetchHospitalDetails(hospital._id)}
+              className="flex items-center gap-2 px-5 py-2 bg-blue-600 text-white 
+                         rounded-full hover:bg-blue-700 transition-all shadow-md"
+            >
+              <Info className="w-4 h-4" />
+              View Details
+            </button>
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-5 py-2 border-2 border-gray-300 
+                       text-gray-700 rounded-full hover:bg-gray-50 transition-all"
+            >
+              <Navigation className="w-4 h-4" />
+              Get Directions
+            </a>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8">
@@ -96,88 +174,13 @@ const HospitalResults = () => {
 
         {/* Results Grid */}
         <div className="grid grid-cols-1 gap-6">
-          {sortedHospitals.map((hospital) => (
-            <HospitalCard 
-              key={hospital._id} 
-              hospital={hospital}
-              distance={calculateDistance(hospital.latitude, hospital.longitude)}
-            />
-          ))}
+          {sortedHospitals.map((hospital) => renderHospitalCard(hospital))}
         </div>
       </div>
       {showModal && <HospitalDetailModal />}
     </div>
   );
 };
-
-const HospitalCard = ({ hospital, distance }) => (
-  <motion.div
-    whileHover={{ scale: 1.02 }}
-    className="bg-white rounded-xl p-6 flex flex-col md:flex-row items-center gap-6 
-               border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300"
-  >
-    {/* Hospital Image/Logo */}
-    <div className="relative flex-shrink-0">
-      <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-100">
-        {hospital.image ? (
-          <img
-            src={hospital.image}
-            alt={hospital.hospitalName}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 
-                       flex items-center justify-center">
-            <Building2 className="w-12 h-12 text-white" />
-          </div>
-        )}
-        {distance && (
-          <span className="absolute -bottom-2 -right-2 px-3 py-1 bg-blue-600 text-white 
-                         text-sm font-semibold rounded-full shadow-lg">
-            {distance} km
-          </span>
-        )}
-      </div>
-    </div>
-
-    {/* Hospital Info */}
-    <div className="flex-1 text-center md:text-left space-y-3">
-      <h3 className="text-xl font-bold text-gray-900">{hospital.hospitalName}</h3>
-      <div className="space-y-2 text-gray-600">
-        <p className="flex items-center justify-center md:justify-start gap-2">
-          <Phone className="w-5 h-5 text-blue-600" />
-          {hospital.phone || "N/A"}
-        </p>
-        <p className="flex items-center justify-center md:justify-start gap-2">
-          <MapPin className="w-5 h-5 text-blue-600" />
-          {hospital.address}
-        </p>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
-        <button
-          onClick={() => fetchHospitalDetails(hospital._id)}
-          className="flex items-center gap-2 px-5 py-2 bg-blue-600 text-white 
-                   rounded-full hover:bg-blue-700 transition-all shadow-md"
-        >
-          <Info className="w-4 h-4" />
-          View Details
-        </button>
-        <a
-          href={`https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-5 py-2 border-2 border-gray-300 
-                   text-gray-700 rounded-full hover:bg-gray-50 transition-all"
-        >
-          <Navigation className="w-4 h-4" />
-          Get Directions
-        </a>
-      </div>
-    </div>
-  </motion.div>
-);
 
 const HospitalDetailModal = () => (
   <motion.div
