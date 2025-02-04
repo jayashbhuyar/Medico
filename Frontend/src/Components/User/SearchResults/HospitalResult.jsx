@@ -9,7 +9,7 @@ const HospitalResults = () => {
   const { state } = useLocation();
   const { results, searchTerm } = state;
   const [userLocation, setUserLocation] = useState(null);
-  const [sortBy, setSortBy] = useState('distance');
+  const [sortBy, setSortBy] = useState("distance");
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,10 +23,13 @@ const HospitalResults = () => {
     const lon2 = parseFloat(hospitalLng);
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return (R * c).toFixed(1);
   };
 
@@ -38,12 +41,12 @@ const HospitalResults = () => {
         (position) => {
           setUserLocation({
             lat: position.coords.latitude,
-            lng: position.coords.longitude
+            lng: position.coords.longitude,
           });
-          setSortBy('distance');
-          toast.success('Location updated successfully');
+          setSortBy("distance");
+          toast.success("Location updated successfully");
         },
-        () => toast.error('Please enable location services')
+        () => toast.error("Please enable location services")
       );
     }
   };
@@ -51,23 +54,25 @@ const HospitalResults = () => {
   const fetchHospitalDetails = async (hospitalId) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8000/api/user/hospitals/${hospitalId}`);
+      const response = await fetch(
+        `http://localhost:8000/api/user/hospitals/${hospitalId}`
+      );
       if (!response.ok) {
-        throw new Error('Failed to fetch hospital details');
+        throw new Error("Failed to fetch hospital details");
       }
       const data = await response.json();
       setSelectedHospital(data);
       setShowModal(true);
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Failed to fetch hospital details');
+      console.error("Error:", error);
+      toast.error("Failed to fetch hospital details");
     } finally {
       setLoading(false);
     }
   };
 
   const sortedHospitals = [...results].sort((a, b) => {
-    if (sortBy === 'distance' && userLocation) {
+    if (sortBy === "distance" && userLocation) {
       const distanceA = calculateDistance(a.latitude, a.longitude);
       const distanceB = calculateDistance(b.latitude, b.longitude);
       return distanceA - distanceB;
@@ -77,7 +82,7 @@ const HospitalResults = () => {
 
   const renderHospitalCard = (hospital) => {
     const distance = calculateDistance(hospital.latitude, hospital.longitude);
-    
+
     return (
       <motion.div
         key={hospital._id}
@@ -95,14 +100,18 @@ const HospitalResults = () => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 
-                           flex items-center justify-center">
+              <div
+                className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 
+                           flex items-center justify-center"
+              >
                 <Building2 className="w-12 h-12 text-white" />
               </div>
             )}
             {distance && (
-              <span className="absolute -bottom-2 -right-2 px-3 py-1 bg-blue-600 text-white 
-                             text-sm font-semibold rounded-full shadow-lg">
+              <span
+                className="absolute -bottom-2 -right-2 px-3 py-1 bg-blue-600 text-white 
+                             text-sm font-semibold rounded-full shadow-lg"
+              >
                 {distance} km
               </span>
             )}
@@ -111,7 +120,9 @@ const HospitalResults = () => {
 
         {/* Hospital Info */}
         <div className="flex-1 text-center md:text-left space-y-3">
-          <h3 className="text-xl font-bold text-gray-900">{hospital.hospitalName}</h3>
+          <h3 className="text-xl font-bold text-gray-900">
+            {hospital.hospitalName}
+          </h3>
           <div className="space-y-2 text-gray-600">
             <p className="flex items-center justify-center md:justify-start gap-2">
               <Phone className="w-5 h-5 text-blue-600" />
@@ -177,12 +188,20 @@ const HospitalResults = () => {
           {sortedHospitals.map((hospital) => renderHospitalCard(hospital))}
         </div>
       </div>
-      {showModal && <HospitalDetailModal />}
+      {showModal && (
+        <HospitalDetailModal
+          selectedHospital={selectedHospital}
+          setShowModal={setShowModal}
+          loading={loading}
+        />
+      )}
     </div>
   );
 };
 
-const HospitalDetailModal = () => (
+const HospitalDetailModal = ({ selectedHospital, setShowModal, loading }) => (
+// console.log(selectedHospital)
+  
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
@@ -218,7 +237,9 @@ const HospitalDetailModal = () => (
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Contact Information
+                </h3>
                 <div className="space-y-2">
                   <p className="flex items-center gap-2 text-gray-600">
                     <Phone className="w-5 h-5" />
@@ -230,12 +251,14 @@ const HospitalDetailModal = () => (
                   </p>
                   <p className="flex items-center gap-2 text-gray-600">
                     <Globe className="w-5 h-5" />
-                    {selectedHospital.website || 'N/A'}
+                    {selectedHospital.website || "N/A"}
                   </p>
                 </div>
               </div>
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Location</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Location
+                </h3>
                 <p className="flex items-start gap-2 text-gray-600">
                   <MapPin className="w-5 h-5 flex-shrink-0" />
                   {selectedHospital.address}

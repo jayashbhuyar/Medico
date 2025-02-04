@@ -26,7 +26,7 @@ const HealthcareSearch = () => {
   const [clinicSearch, setClinicSearch] = useState("");
   const [userLocation, setUserLocation] = useState(null);
   const [locationPermission, setLocationPermission] = useState("prompt");
-  const [searchMode, setSearchMode] = useState('search'); // 'search' or 'nearme'
+  const [searchMode, setSearchMode] = useState("search"); // 'search' or 'nearme'
   const [userCoordinates, setUserCoordinates] = useState(null);
   const navigate = useNavigate();
 
@@ -41,15 +41,22 @@ const HealthcareSearch = () => {
 
   // Memoized search handler
   const handleSearch = useCallback(async () => {
-    console.log('Search initiated:', { searchType, currentSearchValue: getCurrentSearchValue() });
+    console.log("Search initiated:", {
+      searchType,
+      currentSearchValue: getCurrentSearchValue(),
+    });
     toast.dismiss();
 
     function getCurrentSearchValue() {
       switch (searchType) {
-        case "doctor": return doctorSearch;
-        case "hospital": return hospitalSearch;
-        case "clinic": return clinicSearch;
-        default: return "";
+        case "doctor":
+          return doctorSearch;
+        case "hospital":
+          return hospitalSearch;
+        case "clinic":
+          return clinicSearch;
+        default:
+          return "";
       }
     }
 
@@ -57,19 +64,19 @@ const HealthcareSearch = () => {
 
     // Validate input
     if (searchType === "specialty" && !selectedSpecialty) {
-      console.log('Validation failed: No specialty selected');
+      console.log("Validation failed: No specialty selected");
       toast.error("Please select a specialty");
       return;
     }
 
     if (searchType !== "specialty" && !currentSearchValue.trim()) {
-      console.log('Validation failed: No search term entered');
+      console.log("Validation failed: No search term entered");
       toast.error(`Please enter ${searchType} name`);
       return;
     }
 
     setIsLoading(true);
-    console.log('Setting loading state: true');
+    console.log("Setting loading state: true");
     toast.loading("Searching...");
 
     try {
@@ -77,8 +84,11 @@ const HealthcareSearch = () => {
       let params = new URLSearchParams();
 
       // Build endpoint and params
-      console.log('Building search parameters:', { searchType, currentSearchValue });
-      
+      console.log("Building search parameters:", {
+        searchType,
+        currentSearchValue,
+      });
+
       switch (searchType) {
         case "doctor":
           endpoint = "/api/search/doctors";
@@ -103,50 +113,55 @@ const HealthcareSearch = () => {
         params.append("lng", userLocation.longitude);
       }
 
-      console.log('Fetching from:', `http://localhost:8000${endpoint}?${params}`);
-      
-      const response = await fetch(`http://localhost:8000${endpoint}?${params}`);
+      console.log(
+        "Fetching from:",
+        `http://localhost:8000${endpoint}?${params}`
+      );
+
+      const response = await fetch(
+        `http://localhost:8000${endpoint}?${params}`
+      );
       const data = await response.json();
 
-      console.log('Search response:', data);
+      console.log("Search response:", data);
 
       if (data.success) {
         // Navigate based on search type
         switch (searchType) {
           case "doctor":
-            navigate('/doctorresults', { 
-              state: { 
+            navigate("/doctorresults", {
+              state: {
                 results: data.results,
-                searchTerm: currentSearchValue 
-              }
+                searchTerm: currentSearchValue,
+              },
             });
             break;
           case "hospital":
-            navigate('/hospitalresults', { 
-              state: { 
+            navigate("/hospitalresults", {
+              state: {
                 results: data.results,
-                searchTerm: currentSearchValue 
-              }
+                searchTerm: currentSearchValue,
+              },
             });
             break;
           case "clinic":
-            navigate('/clinicresults', { 
-              state: { 
+            navigate("/clinicresults", {
+              state: {
                 results: data.results,
-                searchTerm: currentSearchValue 
-              }
+                searchTerm: currentSearchValue,
+              },
             });
             break;
           case "specialty":
-            navigate('/specialtyresults', { 
-              state: { 
+            navigate("/specialtyresults", {
+              state: {
                 results: data.results,
-                specialty: selectedSpecialty 
-              }
+                specialty: selectedSpecialty,
+              },
             });
             break;
         }
-        
+
         toast.success(`Found ${data.results.length} results`);
       } else {
         throw new Error(data.message);
@@ -155,19 +170,34 @@ const HealthcareSearch = () => {
       console.error("Search error:", error);
       toast.error(error.message || "Search failed");
     } finally {
-      console.log('Setting loading state: false');
+      console.log("Setting loading state: false");
       setIsLoading(false);
       toast.dismiss();
     }
-  }, [searchType, doctorSearch, hospitalSearch, clinicSearch, selectedSpecialty, userLocation, navigate]);
+  }, [
+    searchType,
+    doctorSearch,
+    hospitalSearch,
+    clinicSearch,
+    selectedSpecialty,
+    userLocation,
+    navigate,
+  ]);
 
   // Memoize search types to prevent re-renders
-  const searchTypes = useMemo(() => [
-    { id: "specialty", label: "Search by Specialty", icon: <FaStethoscope /> },
-    { id: "doctor", label: "Find a Doctor", icon: <FaUserMd /> },
-    { id: "hospital", label: "Find Hospital", icon: <FaHospital /> },
-    { id: "clinic", label: "Find Clinic", icon: <FaClinicMedical /> },
-  ], []);
+  const searchTypes = useMemo(
+    () => [
+      {
+        id: "specialty",
+        label: "Search by Specialty",
+        icon: <FaStethoscope />,
+      },
+      { id: "doctor", label: "Find a Doctor", icon: <FaUserMd /> },
+      { id: "hospital", label: "Find Hospital", icon: <FaHospital /> },
+      { id: "clinic", label: "Find Clinic", icon: <FaClinicMedical /> },
+    ],
+    []
+  );
 
   // Debounced search handler
   const debouncedSearch = useCallback(
@@ -179,7 +209,7 @@ const HealthcareSearch = () => {
 
   // Handle search type change with logging
   const handleSearchTypeChange = useCallback((type) => {
-    console.log('Changing search type:', type);
+    console.log("Changing search type:", type);
     setSearchType(type);
     setSelectedSpecialty(null);
     setSearchResults([]);
@@ -498,18 +528,18 @@ const HealthcareSearch = () => {
         </div>
 
         <motion.a
-  href="tel:102"
-  whileHover={{ scale: 1.1 }}
-  className="fixed bottom-8 right-8 bg-red-600 text-white p-4 rounded-full 
+          href="tel:102"
+          whileHover={{ scale: 1.1 }}
+          className="fixed bottom-8 right-8 bg-red-600 text-white p-4 rounded-full 
            shadow-lg flex items-center gap-2 z-50 hover:bg-red-700
            transition-all duration-300 group animate-bounce hover:animate-none"
-  aria-label="Call Emergency Ambulance"
->
-  <FaAmbulance className="text-2xl" />
-  <span className="hidden group-hover:inline whitespace-nowrap font-semibold">
-    Call: 102
-  </span>
-</motion.a>
+          aria-label="Call Emergency Ambulance"
+        >
+          <FaAmbulance className="text-2xl" />
+          <span className="hidden group-hover:inline whitespace-nowrap font-semibold">
+            Call: 102
+          </span>
+        </motion.a>
       </div>
 
       <div className="bg-blue-600 text-white py-16">
@@ -691,18 +721,18 @@ const healthPackages = [
   {
     title: "Basic Health Checkup",
     price: "$99",
-    features: ["Blood Test", "ECG", "Physical Examination"]
+    features: ["Blood Test", "ECG", "Physical Examination"],
   },
   {
     title: "Advanced Health Checkup",
     price: "$199",
-    features: ["Blood Test", "ECG", "MRI", "Consultation"]
+    features: ["Blood Test", "ECG", "MRI", "Consultation"],
   },
   {
     title: "Premium Health Checkup",
     price: "$299",
-    features: ["Blood Test", "ECG", "MRI", "Consultation", "Full Body Scan"]
-  }
+    features: ["Blood Test", "ECG", "MRI", "Consultation", "Full Body Scan"],
+  },
 ];
 
 const PackageCard = ({ title, price, features }) => (
