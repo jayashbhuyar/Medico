@@ -55,6 +55,9 @@ const HospitalNavbar = () => {
   const data=JSON.parse(localStorage.getItem('hospitalData'));
   // console.log(data)
   // console.log(data.image)
+  const handleLogout = () => {  localStorage.removeItem('hospitalData');
+    Cookies.remove('hospitalToken');
+  }
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -296,7 +299,7 @@ const HospitalNavbar = () => {
                     <FaCog className="mr-2" />
                     Settings
                   </Link>
-                  <button className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                  <button className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100" onClick={handleLogout}>
                     <FaSignOutAlt className="mr-2" />
                     Sign out
                   </button>
