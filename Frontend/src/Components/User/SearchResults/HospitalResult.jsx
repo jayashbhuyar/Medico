@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FaHospital, FaMapMarkerAlt, FaPhone, FaEnvelope, FaDirections, FaInfo } from 'react-icons/fa';
-import { Building2, Phone, MapPin, Navigation, Info } from 'lucide-react';
+import { Building2, Phone, MapPin, Navigation, Info, X, Mail, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 
@@ -10,6 +10,9 @@ const HospitalResults = () => {
   const { results, searchTerm } = state;
   const [userLocation, setUserLocation] = useState(null);
   const [sortBy, setSortBy] = useState('distance');
+  const [selectedHospital, setSelectedHospital] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const calculateDistance = (hospitalLat, hospitalLng) => {
     if (!userLocation || !hospitalLat || !hospitalLng) return null;
@@ -42,6 +45,20 @@ const HospitalResults = () => {
         },
         () => toast.error('Please enable location services')
       );
+    }
+  };
+
+  const fetchHospitalDetails = async (hospitalId) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:8000/api/user/hospitals/${hospitalId}`);
+      const data = await response.json();
+      setSelectedHospital(data);
+      setShowModal(true);
+    } catch (error) {
+      toast.error('Failed to fetch hospital details');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -88,19 +105,20 @@ const HospitalResults = () => {
           ))}
         </div>
       </div>
+      {showModal && <HospitalDetailModal />}
     </div>
   );
 };
 
 const HospitalCard = ({ hospital, distance }) => (
   <motion.div
-    whileHover={{ scale: 1.02, boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
-    className="bg-white rounded-xl p-5 flex flex-col md:flex-row items-center gap-5 
-               border border-gray-200 shadow-sm transition-all duration-300"
+    whileHover={{ scale: 1.02 }}
+    className="bg-white rounded-xl p-6 flex flex-col md:flex-row items-center gap-6 
+               border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300"
   >
-    {/* Hospital Image */}
+    {/* Hospital Image/Logo */}
     <div className="relative flex-shrink-0">
-      <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300 shadow">
+      <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-100">
         {hospital.image ? (
           <img
             src={hospital.image}
@@ -108,55 +126,137 @@ const HospitalCard = ({ hospital, distance }) => (
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <Building2 className="w-8 h-8 text-gray-500" />
+          <div className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 
+                       flex items-center justify-center">
+            <Building2 className="w-12 h-12 text-white" />
           </div>
         )}
+        {distance && (
+          <span className="absolute -bottom-2 -right-2 px-3 py-1 bg-blue-600 text-white 
+                         text-sm font-semibold rounded-full shadow-lg">
+            {distance} km
+          </span>
+        )}
       </div>
-      {distance && (
-        <span className="absolute -bottom-2 -right-2 px-2 py-1 bg-blue-500 text-white 
-                        text-xs font-medium rounded-full shadow-md">
-          {distance} km
-        </span>
-      )}
     </div>
 
     {/* Hospital Info */}
-    <div className="flex-1 text-center md:text-left">
-      <h3 className="text-lg font-semibold text-gray-800">{hospital.hospitalName}</h3>
-      <div className="mt-2 space-y-1 text-sm text-gray-600">
-        <p className="flex items-center justify-center md:justify-start">
-          <Phone className="w-4 h-4 mr-2 text-blue-500" />
+    <div className="flex-1 text-center md:text-left space-y-3">
+      <h3 className="text-xl font-bold text-gray-900">{hospital.hospitalName}</h3>
+      <div className="space-y-2 text-gray-600">
+        <p className="flex items-center justify-center md:justify-start gap-2">
+          <Phone className="w-5 h-5 text-blue-600" />
           {hospital.phone || "N/A"}
         </p>
-        <p className="flex items-center justify-center md:justify-start">
-          <MapPin className="w-4 h-4 mr-2 text-blue-500" />
+        <p className="flex items-center justify-center md:justify-start gap-2">
+          <MapPin className="w-5 h-5 text-blue-600" />
           {hospital.address}
         </p>
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-4 flex gap-3 justify-center md:justify-start">
+      <div className="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
         <button
           onClick={() => fetchHospitalDetails(hospital._id)}
-          className="flex items-center gap-1 px-4 py-1.5 bg-blue-500 text-white text-sm font-medium 
-                     rounded-full hover:bg-blue-600 transition-all"
+          className="flex items-center gap-2 px-5 py-2 bg-blue-600 text-white 
+                   rounded-full hover:bg-blue-700 transition-all shadow-md"
         >
           <Info className="w-4 h-4" />
-          Details
+          View Details
         </button>
         <a
-          href={`https://www.google.com/maps?q=${hospital.latitude},${hospital.longitude}`}
+          href={`https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 px-4 py-1.5 border border-gray-300 text-gray-700 text-sm font-medium 
-                     rounded-full hover:bg-gray-100 transition-all"
+          className="flex items-center gap-2 px-5 py-2 border-2 border-gray-300 
+                   text-gray-700 rounded-full hover:bg-gray-50 transition-all"
         >
           <Navigation className="w-4 h-4" />
-          Directions
+          Get Directions
         </a>
       </div>
     </div>
+  </motion.div>
+);
+
+const HospitalDetailModal = () => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+  >
+    <motion.div
+      initial={{ scale: 0.95 }}
+      animate={{ scale: 1 }}
+      className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+    >
+      {loading ? (
+        <div className="p-8 flex justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent" />
+        </div>
+      ) : selectedHospital ? (
+        <>
+          <div className="relative h-64 bg-gradient-to-r from-blue-600 to-blue-800">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 p-2 bg-white/10 rounded-full 
+                       hover:bg-white/20 transition-colors"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Building2 className="w-24 h-24 text-white/50" />
+            </div>
+          </div>
+          <div className="p-8 space-y-6">
+            <h2 className="text-3xl font-bold text-gray-900">
+              {selectedHospital.hospitalName}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
+                <div className="space-y-2">
+                  <p className="flex items-center gap-2 text-gray-600">
+                    <Phone className="w-5 h-5" />
+                    {selectedHospital.phone}
+                  </p>
+                  <p className="flex items-center gap-2 text-gray-600">
+                    <Mail className="w-5 h-5" />
+                    {selectedHospital.email}
+                  </p>
+                  <p className="flex items-center gap-2 text-gray-600">
+                    <Globe className="w-5 h-5" />
+                    {selectedHospital.website || 'N/A'}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900">Location</h3>
+                <p className="flex items-start gap-2 text-gray-600">
+                  <MapPin className="w-5 h-5 flex-shrink-0" />
+                  {selectedHospital.address}
+                </p>
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${selectedHospital.latitude},${selectedHospital.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 
+                           text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Navigation className="w-4 h-4" />
+                  Get Directions
+                </a>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="p-8 text-center text-gray-500">
+          No hospital details available
+        </div>
+      )}
+    </motion.div>
   </motion.div>
 );
 
