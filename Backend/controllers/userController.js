@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 // const { sendEmail } = require('../utils/email');
 // const { generateOTP } = require('../utils/otp');
 
@@ -26,13 +27,17 @@ exports.signup = async (req, res) => {
       });
     }
 
-    // Create user
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create user with hashed password
     const user = await User.create({
       firstName,
       lastName,
       email,
       phone,
-      password,
+      password: hashedPassword,
       dateOfBirth,
       gender,
       address,
@@ -84,12 +89,21 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check if user exists & password is correct
+    // Check if user exists
     const user = await User.findOne({ email }).select('+password');
-    if (!user || !(await user.comparePassword(password))) {
+    if (!user) {
       return res.status(401).json({
         status: 'error',
-        message: 'Incorrect email or password'
+        message: 'Invalid credentials'
+      });
+    }
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Invalid credentials'
       });
     }
 
