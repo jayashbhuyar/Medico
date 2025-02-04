@@ -8,6 +8,7 @@ import {
   FaTimesCircle, FaCaretDown, FaUserPlus, FaCog,
   FaSignOutAlt, FaFileMedical, FaUsers
 } from 'react-icons/fa';
+import Cookies from 'js-cookie';
 
 const HospitalNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,6 +58,7 @@ const HospitalNavbar = () => {
   // console.log(data.image)
   const handleLogout = () => {  localStorage.removeItem('hospitalData');
     Cookies.remove('hospitalToken');
+    Navigate('/hospitallogin');
   }
 
   return (
@@ -272,7 +274,7 @@ const HospitalNavbar = () => {
                 className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100"
               >
                 <img
-                  src={data.image}
+                  src={data.image||"https://via.placeholder.com/32"}
                   alt="Profile"
                   className="h-8 w-8 rounded-full border-2 border-blue-500"
                 />
