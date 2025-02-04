@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   FaHospital, FaUserMd, FaCalendarCheck, FaChartLine,
   FaBell, FaSearch, FaUserCircle, FaBars, FaTimes,
@@ -20,6 +20,7 @@ const HospitalNavbar = () => {
   });
   
   const location = useLocation();
+  const navigate = useNavigate();
   const dropdownRefs = {
     doctors: useRef(null),
     departments: useRef(null),
@@ -56,9 +57,17 @@ const HospitalNavbar = () => {
   const data=JSON.parse(localStorage.getItem('hospitalData'));
   // console.log(data)
   // console.log(data.image)
-  const handleLogout = () => {  localStorage.removeItem('hospitalData');
-    Cookies.remove('hospitalToken');
-    Navigate('/hospitallogin');
+  const handleLogout = () => {
+    // Clear all cookies
+    Object.keys(Cookies.get()).forEach(cookieName => {
+      Cookies.remove(cookieName);
+    });
+    
+    // Clear localStorage
+    localStorage.clear();
+    
+    // Navigate to login
+    navigate('/hospitallogin');
   }
 
   return (
