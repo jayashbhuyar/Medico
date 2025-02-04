@@ -52,6 +52,9 @@ const HospitalNavbar = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+  const data=JSON.parse(localStorage.getItem('hospitalData'));
+  // console.log(data)
+  // console.log(data.image)
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -266,7 +269,7 @@ const HospitalNavbar = () => {
                 className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100"
               >
                 <img
-                  src="https://via.placeholder.com/32"
+                  src={data.image}
                   alt="Profile"
                   className="h-8 w-8 rounded-full border-2 border-blue-500"
                 />
@@ -274,8 +277,8 @@ const HospitalNavbar = () => {
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                   <div className="px-4 py-2 border-b">
-                    <p className="font-semibold">Hospital Admin</p>
-                    <p className="text-sm text-gray-500">admin@hospital.com</p>
+                    <p className="font-semibold">{data.hospitalName}</p>
+                    <p className="text-sm text-gray-500">{data.email}</p>
                   </div>
                   <Link 
                     to="/hospital/profile" 

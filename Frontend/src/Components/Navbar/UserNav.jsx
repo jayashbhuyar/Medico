@@ -56,27 +56,6 @@ const UserNav = () => {
       path: "/usernavdoctors",
       icon: <FaUserMd className="w-5 h-5" />,
     },
-    // {
-    //   name: "Services",
-    //   icon: <FaStethoscope className="w-5 h-5" />,
-    //   subItems: [
-    //     {
-    //       name: "Emergency Care",
-    //       path: "/emergency",
-    //       icon: <FaAmbulance className="w-5 h-5" />,
-    //     },
-    //     {
-    //       name: "Pharmacy",
-    //       path: "/pharmacy",
-    //       icon: <FaPills className="w-5 h-5" />,
-    //     },
-    //     {
-    //       name: "Health Checkup",
-    //       path: "/checkup",
-    //       icon: <FaHeartbeat className="w-5 h-5" />,
-    //     },
-    //   ],
-    // },
     {
       name: "Emergency",
       icon: <FaPhoneAlt className="w-5 h-5 text-red-500" />,
