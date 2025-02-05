@@ -33,6 +33,7 @@ import UserMainpage from './Components/User/UserMainpage'
 import Appointments from './Components/Hospital/Appointments'
 import NavClinic from './Components/User/NavResults/NavClinic'
 import HospitalProfile from './Components/Hospital/HospitalProfile'
+import ReviewPage from './Pages/ReviewPage'
 
 function App() {
   return (
@@ -72,6 +73,7 @@ function App() {
         <Route path="/usermainpage" element={<UserMainpage />} />
         <Route path="/usernavclinic" element={<NavClinic />} />
         <Route path="/hospital/profile" element={<HospitalProfile />} />
+        <Route path="/reviewpage" element={<ReviewPage />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>
