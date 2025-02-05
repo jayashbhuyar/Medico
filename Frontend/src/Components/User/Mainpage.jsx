@@ -1,17 +1,47 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  FaSearch, FaMapMarkerAlt, FaStethoscope, FaStar, 
-  FaCalendarAlt, FaHospital, FaCheck, FaVideo,
-  FaHeart, FaBrain, FaTooth, FaEye,
-  FaAmbulance, FaQuoteRight, FaUserMd, FaClinicMedical,
-  FaChevronDown, FaLocationArrow,
-  FaLungs, FaSyringe, FaBaby, FaMicroscope, FaWeight, 
-  FaHeadSideCough, FaFirstAid, FaHandHoldingHeart, FaShieldAlt, FaCapsules,FaHeartbeat
-} from 'react-icons/fa';
-import UserNav from '../Navbar/UserNav';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaSearch,
+  FaMapMarkerAlt,
+  FaStethoscope,
+  FaStar,
+  FaCalendarAlt,
+  FaHospital,
+  FaCheck,
+  FaVideo,
+  FaHeart,
+  FaBrain,
+  FaTooth,
+  FaEye,
+  FaAmbulance,
+  FaQuoteRight,
+  FaUserMd,
+  FaClinicMedical,
+  FaChevronDown,
+  FaLocationArrow,
+  FaPencilAlt,
+  FaTimes,
+  FaLungs,
+  FaSyringe,
+  FaBaby,
+  FaMicroscope,
+  FaWeight,
+  FaHeadSideCough,
+  FaFirstAid,
+  FaHandHoldingHeart,
+  FaShieldAlt,
+  FaCapsules,
+  FaHeartbeat,
+} from "react-icons/fa";
+import UserNav from "../Navbar/UserNav";
 import { Toaster, toast } from "react-hot-toast";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const HealthcareSearch = () => {
   const [count, setCount] = useState({ doctors: 0, patients: 0, hospitals: 0 });
@@ -28,7 +58,12 @@ const HealthcareSearch = () => {
   const [locationPermission, setLocationPermission] = useState("prompt");
   const [searchMode, setSearchMode] = useState("search"); // 'search' or 'nearme'
   const [userCoordinates, setUserCoordinates] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const navigate = useNavigate();
+  const reviewSectionRef = useRef(null);
 
   // Debounce search to prevent multiple re-renders
   const debounce = (func, wait) => {
@@ -323,8 +358,39 @@ const HealthcareSearch = () => {
       image: "https://via.placeholder.com/60",
     },
   ];
+
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+    const review = {
+      rating,
+      comment,
+      date: new Date().toISOString(),
+    };
+
+    // Store in local storage
+    const existingReviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+    localStorage.setItem(
+      "reviews",
+      JSON.stringify([...existingReviews, review])
+    );
+
+    // Reset form
+    setRating(0);
+    setComment("");
+    setShowReviewModal(false);
+    toast.success("Thank you for your review!");
+  };
+
+  const scrollToReviews = () => {
+    reviewSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+    setShowReviewForm(true);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="relative min-h-screen">
       <UserNav />
       <div className="relative h-screen">
         <video
@@ -530,7 +596,7 @@ const HealthcareSearch = () => {
         <motion.a
           href="tel:102"
           whileHover={{ scale: 1.1 }}
-          className="fixed bottom-8 right-8 bg-red-600 text-white p-4 rounded-full 
+          className="fixed bottom-36 right-8 bg-red-600 text-white p-4 rounded-full 
            shadow-lg flex items-center gap-2 z-50 hover:bg-red-700
            transition-all duration-300 group animate-bounce hover:animate-none"
           aria-label="Call Emergency Ambulance"
@@ -701,7 +767,107 @@ const HealthcareSearch = () => {
           </h2>
         </div>
       </section>
+
       <Toaster position="top-right" />
+
+      {/* Floating Review Button */}
+      <motion.button
+        initial={{ scale: 1 }}
+        animate={{
+          scale: [1, 1.1, 1],
+          boxShadow: [
+            "0 0 0 0 rgba(59, 130, 246, 0.7)",
+            "0 0 0 10px rgba(59, 130, 246, 0)",
+          ],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          repeatType: "reverse",
+        }}
+        className="fixed bottom-16 right-8 z-[9998] bg-blue-600 text-white px-6 py-3 
+                  rounded-full shadow-xl hover:bg-blue-700 transition-all duration-300
+                  flex items-center gap-2 cursor-pointer transform hover:scale-105"
+        onClick={() => setShowReviewModal(true)}
+      >
+        <FaPencilAlt className="h-5 w-5" />
+        <span className="hidden md:inline">Write a Review</span>
+      </motion.button>
+
+      {/* Review Modal */}
+      <AnimatePresence>
+        {showReviewModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] 
+                      flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-800">
+                  Write a Review
+                </h3>
+                <button
+                  onClick={() => setShowReviewModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full"
+                >
+                  <FaTimes className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              <form onSubmit={handleReviewSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-gray-700 font-medium">Rating</label>
+                  <div className="flex gap-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setRating(star)}
+                        className={`text-2xl ${
+                          star <= rating ? "text-yellow-400" : "text-gray-300"
+                        } hover:text-yellow-400 transition-colors`}
+                      >
+                        <FaStar />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-gray-700 font-medium">
+                    Your Experience
+                  </label>
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Share your experience with us..."
+                    className="w-full h-32 px-4 py-2 border border-gray-300 rounded-lg 
+                              focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                              resize-none"
+                    required
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-blue-600 text-white rounded-lg 
+                            hover:bg-blue-700 transition-colors"
+                >
+                  Submit Review
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
