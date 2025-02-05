@@ -42,6 +42,7 @@ import {
 import UserNav from "../Navbar/UserNav";
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const HealthcareSearch = () => {
   const [count, setCount] = useState({ doctors: 0, patients: 0, hospitals: 0 });
@@ -62,6 +63,7 @@ const HealthcareSearch = () => {
   const [comment, setComment] = useState("");
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [review, setReview] = useState("");
   const navigate = useNavigate();
   const reviewSectionRef = useRef(null);
 
@@ -359,26 +361,30 @@ const HealthcareSearch = () => {
     },
   ];
 
-  const handleReviewSubmit = (e) => {
+  const handleReviewSubmit = async (e) => {
     e.preventDefault();
-    const review = {
-      rating,
-      comment,
-      date: new Date().toISOString(),
-    };
-
-    // Store in local storage
-    const existingReviews = JSON.parse(localStorage.getItem("reviews") || "[]");
-    localStorage.setItem(
-      "reviews",
-      JSON.stringify([...existingReviews, review])
-    );
-
-    // Reset form
-    setRating(0);
-    setComment("");
-    setShowReviewModal(false);
-    toast.success("Thank you for your review!");
+    
+    // Get email from localStorage if exists
+    const userEmail = localStorage.getItem('userEmail') || 'guest@guest.com';
+    const userType = localStorage.getItem('userEmail') ? 'User' : 'Guest';
+  
+    try {
+      const response = await axios.post('http://localhost:8000/api/webreviews/create', {
+        email: userEmail,
+        userType,
+        rating,
+        review
+      });
+  
+      if (response.data.success) {
+        toast.success('Thank you for your feedback!');
+        setRating(0);
+        setReview('');
+        setShowReviewModal(false);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to submit review');
+    }
   };
 
   const scrollToReviews = () => {
@@ -823,6 +829,7 @@ const HealthcareSearch = () => {
               </div>
 
               <form onSubmit={handleReviewSubmit} className="space-y-6">
+                {/* Rating Section */}
                 <div className="space-y-2">
                   <label className="text-gray-700 font-medium">Rating</label>
                   <div className="flex gap-2">
@@ -841,17 +848,14 @@ const HealthcareSearch = () => {
                   </div>
                 </div>
 
+                {/* Review Text */}
                 <div className="space-y-2">
-                  <label className="text-gray-700 font-medium">
-                    Your Experience
-                  </label>
+                  <label className="text-gray-700 font-medium">Your Review</label>
                   <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Share your experience with us..."
-                    className="w-full h-32 px-4 py-2 border border-gray-300 rounded-lg 
-                              focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                              resize-none"
+                    value={review}
+                    onChange={(e) => setReview(e.target.value)}
+                    className="w-full h-32 px-4 py-2 border rounded-lg resize-none"
+                    placeholder="Share your thoughts..."
                     required
                   />
                 </div>
