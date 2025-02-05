@@ -12,7 +12,7 @@ const Landingpage = () => {
         muted
       >
         <source
-          src="https://www.shutterstock.com/shutterstock/videos/1063444930/preview/stock-footage-abstract-medical-presentation-background-with-flat-icons-symbols-template-design-and-idea-for.webm"
+          src="https://media.istockphoto.com/id/1500334964/video/abstract-medical-green-pixel-background-with-healthcare-symbols-heart-beat-diagram-looped.mp4?s=mp4-480x480-is&k=20&c=MN4b6y_AwXOQbrtl9XBz_uVgBfx7a2flsa8RIHy6VKk="
           type="video/mp4"
         />
         Your browser does not support the video tag.
