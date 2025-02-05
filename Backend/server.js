@@ -9,13 +9,12 @@ require("dotenv").config();
 const hospitalRoutes = require('./routes/hospitalRoutes');
 const clinicRoutes = require('./routes/clinicRoutes');
 const doctorRoutes = require("./routes/doctorRoutes");
-// const clinicRoutes = require('./routes/clinicRoutes');
-// const consultantRoutes = require('./routes/consultantRoutes');
 const searchRoutes = require('./routes/patientSearch');
 const usernavRoutes=require('./routes/usernavRoutes')
 const nearbyRoutes = require('./routes/nearbyRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const webReviewRoutes = require('./routes/webReviewRoutes');
+const userRoutes = require('./routes/userRoutes'); // Add this line
 const{validateToken,authenticateToken}=require('./middleware/authMiddleware');
 
 const app = express();
@@ -58,10 +57,7 @@ app.use('/api/user/v2', usernavRoutes);
 app.use("/api/user/hospitals", usernavRoutes);
 app.use("api/reviews",reviewRoutes);
 app.use('/api/webreviews', webReviewRoutes);
-// Add to existing routes
-// app.use('/api/hospitals', hospitalRoutes);
-// app.use('/api/clinics', clinicRoutes);
-// app.use('/api/consultants', consultantRoutes);
+app.use('/api/users', userRoutes); // Add this line
 
 // Base route
 app.get("/", (req, res) => {

@@ -4,9 +4,9 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 // const { protect } = require('../middleware/authMiddleware');
 
-router.post('/user/signup', userController.signup);
+router.post('/register', userController.signup);
 // router.post('/verify-email', userController.verifyEmail);
-router.post('/user/login', userController.login);
+router.post('/login', userController.login);
 // router.post('/forgot-password', userController.forgotPassword);
 // router.patch('/reset-password/:token', userController.resetPassword);
 

@@ -1,8 +1,12 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-// const { sendEmail } = require('../utils/email');
-// const { generateOTP } = require('../utils/otp');
+
+const createToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN
+  });
+};
 
 exports.signup = async (req, res) => {
   try {
@@ -44,18 +48,8 @@ exports.signup = async (req, res) => {
       notificationPreferences
     });
 
-    // Generate OTP and send verification email
-    // const otp = generateOTP();
-    // await sendEmail({
-    //   email: user.email,
-    //   subject: 'Email Verification',
-    //   message: `Your OTP for email verification is: ${otp}`
-    // });
-
     // Create token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN
-    });
+    const token = createToken(user._id);
 
     res.status(201).json({
       status: 'success',
@@ -108,9 +102,7 @@ exports.login = async (req, res) => {
     }
 
     // Create token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN
-    });
+    const token = createToken(user._id);
 
     res.status(200).json({
       status: 'success',

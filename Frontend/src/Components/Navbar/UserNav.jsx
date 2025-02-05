@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaHome,
@@ -25,7 +25,9 @@ import {
 const UserNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
   const handleClickOutside = (event) => {
@@ -38,6 +40,26 @@ const UserNav = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    // Check if user is logged in by looking for token or user data in localStorage
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('userData');
+    setIsLoggedIn(!!token && !!userData);
+  }, []);
+
+  const handleSignOut = () => {
+    // Clear all auth related data from localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('userEmail');
+    
+    // Update state
+    setIsLoggedIn(false);
+    
+    // Redirect to home page
+    navigate('/');
+  };
 
   const navItems = [
     { name: "Home", path: "/patientpage", icon: <FaHome className="w-5 h-5" /> },
@@ -206,33 +228,57 @@ const UserNav = () => {
               </motion.div>
             ))}
 
-            {/* Login Button */}
+            {/* Login/Logout Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                to="/userlogin"
-                className="ml-4 px-5 py-2 bg-gradient-to-r from-blue-700 to-blue-400 
-                         text-white rounded-xl shadow-md hover:shadow-lg
-                         transition-all duration-300 flex items-center font-medium"
-              >
-                <FaSignInAlt className="mr-2" />
-                Login 
-              </Link>
+              {isLoggedIn ? (
+                <button
+                  onClick={handleSignOut}
+                  className="ml-4 px-5 py-2 bg-gradient-to-r from-red-600 to-red-400 
+                           text-white rounded-xl shadow-md hover:shadow-lg
+                           transition-all duration-300 flex items-center font-medium"
+                >
+                  <FaSignInAlt className="mr-2" />
+                  Sign Out
+                </button>
+              ) : (
+                <Link
+                  to="/userlogin"
+                  className="ml-4 px-5 py-2 bg-gradient-to-r from-blue-700 to-blue-400 
+                           text-white rounded-xl shadow-md hover:shadow-lg
+                           transition-all duration-300 flex items-center font-medium"
+                >
+                  <FaSignInAlt className="mr-2" />
+                  Login 
+                </Link>
+              )}
             </motion.div>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center space-x-2">
-            {/* Mobile Login Button */}
+            {/* Mobile Login/Logout Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                to="/userlogin"
-                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 
-                         text-white rounded-xl shadow-md hover:shadow-lg
-                         transition-all duration-300 flex items-center font-medium"
-              >
-                <FaSignInAlt className="mr-2" />
-                Login
-              </Link>
+              {isLoggedIn ? (
+                <button
+                  onClick={handleSignOut}
+                  className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-400 
+                           text-white rounded-xl shadow-md hover:shadow-lg
+                           transition-all duration-300 flex items-center font-medium"
+                >
+                  <FaSignInAlt className="mr-2" />
+                  Sign Out
+                </button>
+              ) : (
+                <Link
+                  to="/userlogin"
+                  className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 
+                           text-white rounded-xl shadow-md hover:shadow-lg
+                           transition-all duration-300 flex items-center font-medium"
+                >
+                  <FaSignInAlt className="mr-2" />
+                  Login
+                </Link>
+              )}
             </motion.div>
 
             <button

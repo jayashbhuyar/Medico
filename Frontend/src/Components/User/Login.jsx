@@ -1,112 +1,304 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { FaTools, FaEnvelope, FaPhone, FaClock, FaExclamationTriangle } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  FaEnvelope, FaLock, FaSignInAlt, FaUserPlus, 
+  FaUser, FaCalendar, FaPhone, FaMars, FaHome, FaImage 
+} from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { toast, Toaster } from 'react-hot-toast';
 
-const UserLogin = () => {
+const Auth = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const navigate = useNavigate();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const [profilePicture, setProfilePicture] = useState(null);
+
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+      const endpoint = isLogin ? '/api/users/login' : '/api/users/register';
+      const formData = new FormData();
+      Object.keys(data).forEach(key => formData.append(key, data[key]));
+      if (profilePicture) {
+        formData.append('profilePicture', profilePicture);
+      }
+      const response = await axios.post(`http://localhost:8000${endpoint}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log(response);
+      
+      if (response.data.status === 'success') {
+        localStorage.setItem('userData', JSON.stringify(response.data.user));
+        localStorage.setItem('userToken', response.data.token);
+        toast.success(isLogin ? 'Login successful!' : 'Registration successful!');
+        setShowSuccess(true);
+        setTimeout(() => {
+          navigate('/patientpage'); // Updated navigation path
+        }, 3000);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || `${isLogin ? 'Login' : 'Registration'} failed`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleForm = () => {
+    setIsLogin(!isLogin);
+    reset();
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <motion.div
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full">
+        <motion.div 
+          className="bg-white rounded-xl shadow-xl overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-xl p-8"
         >
-          {/* Maintenance Header */}
-          <div className="text-center mb-8">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              className="inline-block text-blue-500 mb-4"
+          {/* Toggle Buttons */}
+          <div className="flex border-b">
+            <button
+              type="button"
+              onClick={toggleForm}
+              className={`flex-1 py-4 text-center font-medium transition-colors flex items-center justify-center gap-2
+                ${isLogin ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-blue-600'}`}
             >
-              <FaTools className="w-16 h-16" />
-            </motion.div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">
-              Service Temporarily Unavailable
-            </h2>
-            <p className="text-gray-600 text-lg">
-              We're currently enhancing our patient login system to serve you better.
-            </p>
+              <FaSignInAlt />
+              Login
+            </button>
+            <button
+              type="button"
+              onClick={toggleForm}
+              className={`flex-1 py-4 text-center font-medium transition-colors flex items-center justify-center gap-2
+                ${!isLogin ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-blue-600'}`}
+            >
+              <FaUserPlus />
+              Sign Up
+            </button>
           </div>
 
-          {/* Status Information */}
-          <div className="bg-blue-50 rounded-lg p-6 mb-8">
-            <div className="flex items-center mb-4">
-              <FaExclamationTriangle className="text-yellow-500 w-6 h-6 mr-2" />
-              <h3 className="text-xl font-semibold text-gray-800">
-                System Status
-              </h3>
-            </div>
-            <p className="text-gray-600 mb-4">
-              Our patient portal is undergoing scheduled maintenance. Expected completion:
-              <span className="font-semibold"> 48 hours</span>
-            </p>
-            <div className="flex items-center text-sm text-gray-500">
-              <FaClock className="mr-2" />
-              Last Updated: {new Date().toLocaleDateString()}
-            </div>
-          </div>
-
-          {/* Alternative Contact Methods */}
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-green-50 rounded-lg p-6">
-              <h3 className="font-semibold text-lg mb-4 text-gray-800">
-                Need Immediate Assistance?
-              </h3>
-              <div className="space-y-3">
-                <p className="flex items-center text-gray-600">
-                  <FaPhone className="mr-2" />
-                  Emergency: <span className="font-semibold ml-2">108</span>
-                </p>
-                <p className="flex items-center text-gray-600">
-                  <FaPhone className="mr-2" />
-                  Helpline: <span className="font-semibold ml-2">1800-123-4567</span>
-                </p>
-              </div>
-            </div>
-            <div className="bg-purple-50 rounded-lg p-6">
-              <h3 className="font-semibold text-lg mb-4 text-gray-800">
-                Contact Support
-              </h3>
-              <div className="space-y-3">
-                <p className="flex items-center text-gray-600">
-                  <FaEnvelope className="mr-2" />
-                  Email: support@medico.com
-                </p>
-                <p className="flex items-center text-gray-600">
-                  <FaClock className="mr-2" />
-                  Available 24/7
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/patientpage">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg 
-                         hover:bg-blue-700 transition duration-300 flex items-center justify-center"
+          {/* Form */}
+          <div className="p-8 max-h-[70vh] overflow-y-auto">
+            <AnimatePresence mode="wait">
+              <motion.form
+                key={isLogin ? 'login' : 'signup'}
+                initial={{ opacity: 0, x: isLogin ? -20 : 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: isLogin ? 20 : -20 }}
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-6"
               >
-                Return to Homepage
-              </motion.button>
-            </Link>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => window.location.reload()}
-              className="w-full sm:w-auto px-8 py-3 border-2 border-blue-600 text-blue-600 
-                       rounded-lg hover:bg-blue-50 transition duration-300 flex items-center justify-center"
-            >
-              Check Status Again
-            </motion.button>
+                {!isLogin && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">First Name</label>
+                        <div className="mt-1 relative">
+                          <FaUser className="absolute top-3 left-3 text-gray-400" />
+                          <input
+                            {...register('firstName', { required: 'First name is required' })}
+                            className="pl-10 w-full py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                            placeholder="First name"
+                          />
+                        </div>
+                        {errors.firstName && (
+                          <p className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Last Name</label>
+                        <div className="mt-1 relative">
+                          <FaUser className="absolute top-3 left-3 text-gray-400" />
+                          <input
+                            {...register('lastName', { required: 'Last name is required' })}
+                            className="pl-10 w-full py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                            placeholder="Last name"
+                          />
+                        </div>
+                        {errors.lastName && (
+                          <p className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Phone</label>
+                      <div className="mt-1 relative">
+                        <FaPhone className="absolute top-3 left-3 text-gray-400" />
+                        <input
+                          {...register('phone', { 
+                            required: 'Phone is required',
+                            pattern: {
+                              value: /^[0-9]{10}$/,
+                              message: 'Invalid phone number'
+                            }
+                          })}
+                          className="pl-10 w-full py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Phone number"
+                        />
+                      </div>
+                      {errors.phone && (
+                        <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                      <div className="mt-1 relative">
+                        <FaCalendar className="absolute top-3 left-3 text-gray-400" />
+                        <input
+                          type="date"
+                          {...register('dateOfBirth', { required: 'Date of birth is required' })}
+                          className="pl-10 w-full py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      {errors.dateOfBirth && (
+                        <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Gender</label>
+                      <div className="mt-1 relative">
+                        <FaMars className="absolute top-3 left-3 text-gray-400" />
+                        <select
+                          {...register('gender', { required: 'Gender is required' })}
+                          className="pl-10 w-full py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Select gender</option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      {errors.gender && (
+                        <p className="text-red-500 text-xs mt-1">{errors.gender.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Address</label>
+                      <div className="mt-1 relative">
+                        <FaHome className="absolute top-3 left-3 text-gray-400" />
+                        <input
+                          {...register('address', { required: 'Address is required' })}
+                          className="pl-10 w-full py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Address"
+                        />
+                      </div>
+                      {errors.address && (
+                        <p className="text-red-500 text-xs mt-1">{errors.address.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Profile Picture</label>
+                      <div className="mt-1 relative">
+                        <FaImage className="absolute top-3 left-3 text-gray-400" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => setProfilePicture(e.target.files[0])}
+                          className="pl-10 w-full py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <div className="mt-1 relative">
+                    <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
+                    <input
+                      type="email"
+                      {...register('email', {
+                        required: 'Email is required',
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: 'Invalid email address'
+                        }
+                      })}
+                      className="pl-10 w-full py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Email address"
+                    />
+                  </div>
+                  {errors.email && (
+                    <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Password</label>
+                  <div className="mt-1 relative">
+                    <FaLock className="absolute top-3 left-3 text-gray-400" />
+                    <input
+                      type="password"
+                      {...register('password', {
+                        required: 'Password is required',
+                        minLength: {
+                          value: 8,
+                          message: 'Password must be at least 8 characters'
+                        }
+                      })}
+                      className="pl-10 w-full py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Password"
+                    />
+                  </div>
+                  {errors.password && (
+                    <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
+                           transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 
+                           focus:ring-offset-2 disabled:opacity-50"
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                      {isLogin ? 'Logging in...' : 'Signing up...'}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      {isLogin ? <FaSignInAlt className="mr-2" /> : <FaUserPlus className="mr-2" />}
+                      {isLogin ? 'Login' : 'Sign Up'}
+                    </div>
+                  )}
+                </button>
+              </motion.form>
+            </AnimatePresence>
           </div>
         </motion.div>
       </div>
+      <Toaster position="top-right" />
+
+      {/* Success Animation */}
+      {showSuccess && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        >
+          <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-bold mb-4">Login Successful!</h2>
+            <p className="text-gray-700">Redirecting to the main page...</p>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };
 
-export default UserLogin;
+export default Auth;
