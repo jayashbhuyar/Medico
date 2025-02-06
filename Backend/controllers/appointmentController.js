@@ -19,7 +19,7 @@ exports.createAppointment = async (req, res) => {
 // Get All Appointments
 exports.getAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.find().sort({ createdAt: -1 });
+    const appointments = await Appointment.find().sort({ appointmentDate: 1 });
     res.status(200).json({
       success: true,
       count: appointments.length,
@@ -61,14 +61,8 @@ exports.updateAppointment = async (req, res) => {
     const appointment = await Appointment.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true }
+      { new: true }
     );
-    if (!appointment) {
-      return res.status(404).json({
-        success: false,
-        message: 'Appointment not found'
-      });
-    }
     res.status(200).json({
       success: true,
       data: appointment
@@ -84,13 +78,7 @@ exports.updateAppointment = async (req, res) => {
 // Delete Appointment
 exports.deleteAppointment = async (req, res) => {
   try {
-    const appointment = await Appointment.findByIdAndDelete(req.params.id);
-    if (!appointment) {
-      return res.status(404).json({
-        success: false,
-        message: 'Appointment not found'
-      });
-    }
+    await Appointment.findByIdAndDelete(req.params.id);
     res.status(200).json({
       success: true,
       data: {}

@@ -355,6 +355,7 @@ const NavDoctors = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <p>Doctor: {appointmentData.doctorName}</p>
                   <p>{appointmentData.organizationType}: {appointmentData.organizationName}</p>
+                  
                 </div>
               </div>
 

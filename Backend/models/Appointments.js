@@ -68,6 +68,31 @@ const appointmentSchema = new mongoose.Schema({
     lowercase: true
   },
 
+  // Appointment Date
+  appointmentDate: {
+    type: Date,
+    required: [true, 'Appointment date is required'],
+    validate: {
+      validator: function(value) {
+        return value > new Date();
+      },
+      message: 'Appointment date must be in the future'
+    }
+  },
+
+  // Time Slot
+  timeSlots: {
+    start: {
+      type: String,
+      required: true,
+      match: [/^\d{2}:\d{2}$/, "Start time must be in HH:mm format"],
+    },
+    end: {
+      type: String,
+      required: true,
+      match: [/^\d{2}:\d{2}$/, "End time must be in HH:mm format"],
+    },
+  },
   // Appointment Status
   status: {
     type: String,
