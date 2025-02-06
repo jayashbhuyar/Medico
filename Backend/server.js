@@ -10,13 +10,14 @@ const hospitalRoutes = require('./routes/hospitalRoutes');
 const clinicRoutes = require('./routes/clinicRoutes');
 const doctorRoutes = require("./routes/doctorRoutes");
 const searchRoutes = require('./routes/patientSearch');
-const usernavRoutes=require('./routes/usernavRoutes')
+const usernavRoutes = require('./routes/usernavRoutes')
 const nearbyRoutes = require('./routes/nearbyRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const webReviewRoutes = require('./routes/webReviewRoutes');
 const userRoutes = require('./routes/userRoutes'); // Add this line
 const appointmentRoutes = require('./routes/appointmentRoutes');
-const{validateToken,authenticateToken}=require('./middleware/authMiddleware');
+const { validateToken, authenticateToken } = require('./middleware/authMiddleware');
+const consultantRoute = require('./routes/consultantRoutes')
 
 const app = express();
 
@@ -45,23 +46,23 @@ mongoose
   })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
-  app.use("/api/hospitals", hospitalRoutes);
-  // Add to existing routes
-  app.use('/api/user/clinics', clinicRoutes);
-  app.use('/api/clinics', clinicRoutes);
-  app.use('/api/token/validate',validateToken)
-  app.use('/api/search', nearbyRoutes);
-  app.use("/api/search", searchRoutes);
-  app.use("/api/doctors", doctorRoutes);
+app.use("/api/hospitals", hospitalRoutes);
+// Add to existing routes
+app.use('/api/user/clinics', clinicRoutes);
+app.use('/api/clinics', clinicRoutes);
+app.use('/api/token/validate', validateToken)
+app.use('/api/search', nearbyRoutes);
+app.use("/api/search", searchRoutes);
+app.use("/api/doctors", doctorRoutes);
 // Routes
 app.use('/api/user/v2', usernavRoutes);
 app.use("/api/user/hospitals", usernavRoutes);
-app.use("api/reviews",reviewRoutes);
+app.use("api/reviews", reviewRoutes);
 app.use('/api/webreviews', webReviewRoutes);
 app.use('/api/users', userRoutes); // Add this line
 
 app.use('/api/appointments', appointmentRoutes);
-
+app.use('/api/consultant', consultantRoute)
 // Base route
 app.get("/", (req, res) => {
   res.send("Medico API is running");

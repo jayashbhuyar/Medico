@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaUserMd } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { toast, Toaster } from 'react-hot-toast';
+import axios from 'axios'
+import Cookies from 'js-cookie';
 
 function ConsultantLogin() {
   const [formData, setFormData] = useState({
@@ -10,7 +12,8 @@ function ConsultantLogin() {
     password: ''
   });
   const [errors, setErrors] = useState({});
-
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -27,12 +30,53 @@ function ConsultantLogin() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("🔹 Form submitted");
+
     if (validateForm()) {
-      // Implement login logic here
-      console.log('Login attempt:', formData);
-      toast.success('Login successful!');
+      console.log("✅ Form validation passed");
+      setLoading(true);
+      toast.dismiss();
+
+      try {
+        console.log("📡 Sending request to API...");
+        const response = await axios.post('http://localhost:8000/api/consultant/login', formData);
+
+        console.log("✅ API Response received:", response);
+
+        const { message, token, hospital } = response.data;
+        console.log("📦 Extracted data:", { message, token, hospital });
+
+        if (token) {
+          console.log("🔐 Token received, storing in cookies and localStorage...");
+          Cookies.set('hospitalToken', token, {
+            expires: 7,
+            // secure: true,
+            sameSite: 'Strict'
+          });
+
+          // Store entire hospital data in localStorage
+          // localStorage.setItem('hospitalToken', token);
+          localStorage.setItem('hospitalData', JSON.stringify(hospital));
+
+          toast.success('Login successful!', { duration: 2000, position: 'top-right' });
+
+          console.log("🚀 Navigating to dashboard...");
+          navigate('/consltant/dashboard');
+        } else {
+          console.warn("⚠️ No token received:", message);
+          toast.error(message || 'Login failed!');
+        }
+      } catch (error) {
+        console.error("❌ Login error:", error);
+        toast.error(error.response?.data?.message || 'Invalid credentials');
+      } finally {
+        console.log("🔄 Setting loading to false");
+        setLoading(false);
+      }
+    } else {
+      console.warn("⚠️ Form validation failed");
     }
   };
 
@@ -70,9 +114,8 @@ function ConsultantLogin() {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${
-                  errors.email ? 'border-red-500' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'
+                  } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                 placeholder="Enter your email"
               />
               {errors.email && (
@@ -90,9 +133,8 @@ function ConsultantLogin() {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${
-                  errors.password ? 'border-red-500' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'
+                  } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                 placeholder="Enter your password"
               />
               {errors.password && (

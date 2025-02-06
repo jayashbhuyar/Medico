@@ -11,10 +11,12 @@ import {
   FaInfoCircle,
   FaLock,
   FaImage,
+  FaSearch,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast, Toaster } from "react-hot-toast";
 import Select from 'react-select';
+import axios from "axios";
 
 const INDIA_STATES_CITIES = {
   "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore"],
@@ -53,7 +55,8 @@ function ConsultantRegistration() {
   const [cities, setCities] = useState([]);
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
-
+  const [searchAddress, setSearchAddress] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     doctorName: "",
     email: "",
@@ -71,6 +74,21 @@ function ConsultantRegistration() {
     password: "",
     confirmPassword: "",
   });
+
+  const searchLocation = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await axios.get(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${searchAddress}`
+      );
+      if (response.data.length > 0) {
+        const { lat, lon } = response.data[0];
+        setSelectedLocation({ lat: parseFloat(lat), lng: parseFloat(lon) });
+      }
+    } catch (error) {
+      console.error('Error searching location:', error);
+    }
+  };
 
   const validateStep = () => {
     const newErrors = {};
@@ -161,11 +179,83 @@ function ConsultantRegistration() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateStep()) {
-      console.log("Final Form Data:", formData);
-      toast.success("Consultant registered successfully!");
+      try {
+        setIsLoading(true);
+        toast.loading('Registering hospital...');
+
+        const hospitalData = new FormData();
+
+        // Log form data for debugging
+        console.log('Form Data:', formData);
+
+        // Required fields validation
+        const requiredFields = [
+          "doctorName",
+          "email",
+          "phone",
+          "state",
+          "city",
+          "address",
+          "password"
+        ];
+
+        const missingFields = requiredFields.filter(field => !formData[field]);
+        if (missingFields.length > 0) {
+          throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+        }
+
+        // Append form fields properly
+        Object.keys(formData).forEach(key => {
+          if (key === 'image' && formData[key]) {
+            hospitalData.append('image', formData[key]);
+          } else if (formData[key]) {
+            hospitalData.append(key, formData[key]);
+          }
+        });
+
+        // Add location data if available
+        if (selectedLocation) {
+          hospitalData.append('latitude', selectedLocation.lat.toString());
+          hospitalData.append('longitude', selectedLocation.lng.toString());
+        }
+
+        // Log FormData content
+        for (let pair of hospitalData.entries()) {
+          console.log(pair[0], pair[1]);
+        }
+
+        const response = await axios.post(
+          'http://localhost:8000/api/consultant/register',
+          hospitalData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            }
+          }
+        );
+        toast.dismiss();
+
+        if (response.data.success) {
+          toast.success('Registration successful!');
+          localStorage.setItem('hospitalToken', response.data.token);
+        }
+
+      } catch (error) {
+        toast.dismiss();
+        console.log('Full error:', error);
+        console.log('Error response:', error.response?.data);
+
+        const errorMessage = error.response?.data?.message
+          || error.message
+          || 'Registration failed';
+
+        toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -183,10 +273,9 @@ function ConsultantRegistration() {
                     backgroundColor: step >= num ? "#2563eb" : "#fff",
                   }}
                   className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-semibold
-                    ${
-                      step >= num
-                        ? "text-white shadow-lg shadow-blue-200"
-                        : "text-gray-400 border-2 border-gray-200"
+                    ${step >= num
+                      ? "text-white shadow-lg shadow-blue-200"
+                      : "text-gray-400 border-2 border-gray-200"
                     } transition-all duration-300`}
                 >
                   {num}
@@ -304,6 +393,24 @@ function ConsultantRegistration() {
               {step === 2 && (
                 <div className="space-y-6">
                   <div className="flex justify-center space-x-4 mb-4">
+
+
+                    <div className="flex-1 relative">
+                      <input
+                        type="text"
+                        value={searchAddress}
+                        onChange={(e) => setSearchAddress(e.target.value)}
+                        placeholder="Search location..."
+                        className="w-full px-4 py-3 pr-12 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                      />
+                      <button
+                        onClick={searchLocation}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500"
+                      >
+                        <FaSearch className="w-5 h-5" />
+                      </button>
+                    </div>
+
                     <button
                       type="button"
                       onClick={getCurrentLocation}
@@ -576,9 +683,8 @@ const InputField = ({ icon, label, error, ...props }) => (
     </div>
     <input
       {...props}
-      className={`w-full px-4 py-3 rounded-lg border ${
-        error ? "border-red-500" : "border-gray-300"
-      } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+      className={`w-full px-4 py-3 rounded-lg border ${error ? "border-red-500" : "border-gray-300"
+        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
     />
     {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
   </div>
@@ -592,9 +698,8 @@ const SelectField = ({ icon, label, options, error, ...props }) => (
     </div>
     <select
       {...props}
-      className={`w-full px-4 py-3 rounded-lg border ${
-        error ? "border-red-500" : "border-gray-300"
-      } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+      className={`w-full px-4 py-3 rounded-lg border ${error ? "border-red-500" : "border-gray-300"
+        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
     >
       <option value="">Select {label}</option>
       {options.map((option) => (

@@ -35,6 +35,7 @@ import NavClinic from './Components/User/NavResults/NavClinic'
 import HospitalProfile from './Components/Hospital/HospitalProfile'
 import ReviewPage from './Pages/ReviewPage'
 import ProfilePage from './Components/User/ProfilePage'
+import ConsultantDashboard from './Components/Consultant/ConsultantDashboard'
 
 function App() {
   return (
@@ -76,6 +77,7 @@ function App() {
         <Route path="/usernavclinic" element={<NavClinic />} />
         <Route path="/hospital/profile" element={<HospitalProfile />} />
         <Route path="/reviewpage" element={<ReviewPage />} />
+        <Route path='/consultant/dashboard' element={<ConsultantDashboard />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>
