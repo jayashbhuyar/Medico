@@ -9,6 +9,7 @@ import { Star, MessageSquare } from "lucide-react";
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
+import UserNav from '../../Navbar/UserNav';
 
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   if (!lat1 || !lon1 || !lat2 || !lon2) return null;
@@ -211,9 +212,10 @@ const ClinicResults = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-white">
+      <UserNav />
       <ToastContainer />
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-emerald-600/90 to-teal-600/90 py-12">
+      <div className="bg-gradient-to-r from-emerald-600/90 to-teal-600/90 py-12 mt-16">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-3xl font-bold text-white mb-2">
             Clinics matching "{searchTerm}"

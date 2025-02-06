@@ -4,6 +4,7 @@ import { FaUserMd, FaStar, FaClock, FaMapMarkerAlt, FaEye, FaDirections, FaFilte
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import DoctorProfile from '../NavResults/DoctorProfile';
+import UserNav from '../../Navbar/UserNav';
 
 const SpecialtyResults = () => {
   const { state } = useLocation();
@@ -75,8 +76,9 @@ const SpecialtyResults = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <UserNav />
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12 mt-12">
         <div className="container mx-auto px-4">
           <motion.h1 
             initial={{ opacity: 0, y: -20 }}

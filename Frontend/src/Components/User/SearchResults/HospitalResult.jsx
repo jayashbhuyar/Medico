@@ -5,6 +5,7 @@ import { Building2, Phone, MapPin, Navigation, Info, X, Mail, Globe, Calendar, S
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import UserNav from '../../Navbar/UserNav';
 
 const HospitalResults = () => {
   const { state } = useLocation();
@@ -237,7 +238,8 @@ const HospitalResults = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8">
-      <div className="container mx-auto px-4">
+      <UserNav />
+      <div className="container mx-auto px-4 mt-12">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
