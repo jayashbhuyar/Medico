@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserNav from '../../Navbar/UserNav'
 
 import DoctorProfile from "./DoctorProfile";
 
