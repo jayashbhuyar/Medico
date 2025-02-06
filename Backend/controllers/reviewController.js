@@ -1,27 +1,88 @@
 const Review = require('../models/review');
 
-// Create Review
 exports.createReview = async (req, res) => {
   try {
-    // Check if user is logged in
-    const userEmail = req.body.reviewerEmail || 'guest@guest.com';
-    const userType = req.body.reviewerEmail ? 'User' : 'Guest';
+    // console.log('Create review:', req.body);
+    const { reviewerEmail, userType, entityType, entityEmail, rating, text } = req.body;
 
-    const reviewData = {
-      ...req.body,
-      reviewerEmail: userEmail,
-      userType: userType
-    };
+    // Validate required fields
+    if (!reviewerEmail || !userType || !entityType || !entityEmail || !rating || !text) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide all required fields'
+      });
+    }
 
-    const review = await Review.create(reviewData);
+    // Check for existing review from same user for same entity
+    // const existingReview = await Review.findOne({
+    //   reviewerEmail,
+    //   entityEmail,
+    //   entityType
+    // });
+
+    // if (existingReview) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: 'You have already reviewed this hospital'
+    //   });
+    // }
+
+    // Create review
+    const review = await Review.create({
+      reviewerEmail,
+      userType,
+      entityType,
+      entityEmail,
+      rating,
+      text,
+    });
+
     res.status(201).json({
       success: true,
       data: review
     });
+
   } catch (error) {
-    res.status(400).json({
+    // console.error('Review creation error:', error);
+    res.status(500).json({
       success: false,
-      message: error.message
+      message: error.message || 'Error creating review'
+    });
+  }
+};
+
+// Get Reviews for Hospital
+exports.getHospitalReviews = async (req, res) => {
+  // console.log('Get hospital reviews:', req.params); // Debugging log
+
+  try {
+    const { email } = req.params; // Extract email correctly
+    // console.log('Received hospitalEmail:', email);
+
+    const reviews = await Review.find({
+      entityEmail: email, // Use the correct variable
+      entityType: 'Hospital'
+    }).sort({ createdAt: -1 });
+
+    // console.log('Fetched Reviews:', reviews); // Check if data is fetched
+
+    if (reviews.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No reviews found for this hospital'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: reviews
+    });
+
+  } catch (error) {
+    // console.error('Fetch reviews error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error fetching reviews'
     });
   }
 };

@@ -57,7 +57,7 @@ app.use("/api/doctors", doctorRoutes);
 // Routes
 app.use('/api/user/v2', usernavRoutes);
 app.use("/api/user/hospitals", usernavRoutes);
-app.use("api/reviews", reviewRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
 app.use('/api/webreviews', webReviewRoutes);
 app.use('/api/users', userRoutes); // Add this line
 
