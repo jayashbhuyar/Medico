@@ -172,20 +172,30 @@ const UserNav = () => {
               >
                 {item.subItems ? (
                   <button
-                    onClick={() => setActiveDropdown(activeDropdown === item.name ? null : item.name)}
+                    onClick={() =>
+                      setActiveDropdown(
+                        activeDropdown === item.name ? null : item.name
+                      )
+                    }
                     className={`flex items-center px-4 py-2 rounded-xl group relative
-                              ${location.pathname === item.path 
-                                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md" 
-                                : "text-gray-700 hover:bg-gray-50"}
+                              ${
+                                location.pathname === item.path
+                                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md"
+                                  : "text-gray-700 hover:bg-gray-50"
+                              }
                               transition-all duration-300`}
                   >
-                    <span className="mr-2 text-blue-600 group-hover:text-indigo-600 
-                                   transition-colors duration-300">
+                    <span
+                      className="mr-2 text-blue-600 group-hover:text-indigo-600 
+                                   transition-colors duration-300"
+                    >
                       {item.icon}
                     </span>
                     {item.name}
                     <motion.span
-                      animate={{ rotate: activeDropdown === item.name ? 180 : 0 }}
+                      animate={{
+                        rotate: activeDropdown === item.name ? 180 : 0,
+                      }}
                       transition={{ duration: 0.3 }}
                       className="ml-2"
                     >
@@ -196,13 +206,17 @@ const UserNav = () => {
                   <Link
                     to={item.path}
                     className={`flex items-center px-4 py-2 rounded-xl relative
-                              ${location.pathname === item.path 
-                                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md" 
-                                : "text-gray-700 hover:bg-gray-50"}
+                              ${
+                                location.pathname === item.path
+                                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md"
+                                  : "text-gray-700 hover:bg-gray-50"
+                              }
                               transition-all duration-300`}
                   >
-                    <span className="mr-2 text-blue-600 group-hover:text-indigo-600 
-                                   transition-colors duration-300">
+                    <span
+                      className="mr-2 text-blue-600 group-hover:text-indigo-600 
+                                   transition-colors duration-300"
+                    >
                       {item.icon}
                     </span>
                     {item.name}
@@ -229,10 +243,16 @@ const UserNav = () => {
                               href={`tel:${subItem.phone}`}
                               className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                             >
-                              <span className="p-2 rounded-full bg-gray-100">{subItem.icon}</span>
+                              <span className="p-2 rounded-full bg-gray-100">
+                                {subItem.icon}
+                              </span>
                               <div>
-                                <p className="font-medium text-gray-900">{subItem.name}</p>
-                                <p className="text-sm text-gray-500">Click to call</p>
+                                <p className="font-medium text-gray-900">
+                                  {subItem.name}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                  Click to call
+                                </p>
                               </div>
                             </a>
                           ) : (
@@ -242,7 +262,9 @@ const UserNav = () => {
                                        hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50
                                        transition-all duration-300"
                             >
-                              <span className="mr-2 text-blue-600">{subItem.icon}</span>
+                              <span className="mr-2 text-blue-600">
+                                {subItem.icon}
+                              </span>
                               {subItem.name}
                             </Link>
                           )}
@@ -255,65 +277,76 @@ const UserNav = () => {
             ))}
 
             {/* Login/Logout Button */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <div className="relative">
               {isAuthenticated ? (
-                <div className="relative">
+                <div>
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-50"
+                    className="flex items-center gap-2 h-10 px-3 hover:bg-gray-100 
+                               transition-colors rounded-md"
                   >
-                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 
+                                  flex items-center justify-center text-white font-semibold">
                       {userData?.firstName?.charAt(0)}
                     </div>
-                    <span className="font-medium">{userData?.firstName}</span>
+                    <span className="text-gray-700 font-medium">{userData?.firstName}</span>
                   </button>
 
-                  <AnimatePresence>
-                    {showProfileMenu && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 z-50"
-                      >
-                        <div className="p-4 border-b">
-                          <p className="font-medium text-gray-900">{`${userData?.firstName} ${userData?.lastName}`}</p>
-                          <p className="text-sm text-gray-500">{userData?.email}</p>
+                  {showProfileMenu && (
+                    <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl 
+                                  border border-gray-100 overflow-hidden">
+                      {/* User Info Section */}
+                      <div className="p-6 bg-gradient-to-r from-blue-50 to-blue-100 flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-full bg-white p-1 shadow-md">
+                          <div className="w-full h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 
+                                      flex items-center justify-center text-white font-bold text-xl">
+                            {userData?.firstName?.charAt(0)}
+                          </div>
                         </div>
-                        
-                        <div className="p-2">
-                          <Link
-                            to="/userprofile"
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors"
-                          >
-                            <FaUser className="text-blue-600" />
-                            <span>Profile</span>
-                          </Link>
-                          
-                          <button
-                            onClick={handleLogout}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 w-full rounded-lg transition-colors"
-                          >
-                            <FaSignOutAlt />
-                            <span>Sign Out</span>
-                          </button>
+                        <div>
+                          <p className="text-lg font-semibold text-gray-800">
+                            {userData?.firstName} {userData?.lastName}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {userData?.email}
+                          </p>
                         </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                      </div>
+
+                      {/* Menu Options */}
+                      <div className="p-2">
+                        <Link
+                          to="/userprofile"
+                          className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 
+                                   rounded-xl transition-colors"
+                        >
+                          <FaUser className="text-blue-600 w-5 h-5" />
+                          <span className="text-gray-700 font-medium">My Profile</span>
+                        </Link>
+
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-red-50 
+                                   hover:text-red-600 w-full rounded-xl transition-colors"
+                        >
+                          <FaSignOutAlt className="w-5 h-5" />
+                          <span className="font-medium">Sign Out</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <Link
                   to="/userlogin"
-                  className="ml-4 px-5 py-2 bg-gradient-to-r from-blue-700 to-blue-400 
-                           text-white rounded-xl shadow-md hover:shadow-lg
-                           transition-all duration-300 flex items-center font-medium"
+                  className="h-10 px-4 text-gray-700 hover:bg-gray-100 transition-colors 
+                             rounded-md flex items-center gap-2"
                 >
-                  <FaSignInAlt className="mr-2" />
-                  Login 
+                  <FaSignInAlt />
+                  Login
                 </Link>
               )}
-            </motion.div>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -342,9 +375,11 @@ const UserNav = () => {
                       >
                         <div className="p-4 border-b">
                           <p className="font-medium text-gray-900">{`${userData?.firstName} ${userData?.lastName}`}</p>
-                          <p className="text-sm text-gray-500">{userData?.email}</p>
+                          <p className="text-sm text-gray-500">
+                            {userData?.email}
+                          </p>
                         </div>
-                        
+
                         <div className="p-2">
                           <Link
                             to="/userprofile"
@@ -353,7 +388,7 @@ const UserNav = () => {
                             <FaUser className="text-blue-600" />
                             <span>Profile</span>
                           </Link>
-                          
+
                           <button
                             onClick={handleLogout}
                             className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 w-full rounded-lg transition-colors"
