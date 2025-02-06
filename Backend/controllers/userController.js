@@ -71,17 +71,26 @@ exports.signup = async (req, res) => {
     // Create token
     const token = createToken(user._id);
 
+    // Send complete user data excluding password
+    const userResponse = {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      dateOfBirth: user.dateOfBirth,
+      gender: user.gender,
+      address: user.address,
+      notificationPreferences: user.notificationPreferences,
+      image: user.image,
+      createdAt: user.createdAt,
+      isVerified: user.isVerified
+    };
+
     res.status(201).json({
       status: "success",
       token,
-      data: {
-        user: {
-          id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-        },
-      },
+      user: userResponse
     });
   } catch (error) {
     res.status(400).json({
@@ -95,7 +104,6 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if email and password exist
     if (!email || !password) {
       return res.status(400).json({
         status: 'error',
@@ -103,7 +111,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check if user exists
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(401).json({
@@ -112,7 +119,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({
@@ -121,20 +127,27 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Create token
     const token = createToken(user._id);
+
+    const userResponse = {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      dateOfBirth: user.dateOfBirth,
+      gender: user.gender,
+      address: user.address,
+      notificationPreferences: user.notificationPreferences,
+      image: user.image,
+      createdAt: user.createdAt,
+      isVerified: user.isVerified
+    };
 
     res.status(200).json({
       status: 'success',
       token,
-      data: {
-        user: {
-          id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email
-        }
-      }
+      user: userResponse
     });
   } catch (error) {
     res.status(400).json({

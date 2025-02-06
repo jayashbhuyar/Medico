@@ -20,7 +20,11 @@ import {
   FaShieldAlt,
   FaFire,
   FaPhoneVolume,
+  FaUser,
+  FaSignOutAlt,
+  FaCog,
 } from "react-icons/fa";
+import Cookies from 'js-cookie';
 
 const UserNav = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,6 +33,10 @@ const UserNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -48,6 +56,16 @@ const UserNav = () => {
     setIsLoggedIn(!!token && !!userData);
   }, []);
 
+  useEffect(() => {
+    const token = Cookies.get('userToken');
+    const storedUserData = localStorage.getItem('userData');
+    
+    if (token && storedUserData) {
+      setIsAuthenticated(true);
+      setUserData(JSON.parse(storedUserData));
+    }
+  }, []);
+
   const handleSignOut = () => {
     // Clear all auth related data from localStorage
     localStorage.removeItem('token');
@@ -58,6 +76,14 @@ const UserNav = () => {
     setIsLoggedIn(false);
     
     // Redirect to home page
+    navigate('/');
+  };
+
+  const handleLogout = () => {
+    Cookies.remove('userToken');
+    localStorage.removeItem('userData');
+    setIsAuthenticated(false);
+    setUserData(null);
     navigate('/');
   };
 
@@ -230,16 +256,52 @@ const UserNav = () => {
 
             {/* Login/Logout Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              {isLoggedIn ? (
-                <button
-                  onClick={handleSignOut}
-                  className="ml-4 px-5 py-2 bg-gradient-to-r from-red-600 to-red-400 
-                           text-white rounded-xl shadow-md hover:shadow-lg
-                           transition-all duration-300 flex items-center font-medium"
-                >
-                  <FaSignInAlt className="mr-2" />
-                  Sign Out
-                </button>
+              {isAuthenticated ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-50"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                      {userData?.firstName?.charAt(0)}
+                    </div>
+                    <span className="font-medium">{userData?.firstName}</span>
+                  </button>
+
+                  <AnimatePresence>
+                    {showProfileMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 z-50"
+                      >
+                        <div className="p-4 border-b">
+                          <p className="font-medium text-gray-900">{`${userData?.firstName} ${userData?.lastName}`}</p>
+                          <p className="text-sm text-gray-500">{userData?.email}</p>
+                        </div>
+                        
+                        <div className="p-2">
+                          <Link
+                            to="/profile"
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors"
+                          >
+                            <FaUser className="text-blue-600" />
+                            <span>Profile</span>
+                          </Link>
+                          
+                          <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 w-full rounded-lg transition-colors"
+                          >
+                            <FaSignOutAlt />
+                            <span>Sign Out</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ) : (
                 <Link
                   to="/userlogin"
@@ -258,16 +320,60 @@ const UserNav = () => {
           <div className="lg:hidden flex items-center space-x-2">
             {/* Mobile Login/Logout Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              {isLoggedIn ? (
-                <button
-                  onClick={handleSignOut}
-                  className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-400 
-                           text-white rounded-xl shadow-md hover:shadow-lg
-                           transition-all duration-300 flex items-center font-medium"
-                >
-                  <FaSignInAlt className="mr-2" />
-                  Sign Out
-                </button>
+              {isAuthenticated ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-50"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                      {userData?.firstName?.charAt(0)}
+                    </div>
+                    <span className="font-medium">{userData?.firstName}</span>
+                  </button>
+
+                  <AnimatePresence>
+                    {showProfileMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 z-50"
+                      >
+                        <div className="p-4 border-b">
+                          <p className="font-medium text-gray-900">{`${userData?.firstName} ${userData?.lastName}`}</p>
+                          <p className="text-sm text-gray-500">{userData?.email}</p>
+                        </div>
+                        
+                        <div className="p-2">
+                          <Link
+                            to="/profile"
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors"
+                          >
+                            <FaUser className="text-blue-600" />
+                            <span>Profile</span>
+                          </Link>
+                          
+                          <Link
+                            to="/settings"
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors"
+                          >
+                            <FaCog className="text-blue-600" />
+                            <span>Settings</span>
+                          </Link>
+                          
+                          <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 w-full rounded-lg transition-colors"
+                          >
+                            <FaSignOutAlt />
+                            <span>Sign Out</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ) : (
                 <Link
                   to="/userlogin"

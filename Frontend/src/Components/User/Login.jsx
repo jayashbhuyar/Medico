@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { toast, Toaster } from 'react-hot-toast';
+import Cookies from 'js-cookie';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -42,10 +43,15 @@ const Auth = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
-
+      console.log('Response:', response); // Debug log
       if (response.data.status === 'success') {
-        localStorage.setItem('userData', JSON.stringify(response.data.user));
-        localStorage.setItem('userToken', response.data.token);
+        Cookies.set('userToken', response.data.token, { 
+          expires: 7, // 7 days
+          secure: true,
+          sameSite: 'strict'
+        });
+        
+        localStorage.setItem('userData', JSON.stringify(response.data.data.user));
         toast.success(isLogin ? 'Login successful!' : 'Registration successful!');
         setShowSuccess(true);
         setTimeout(() => {
