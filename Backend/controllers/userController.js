@@ -1,10 +1,11 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const cloudinary = require("../config/cloudinary");
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
+    expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 
@@ -19,16 +20,34 @@ exports.signup = async (req, res) => {
       dateOfBirth,
       gender,
       address,
-      notificationPreferences
+      notificationPreferences,
     } = req.body;
 
     // Check if user exists
     const userExists = await User.findOne({ $or: [{ email }, { phone }] });
     if (userExists) {
       return res.status(400).json({
-        status: 'error',
-        message: 'User already exists with this email or phone'
+        status: "error",
+        message: "User already exists with this email or phone",
       });
+    }
+
+    // Upload image to Cloudinary
+    let imageUrl = '';
+    if (req.files && req.files.image) {
+      try {
+        const result = await cloudinary.uploader.upload(req.files.image.tempFilePath, {
+          folder: 'user_images',
+          width: 300,
+          crop: "scale"
+        });
+        imageUrl = result.secure_url;
+      } catch (uploadError) {
+        return res.status(500).json({
+          status: 'error',
+          message: 'Failed to upload image'
+        });
+      }
     }
 
     // Hash password
@@ -45,28 +64,29 @@ exports.signup = async (req, res) => {
       dateOfBirth,
       gender,
       address,
-      notificationPreferences
+      notificationPreferences,
+      image: imageUrl,
     });
 
     // Create token
     const token = createToken(user._id);
 
     res.status(201).json({
-      status: 'success',
+      status: "success",
       token,
       data: {
         user: {
           id: user._id,
           firstName: user.firstName,
           lastName: user.lastName,
-          email: user.email
-        }
-      }
+          email: user.email,
+        },
+      },
     });
   } catch (error) {
     res.status(400).json({
-      status: 'error',
-      message: error.message
+      status: "error",
+      message: error.message,
     });
   }
 };

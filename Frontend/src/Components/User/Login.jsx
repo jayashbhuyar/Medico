@@ -22,17 +22,27 @@ const Auth = () => {
     try {
       const endpoint = isLogin ? '/api/users/login' : '/api/users/register';
       const formData = new FormData();
+      
+      // Add all form fields to FormData
       Object.keys(data).forEach(key => formData.append(key, data[key]));
+      
+      // Add image file if exists
       if (profilePicture) {
-        formData.append('profilePicture', profilePicture);
+        formData.append('image', profilePicture); // Changed from 'profilePicture' to 'image'
+        console.log('Image being sent:', profilePicture); // Debug log
       }
+
+      // Log FormData contents
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[0] === 'image' ? 'File being sent' : pair[1]);
+      }
+
       const response = await axios.post(`http://localhost:8000${endpoint}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      console.log(response);
-      
+
       if (response.data.status === 'success') {
         localStorage.setItem('userData', JSON.stringify(response.data.user));
         localStorage.setItem('userToken', response.data.token);
@@ -43,7 +53,8 @@ const Auth = () => {
         }, 3000);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || `${isLogin ? 'Login' : 'Registration'} failed`);
+      console.error('Error during submission:', error);
+      toast.error(error.response?.data?.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }

@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
     state: String,
     country: String
   },
-  profilePicture: {
+  image: {
     type: String,
     default: ''
   },
