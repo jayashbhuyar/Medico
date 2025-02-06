@@ -383,13 +383,6 @@ const DoctorCard = ({ doctor, distance, onViewProfile, onBooking }) => {
 
         <div className="mt-6 flex gap-2">
           <button
-            onClick={onBooking}
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg 
-                     hover:bg-blue-700 transition duration-300 shadow-md"
-          >
-            Book Appointment
-          </button>
-          <button
             onClick={onViewProfile}
             className="flex-1 border-2 border-blue-600 text-blue-600 py-2 px-4 
                    rounded-lg hover:bg-blue-50 transition duration-300"
