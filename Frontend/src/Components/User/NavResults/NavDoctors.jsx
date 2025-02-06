@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import AppointmentCard from '../../common/AppointmentCard';
 import {
   FaUserMd,
   FaMapMarkerAlt,
@@ -8,7 +9,6 @@ import {
   FaClinicMedical,
   FaClock,
   FaRupeeSign,
-  FaCalendarCheck
 } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,7 +24,7 @@ const NavDoctors = () => {
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
-  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
   const [appointmentData, setAppointmentData] = useState(null);
 
   const daysOfWeek = [
@@ -55,21 +55,7 @@ const NavDoctors = () => {
     }
   };
 
-  const getUserLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
-    }
-  };
+  
 
   // Calculate distance using Haversine formula
   const calculateDistance = (doctorLat, doctorLng) => {
@@ -120,10 +106,7 @@ const NavDoctors = () => {
       return true;
     });
 
-  const handleViewProfile = (doctor) => {
-    setSelectedDoctor(doctor);
-    setShowProfile(true);
-  };
+  
 
   const handleNearMe = () => {
     if (navigator.geolocation) {
@@ -143,9 +126,7 @@ const NavDoctors = () => {
     }
   };
 
-  const handleBooking = () => {
-    toast.info("Please login to book an appointment");
-  };
+  
 
   const calculateAge = (dob) => {
     const birthDate = new Date(dob);
@@ -158,8 +139,8 @@ const NavDoctors = () => {
     return age;
   };
 
-  const handleBookAppointment = (doctor) => {
-    const userData = JSON.parse(localStorage.getItem('userData'));
+  const handleBookAppointment = async (doctor) => {
+    const userData = await JSON.parse(localStorage.getItem('userData'));
     
     if (!userData) {
       toast.error('Please login to book appointment');
@@ -187,24 +168,15 @@ const NavDoctors = () => {
     };
 
     setAppointmentData(appointmentInfo);
-    setShowAppointmentModal(true);
+    setShowBooking(true);
   };
 
-  const confirmAppointment = async () => {
-    try {
-      const response = await axios.post(
-        'http://localhost:8000/api/appointments/create',
-        appointmentData
-      );
-
-      if (response.data.success) {
-        toast.success('Appointment booked successfully!');
-        setShowAppointmentModal(false);
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to book appointment');
-    }
+  const handleViewProfile = (doctor) => {
+    setSelectedDoctor(doctor);
+    setShowProfile(true);
   };
+
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -291,10 +263,7 @@ const NavDoctors = () => {
                       doctor.latitude,
                       doctor.longitude
                     )}
-                    onViewProfile={() => {
-                      setSelectedDoctor(doctor);
-                      setShowProfile(true);
-                    }}
+                    onViewProfile={() => handleViewProfile(doctor)}
                     onBooking={() => handleBookAppointment(doctor)}
                   />
                 </motion.div>
@@ -307,74 +276,37 @@ const NavDoctors = () => {
       {/* Profile Modal */}
       <AnimatePresence>
         {showProfile && selectedDoctor && (
-          <DoctorProfile
-            doctor={selectedDoctor}
-            distance={calculateDistance(
-              selectedDoctor.latitude,
-              selectedDoctor.longitude
-            )}
-            onClose={() => {
-              setShowProfile(false);
-              setSelectedDoctor(null);
-            }}
-          />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-40"
+          >
+            <DoctorProfile
+              doctor={selectedDoctor}
+              distance={calculateDistance(
+                selectedDoctor.latitude,
+                selectedDoctor.longitude
+              )}
+              onClose={() => setShowProfile(false)}
+            />
+          </motion.div>
         )}
       </AnimatePresence>
 
       {/* Appointment Modal */}
       <AnimatePresence>
-        {showAppointmentModal && appointmentData && (
+        {showBooking && selectedDoctor && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+            className="fixed inset-0 bg-black/50 z-50"
           >
-            <motion.div
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.95 }}
-              className="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full mx-4"
-            >
-              <h2 className="text-2xl font-bold mb-6">Confirm Appointment</h2>
-              
-              {/* Patient Information */}
-              <div className="mb-6">
-                <h3 className="font-semibold mb-2">Patient Information</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <p>Name: {appointmentData.firstName} {appointmentData.lastName}</p>
-                  <p>Age: {appointmentData.age}</p>
-                  <p>Email: {appointmentData.email}</p>
-                  <p>Phone: {appointmentData.phone}</p>
-                </div>
-              </div>
-
-              {/* Doctor & Organization Information */}
-              <div className="mb-6">
-                <h3 className="font-semibold mb-2">Appointment Details</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <p>Doctor: {appointmentData.doctorName}</p>
-                  <p>{appointmentData.organizationType}: {appointmentData.organizationName}</p>
-                  
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-4">
-                <button
-                  onClick={() => setShowAppointmentModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmAppointment}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Confirm Appointment
-                </button>
-              </div>
-            </motion.div>
+            <AppointmentCard 
+              doctor={selectedDoctor}
+              onClose={() => setShowBooking(false)}
+            />
           </motion.div>
         )}
       </AnimatePresence>
