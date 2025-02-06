@@ -8,6 +8,7 @@ import {
   FaClinicMedical,
   FaClock,
   FaRupeeSign,
+  FaCalendarCheck
 } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,6 +24,8 @@ const NavDoctors = () => {
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [appointmentData, setAppointmentData] = useState(null);
 
   const daysOfWeek = [
     "Monday",
@@ -144,6 +147,65 @@ const NavDoctors = () => {
     toast.info("Please login to book an appointment");
   };
 
+  const calculateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const month = today.getMonth() - birthDate.getMonth();
+    if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const handleBookAppointment = (doctor) => {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    
+    if (!userData) {
+      toast.error('Please login to book appointment');
+      return;
+    }
+
+    const appointmentInfo = {
+      // Patient Info
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      phone: userData.phone,
+      dateOfBirth: userData.dateOfBirth,
+      age: calculateAge(userData.dateOfBirth),
+      image: userData.image,
+
+      // Organization Info
+      organizationType: doctor.organizationType,
+      organizationName: doctor.organizationName,
+      organizationEmail: doctor.organizationEmail,
+
+      // Doctor Info
+      doctorName: doctor.name,
+      doctorEmail: doctor.email
+    };
+
+    setAppointmentData(appointmentInfo);
+    setShowAppointmentModal(true);
+  };
+
+  const confirmAppointment = async () => {
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/api/appointments/create',
+        appointmentData
+      );
+
+      if (response.data.success) {
+        toast.success('Appointment booked successfully!');
+        setShowAppointmentModal(false);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to book appointment');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       <ToastContainer position="top-right" autoClose={3000} />
@@ -233,9 +295,7 @@ const NavDoctors = () => {
                       setSelectedDoctor(doctor);
                       setShowProfile(true);
                     }}
-                    onBooking={() =>
-                      toast.info("Please login to book appointment")
-                    }
+                    onBooking={() => handleBookAppointment(doctor)}
                   />
                 </motion.div>
               ))}
@@ -260,6 +320,65 @@ const NavDoctors = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* Appointment Modal */}
+      <AnimatePresence>
+        {showAppointmentModal && appointmentData && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full mx-4"
+            >
+              <h2 className="text-2xl font-bold mb-6">Confirm Appointment</h2>
+              
+              {/* Patient Information */}
+              <div className="mb-6">
+                <h3 className="font-semibold mb-2">Patient Information</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <p>Name: {appointmentData.firstName} {appointmentData.lastName}</p>
+                  <p>Age: {appointmentData.age}</p>
+                  <p>Email: {appointmentData.email}</p>
+                  <p>Phone: {appointmentData.phone}</p>
+                </div>
+              </div>
+
+              {/* Doctor & Organization Information */}
+              <div className="mb-6">
+                <h3 className="font-semibold mb-2">Appointment Details</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <p>Doctor: {appointmentData.doctorName}</p>
+                  <p>{appointmentData.organizationType}: {appointmentData.organizationName}</p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => setShowAppointmentModal(false)}
+                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmAppointment}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Confirm Appointment
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <ToastContainer />
     </div>
   );
 };
