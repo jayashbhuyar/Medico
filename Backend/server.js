@@ -15,6 +15,7 @@ const nearbyRoutes = require('./routes/nearbyRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const webReviewRoutes = require('./routes/webReviewRoutes');
 const userRoutes = require('./routes/userRoutes'); // Add this line
+const appointmentRoutes = require('./routes/appointmentRoutes');
 const{validateToken,authenticateToken}=require('./middleware/authMiddleware');
 
 const app = express();
@@ -58,6 +59,8 @@ app.use("/api/user/hospitals", usernavRoutes);
 app.use("api/reviews",reviewRoutes);
 app.use('/api/webreviews', webReviewRoutes);
 app.use('/api/users', userRoutes); // Add this line
+
+app.use('/api/appointments', appointmentRoutes);
 
 // Base route
 app.get("/", (req, res) => {
