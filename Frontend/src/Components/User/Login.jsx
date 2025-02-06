@@ -50,8 +50,8 @@ const Auth = () => {
           secure: true,
           sameSite: 'strict'
         });
-        
-        localStorage.setItem('userData', JSON.stringify(response.data.data.user));
+        console.log(response)
+        localStorage.setItem('userData', JSON.stringify(response.data.user));
         toast.success(isLogin ? 'Login successful!' : 'Registration successful!');
         setShowSuccess(true);
         setTimeout(() => {

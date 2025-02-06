@@ -34,6 +34,7 @@ import Appointments from './Components/Hospital/Appointments'
 import NavClinic from './Components/User/NavResults/NavClinic'
 import HospitalProfile from './Components/Hospital/HospitalProfile'
 import ReviewPage from './Pages/ReviewPage'
+import ProfilePage from './Components/User/ProfilePage'
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
         <Route path="/specialtyresults" element={<SpecialtyResults />} />
         <Route path="/doctorresults" element={<DoctorResults />} />
         <Route path="/hospitalresults" element={<HospitalResults />} />
+        <Route path="/userprofile" element={<ProfilePage />} />
         <Route path="/clinicresults" element={<ClinicResults />} />
         <Route path="/userlogin" element={<UserLogin />} />
         <Route path="/usernavhospitals" element={<Hospitals />} />
