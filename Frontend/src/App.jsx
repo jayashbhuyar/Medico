@@ -40,8 +40,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/abc" element={<Landingpage />} />
-        <Route path="/abc" element={<Landingpage />} />
+        <Route path="/" element={<Landingpage />} />
         <Route path="/doctorpage" element={<DoctorPage />} />
         <Route path="/hospitalregistration" element={<HospitalRegistration />} />
         <Route path="/clinicregistration" element={<ClinicRegistration />} />
