@@ -87,6 +87,42 @@ exports.getHospitalReviews = async (req, res) => {
   }
 };
 
+exports.getClinicReviews = async (req, res) => {
+  // console.log('Get hospital reviews:', req.params); // Debugging log
+
+  try {
+    const { email } = req.params; // Extract email correctly
+    // console.log('Received hospitalEmail:', email);
+
+    const reviews = await Review.find({
+      entityEmail: email, // Use the correct variable
+      entityType: 'Clinic'
+    }).sort({ createdAt: -1 });
+
+    // console.log('Fetched Reviews:', reviews); // Check if data is fetched
+
+    if (reviews.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No reviews found for this clinic'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: reviews
+    });
+
+  } catch (error) {
+    // console.error('Fetch reviews error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error fetching reviews'
+    });
+  }
+};
+
+
 // Get All Reviews
 exports.getReviews = async (req, res) => {
   try {

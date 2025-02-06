@@ -6,6 +6,7 @@ const reviewController = require('../controllers/reviewController');
 router.post('/create', reviewController.createReview);
 router.get('/all', reviewController.getReviews);
 router.get('/hospital/:email', reviewController.getHospitalReviews);
+router.get('/clinic/:email', reviewController.getClinicReviews);
 router.patch('/update/:id', reviewController.updateReview);
 router.delete('/delete/:id', reviewController.deleteReview);
 

@@ -1,167 +1,168 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import {
-  FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn,
-  FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock,
-  FaHeart, FaArrowRight, FaUserMd, FaHospital,
-  FaAmbulance, FaPills, FaCalendarCheck
-} from 'react-icons/fa';
+// {/* <button
+// onClick={() => setShowReviewModal(true)}
+// className="px-6 py-3 bg-green-600 text-white rounded-xl 
+//          hover:bg-green-700 transition-all shadow-sm 
+//          hover:shadow-md font-medium flex items-center 
+//          justify-center gap-2"
+// >
+// <Star className="w-5 h-5" />
+// Add Review
+// </button>
+// <button
+// onClick={fetchHospitalReviews}
+// className="px-6 py-3 bg-blue-600 text-white rounded-xl 
+//          hover:bg-blue-700 transition-all shadow-sm 
+//          hover:shadow-md font-medium flex items-center 
+//          justify-center gap-2"
+// >
+// <MessageSquare className="w-5 h-5" />
+// Show Reviews
+// </button>
 
-const UserFooter = () => {
-  const quickLinks = [
-    { name: "Find a Doctor", icon: <FaUserMd />, path: "/find-doctor" },
-    { name: "Book Appointment", icon: <FaCalendarCheck />, path: "/appointment" },
-    { name: "Emergency Care", icon: <FaAmbulance />, path: "/emergency" },
-    { name: "Our Hospitals", icon: <FaHospital />, path: "/hospitals" },
-    { name: "Online Pharmacy", icon: <FaPills />, path: "/pharmacy" }
-  ];
+// {/* Review Modal */}
+// {showReviewModal && (
+// <div className="fixed inset-0 bg-black bg-opacity-50 z-50 
+// flex items-center justify-center">
+// <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+// <h2 className="text-2xl font-bold mb-4">Write a Review</h2>
+// <div className="space-y-4">
+// <div>
+// <label className="block mb-2">Rating</label>
+// <div className="flex gap-2">
+// {[1, 2, 3, 4, 5].map((star) => (
+// <button
+// key={star}
+// onClick={() => setRating(star)}
+// className={`text-2xl ${
+// rating >= star ? 'text-yellow-400' : 'text-gray-300'
+// }`}
+// >
+// ★
+// </button>
+// ))}
+// </div>
+// </div>
+// <div>
+// <label className="block mb-2">Review</label>
+// <textarea
+// value={reviewText}
+// onChange={(e) => setReviewText(e.target.value)}
+// className="w-full p-2 border rounded-lg"
+// rows="4"
+// placeholder="Write your review here..."
+// />
+// </div>
+// <div className="flex gap-4">
+// <button
+// onClick={() => {
+// setShowReviewModal(false);
+// setRating(0);
+// setReviewText('');
+// }}
+// className="flex-1 py-2 bg-gray-100 rounded-lg"
+// >
+// Cancel
+// </button>
+// <button
+// onClick={handleReviewSubmit}
+// disabled={!rating || !reviewText}
+// className="flex-1 py-2 bg-blue-600 text-white rounded-lg 
+//  disabled:bg-gray-300"
+// >
+// Submit Review
+// </button>
+// </div>
+// </div>
+// </div>
+// </div>
+// )}
 
-  const services = [
-    "Primary Care", "Specialty Care", "Emergency Services",
-    "Mental Health", "Dental Care", "Pediatrics",
-    "Laboratory Services", "Radiology"
-  ];
+// {/* Reviews Display Modal */}
+// {showReviews && (
+// <div className="fixed inset-0 bg-black bg-opacity-50 z-50 
+// flex items-center justify-center">
+// <div className="bg-white rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[80vh] overflow-y-auto">
+// <div className="flex justify-between items-center mb-4">
+// <h2 className="text-2xl font-bold">Hospital Reviews</h2>
+// <button
+// onClick={() => setShowReviews(false)}
+// className="text-gray-500 hover:text-gray-700"
+// >
+// ✕
+// </button>
+// </div>
+// <div className="space-y-4">
+// {hospitalReviews.map((review) => (
+// <div key={review._id} className="bg-gray-50 p-4 rounded-lg">
+// <div className="flex items-center justify-between mb-2">
+// <div className="text-yellow-400">
+// {'★'.repeat(review.rating)}
+// {'☆'.repeat(5 - review.rating)}
+// </div>
+// <div className="text-sm text-gray-500">
+// {new Date(review.createdAt).toLocaleDateString()}
+// </div>
+// </div>
+// <p className="text-gray-700">{review.text}</p>
+// <p className="text-sm text-gray-500 mt-2">
+// By: {review.reviewerEmail}
+// </p>
+// </div>
+// ))}
+// {hospitalReviews.length === 0 && (
+// <p className="text-center text-gray-500">No reviews yet</p>
+// )}
+// </div>
+// {/* <ToastContainer /> */}
+// </div>
+// </div>
+// )}
+// </div>
+// const fetchHospitalReviews = async (hospital) => {
+// try {
+// setSelectedHospital(hospital);
+// const response = await axios.get(
+// `http://localhost:8000/api/v1/reviews/hospital/${hospital.email}`
+// );
+// setHospitalReviews(response.data.data);
+// console.log(response.data.data);
+// setShowReviews(true);
+// } catch (error) {
+// toast.error("Failed to fetch reviews");
+// }
+// };
+// const handleReviewSubmit = async () => {
+// const userData = JSON.parse(localStorage.getItem("userData"));
 
-  return (
-    <footer className="bg-gradient-to-b from-blue-50 to-white">
-      {/* Newsletter Section */}
-      <div className="max-w-7xl mx-auto px-4 pt-16">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-8 md:p-12 shadow-xl">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="text-white max-w-xl">
-              <h2 className="text-3xl font-bold mb-4">Subscribe to Our Newsletter</h2>
-              <p className="opacity-90">Stay updated with the latest medical news, health tips, and special offers.</p>
-            </div>
-            <div className="w-full md:w-auto">
-              <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto md:mx-0">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white 
-                    placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
-                />
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-white text-blue-600 rounded-xl font-semibold
-                    hover:shadow-lg transition-all duration-300"
-                >
-                  Subscribe
-                </motion.button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+// if (!userData) {
+// toast.error("Please login to submit review");
+// return;
+// }
 
-      {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Company Info */}
-          <div>
-            <Link to="/" className="inline-block mb-6">
-              <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 
-                bg-clip-text text-transparent">Medico</span>
-            </Link>
-            <p className="text-gray-600 mb-6">
-              Providing quality healthcare services with a commitment to excellence and compassion.
-            </p>
-            <div className="flex gap-4">
-              {[FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn].map((Icon, index) => (
-                <motion.a
-                  key={index}
-                  href="#"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 
-                    text-white flex items-center justify-center hover:shadow-lg transition-shadow"
-                >
-                  <Icon />
-                </motion.a>
-              ))}
-            </div>
-          </div>
+// try {
+// const reviewData = {
+// reviewerEmail: userData.email,
+// userType: "User",
+// entityType: "Hospital",
+// entityEmail: selectedHospital.email,
+// rating,
+// text: reviewText,
+// };
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-6">Quick Links</h3>
-            <ul className="space-y-4">
-              {quickLinks.map((link) => (
-                <motion.li
-                  key={link.name}
-                  whileHover={{ x: 5 }}
-                >
-                  <Link
-                    to={link.path}
-                    className="flex items-center text-gray-600 hover:text-blue-600 transition-colors"
-                  >
-                    <span className="mr-2">{link.icon}</span>
-                    {link.name}
-                  </Link>
-                </motion.li>
-              ))}
-            </ul>
-          </div>
+// const response = await axios.post(  
+// "http://localhost:8000/api/v1/reviews/create",
+// reviewData
+// );
 
-          {/* Services */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-6">Our Services</h3>
-            <div className="grid grid-cols-1 gap-3">
-              {services.map((service) => (
-                <motion.div
-                  key={service}
-                  whileHover={{ x: 5 }}
-                  className="flex items-center text-gray-600 hover:text-blue-600 transition-colors"
-                >
-                  <FaArrowRight className="mr-2 text-sm" />
-                  <span>{service}</span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
 
-          {/* Contact Info */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-6">Contact Us</h3>
-            <div className="space-y-4">
-              {[
-                { icon: <FaPhoneAlt />, text: "+1 (555) 123-4567", label: "Emergency Helpline:" },
-                { icon: <FaEnvelope />, text: "contact@medico.com", label: "Email:" },
-                { icon: <FaMapMarkerAlt />, text: "123 Healthcare Ave, Medical District, NY 10001", label: "Location:" },
-                { icon: <FaClock />, text: "24/7 Emergency Services", label: "Hours:" }
-              ].map((item) => (
-                <div key={item.label} className="flex items-start">
-                  <span className="text-blue-600 mt-1 mr-3">{item.icon}</span>
-                  <div>
-                    <span className="text-gray-800 font-medium">{item.label}</span>
-                    <p className="text-gray-600">{item.text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-600 text-center md:text-left">
-              © {new Date().getFullYear()} Medico. All rights reserved. Made with{' '}
-              <FaHeart className="inline text-red-500 mx-1" /> for better healthcare
-            </p>
-            <div className="flex gap-6 text-gray-600">
-              <Link to="/privacy" className="hover:text-blue-600 transition-colors">Privacy Policy</Link>
-              <Link to="/terms" className="hover:text-blue-600 transition-colors">Terms of Service</Link>
-              <Link to="/sitemap" className="hover:text-blue-600 transition-colors">Sitemap</Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-};
-
-export default UserFooter;
+// if (response.data.success) {
+// toast.success("Review submitted successfully!");
+// setShowReviewModal(false);
+// setRating(0);
+// setReviewText("");
+// }
+// } catch (error) {
+// toast.error(error.response?.data?.message || "Failed to submit review");
+// }
+// };
+//  */}
