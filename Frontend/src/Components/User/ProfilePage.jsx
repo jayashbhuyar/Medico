@@ -7,132 +7,187 @@ import {
 
 const ProfilePage = () => {
   const [userData, setUserData] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const storedData = localStorage.getItem('userData');
-    if (storedData) {
-      setUserData(JSON.parse(storedData));
+    try {
+      const storedData = localStorage.getItem('userData');
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        if (typeof parsedData === 'object' && parsedData !== null) {
+          setUserData(parsedData);
+        } else {
+          setError('Invalid user data format');
+        }
+      } else {
+        setError('No user data found');
+      }
+    } catch (err) {
+      setError('Error loading user data');
+      console.error('Error:', err);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  if (!userData) return <div>Loading...</div>;
+  const renderNotificationPreferences = () => {
+    if (!userData?.notificationPreferences) return null;
+    
+    return Object.entries(userData.notificationPreferences).map(([key, value]) => (
+      <div key={key} className="flex items-center justify-between">
+        <span className="text-gray-600 capitalize">{key}</span>
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            checked={!!value}
+            readOnly
+            className="sr-only peer"
+          />
+          <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 
+                         peer-checked:after:translate-x-full after:content-[''] after:absolute 
+                         after:top-[2px] after:left-[2px] after:bg-white after:rounded-full 
+                         after:h-5 after:w-5 after:transition-all">
+          </div>
+        </label>
+      </div>
+    ));
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
+
+  if (!userData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-500">No user data available</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8">
-      <div className="container mx-auto px-4">
-        {/* Profile Header */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 h-64">
+        <div className="container mx-auto px-4 h-full flex items-end pb-16">
+          <h1 className="text-4xl font-bold text-white">Profile</h1>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 -mt-16">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8"
+          className="bg-white rounded-2xl shadow-xl p-6 md:p-8"
         >
-          <div className="relative h-48 bg-gradient-to-r from-blue-600 to-indigo-600">
-            <div className="absolute inset-0 bg-black/20"></div>
-            
+          {/* Profile Header */}
+          <div className="flex flex-col md:flex-row items-start gap-8 mb-8">
             {/* Profile Image */}
-            <div className="absolute -bottom-16 left-8">
-              <div className="relative w-32 h-32">
-                {userData.image ? (
-                  <img
-                    src={userData.image}
-                    alt={`${userData.firstName} ${userData.lastName}`}
-                    className="w-full h-full rounded-full object-cover border-4 border-white shadow-xl"
-                  />
+            <div className="relative group">
+              <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gradient-to-r from-blue-100 to-indigo-100">
+                {userData?.image ? (
+                  <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full rounded-full bg-blue-100 border-4 border-white shadow-xl 
-                                flex items-center justify-center">
-                    <FaUser className="w-12 h-12 text-blue-600" />
+                  <div className="w-full h-full flex items-center justify-center">
+                    <FaUser className="w-12 h-12 text-blue-400" />
                   </div>
                 )}
               </div>
             </div>
 
             {/* User Info */}
-            <div className="absolute bottom-0 left-0 right-0 p-8 pl-44 bg-gradient-to-t from-black/60">
-              <h1 className="text-4xl font-bold text-white mb-2">
-                {`${userData.firstName} ${userData.lastName}`}
-              </h1>
-              <p className="text-blue-100">{userData.email}</p>
+            <div className="flex-1">
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                {`${userData?.firstName || ''} ${userData?.lastName || ''}`}
+              </h2>
+              <p className="text-gray-500 flex items-center gap-2">
+                <FaEnvelope />
+                {userData?.email}
+              </p>
+            </div>
+          </div>
+
+          {/* Info Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Personal Info Card */}
+            <div className="lg:col-span-2 bg-gray-50 rounded-xl p-6">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+                <FaUser className="text-blue-600" />
+                Personal Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {userData?.phone && (
+                  <InfoField icon={<FaPhone className="text-blue-600" />} label="Phone" value={userData.phone} />
+                )}
+                {userData?.dateOfBirth && (
+                  <InfoField 
+                    icon={<FaCalendar className="text-blue-600" />} 
+                    label="Date of Birth" 
+                    value={new Date(userData.dateOfBirth).toLocaleDateString()} 
+                  />
+                )}
+                {userData?.gender && (
+                  <InfoField icon={<FaMars className="text-blue-600" />} label="Gender" value={userData.gender} />
+                )}
+                {Object.keys(userData?.address || {}).length > 0 ? (
+                  <InfoField 
+                    icon={<FaHome className="text-blue-600" />} 
+                    label="Address" 
+                    value={userData.address} 
+                  />
+                ) : (
+                  <InfoField 
+                    icon={<FaHome className="text-blue-600" />} 
+                    label="Address" 
+                    value="Not provided" 
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Notifications Card */}
+            <div className="bg-gray-50 rounded-xl p-6">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+                <FaBell className="text-blue-600" />
+                Notifications
+              </h3>
+              <div className="space-y-4">
+                {renderNotificationPreferences()}
+              </div>
             </div>
           </div>
         </motion.div>
-
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Personal Information */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-2"
-          >
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Personal Information</h2>
-                <button
-                  onClick={() => setIsEditing(!isEditing)}
-                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                >
-                  <FaEdit />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InfoField icon={<FaPhone />} label="Phone" value={userData.phone} />
-                <InfoField icon={<FaCalendar />} label="Date of Birth" value={new Date(userData.dateOfBirth).toLocaleDateString()} />
-                <InfoField icon={<FaMars />} label="Gender" value={userData.gender} />
-                <InfoField icon={<FaHome />} label="Address" value={userData.address} />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Notification Preferences */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <FaBell className="text-blue-600" />
-                Notification Preferences
-              </h2>
-              
-              <div className="space-y-4">
-                {Object.entries(userData.notificationPreferences).map(([key, value]) => (
-                  <div key={key} className="flex items-center justify-between">
-                    <span className="text-gray-600 capitalize">{key}</span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={value}
-                        className="sr-only peer"
-                        onChange={() => {}}
-                      />
-                      <div className={`w-11 h-6 bg-gray-200 rounded-full peer 
-                        peer-checked:after:translate-x-full peer-checked:bg-blue-600
-                        after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-                        after:bg-white after:rounded-full after:h-5 after:w-5 
-                        after:transition-all`}>
-                      </div>
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </div>
       </div>
     </div>
   );
 };
 
+// InfoField component
 const InfoField = ({ icon, label, value }) => (
-  <div>
-    <label className="text-sm text-gray-600 mb-1 flex items-center gap-2">
-      {icon}
-      {label}
-    </label>
-    <p className="text-lg font-medium text-gray-900">{value}</p>
+  <div className="flex items-start gap-3">
+    <div className="mt-1">{icon}</div>
+    <div>
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className="font-medium text-gray-900">
+        {typeof value === 'object' ? 
+          (Object.keys(value).length === 0 ? 'Not provided' : JSON.stringify(value)) 
+          : value}
+      </p>
+    </div>
   </div>
 );
 

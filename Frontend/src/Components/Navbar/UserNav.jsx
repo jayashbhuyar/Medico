@@ -84,7 +84,7 @@ const UserNav = () => {
     localStorage.removeItem('userData');
     setIsAuthenticated(false);
     setUserData(null);
-    navigate('/');
+    navigate('/patientpage');
   };
 
   const navItems = [
@@ -283,7 +283,7 @@ const UserNav = () => {
                         
                         <div className="p-2">
                           <Link
-                            to="/profile"
+                            to="/userprofile"
                             className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors"
                           >
                             <FaUser className="text-blue-600" />
@@ -347,19 +347,11 @@ const UserNav = () => {
                         
                         <div className="p-2">
                           <Link
-                            to="/profile"
+                            to="/userprofile"
                             className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors"
                           >
                             <FaUser className="text-blue-600" />
                             <span>Profile</span>
-                          </Link>
-                          
-                          <Link
-                            to="/settings"
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors"
-                          >
-                            <FaCog className="text-blue-600" />
-                            <span>Settings</span>
                           </Link>
                           
                           <button
