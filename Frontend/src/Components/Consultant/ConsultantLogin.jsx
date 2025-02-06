@@ -63,7 +63,7 @@ function ConsultantLogin() {
           toast.success('Login successful!', { duration: 2000, position: 'top-right' });
 
           console.log("🚀 Navigating to dashboard...");
-          navigate('/consltant/dashboard');
+          navigate('/consultant/dashboard');
         } else {
           console.warn("⚠️ No token received:", message);
           toast.error(message || 'Login failed!');
