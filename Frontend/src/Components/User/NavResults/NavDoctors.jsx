@@ -180,140 +180,143 @@ const NavDoctors = () => {
   
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      <ToastContainer position="top-right" autoClose={3000} />
+    <>
+      <UserNav />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 mt-16">
+        <ToastContainer position="top-right" autoClose={3000} />
 
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            Find Your Doctor
-          </h1>
-          <p className="text-blue-100">
-            Connect with the best healthcare professionals
-          </p>
-        </div>
-      </div>
-
-      {/* Filters Section */}
-      <div className="sticky top-0 z-30 bg-white border-b shadow-md">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-2 py-1 text-xs md:text-sm rounded border border-gray-300 focus:border-blue-500 outline-none"
-            >
-              <option value="">Sort By</option>
-              <option value="experience">Experience</option>
-              <option value="fees">Consultation Fees</option>
-              <option value="distance">Distance</option>
-            </select>
-
-            <select
-              value={selectedDay}
-              onChange={(e) => setSelectedDay(e.target.value)}
-              className="px-2 py-1 text-xs md:text-sm rounded border border-gray-300 focus:border-blue-500 outline-none"
-            >
-              <option value="">Available Days</option>
-              {daysOfWeek.map((day) => (
-                <option key={day} value={day}>
-                  {day}
-                </option>
-              ))}
-            </select>
+        {/* Hero Section */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-8">
+          <div className="max-w-7xl mx-auto px-4">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+              Find Your Doctor
+            </h1>
+            <p className="text-blue-100">
+              Connect with the best healthcare professionals
+            </p>
           </div>
+        </div>
 
-          <button
-            onClick={handleNearMe}
-            className="px-3 py-1 text-xs md:text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 
+        {/* Filters Section */}
+        <div className="sticky top-0 z-30 bg-white border-b shadow-md">
+          <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-2 py-1 text-xs md:text-sm rounded border border-gray-300 focus:border-blue-500 outline-none"
+              >
+                <option value="">Sort By</option>
+                <option value="experience">Experience</option>
+                <option value="fees">Consultation Fees</option>
+                <option value="distance">Distance</option>
+              </select>
+
+              <select
+                value={selectedDay}
+                onChange={(e) => setSelectedDay(e.target.value)}
+                className="px-2 py-1 text-xs md:text-sm rounded border border-gray-300 focus:border-blue-500 outline-none"
+              >
+                <option value="">Available Days</option>
+                {daysOfWeek.map((day) => (
+                  <option key={day} value={day}>
+                    {day}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              onClick={handleNearMe}
+              className="px-3 py-1 text-xs md:text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 
                  transition-all flex items-center shadow-md hover:shadow-lg"
-          >
-            <FaMapMarkerAlt size={14} className="text-white" />
-            <span className="ml-1">Near Me</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Results Section */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {loading ? (
-          <div className="flex justify-center items-center min-h-[400px]">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600"></div>
+            >
+              <FaMapMarkerAlt size={14} className="text-white" />
+              <span className="ml-1">Near Me</span>
+            </button>
           </div>
-        ) : error ? (
-          <div className="text-center text-red-500 py-8">{error}</div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            <AnimatePresence>
-              {sortedDoctors.map((doctor) => (
-                <motion.div
-                  key={doctor._id}
-                  layout
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <DoctorCard
-                    doctor={doctor}
-                    distance={calculateDistance(
-                      doctor.latitude,
-                      doctor.longitude
-                    )}
-                    onViewProfile={() => handleViewProfile(doctor)}
-                    onBooking={() => handleBookAppointment(doctor)}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        )}
+        </div>
+
+        {/* Results Section */}
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          {loading ? (
+            <div className="flex justify-center items-center min-h-[400px]">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-500 py-8">{error}</div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              <AnimatePresence>
+                {sortedDoctors.map((doctor) => (
+                  <motion.div
+                    key={doctor._id}
+                    layout
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <DoctorCard
+                      doctor={doctor}
+                      distance={calculateDistance(
+                        doctor.latitude,
+                        doctor.longitude
+                      )}
+                      onViewProfile={() => handleViewProfile(doctor)}
+                      onBooking={() => handleBookAppointment(doctor)}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Profile Modal */}
+        <AnimatePresence>
+          {showProfile && selectedDoctor && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-40"
+            >
+              <DoctorProfile
+                doctor={selectedDoctor}
+                distance={calculateDistance(
+                  selectedDoctor.latitude,
+                  selectedDoctor.longitude
+                )}
+                onClose={() => setShowProfile(false)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Appointment Modal */}
+        <AnimatePresence>
+          {showBooking && selectedDoctor && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50"
+            >
+              <AppointmentCard
+                doctor={selectedDoctor}
+                onClose={() => setShowBooking(false)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <ToastContainer />
       </div>
-
-      {/* Profile Modal */}
-      <AnimatePresence>
-        {showProfile && selectedDoctor && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-40"
-          >
-            <DoctorProfile
-              doctor={selectedDoctor}
-              distance={calculateDistance(
-                selectedDoctor.latitude,
-                selectedDoctor.longitude
-              )}
-              onClose={() => setShowProfile(false)}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Appointment Modal */}
-      <AnimatePresence>
-        {showBooking && selectedDoctor && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50"
-          >
-            <AppointmentCard 
-              doctor={selectedDoctor}
-              onClose={() => setShowBooking(false)}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <ToastContainer />
-    </div>
+    </>
   );
 };
 

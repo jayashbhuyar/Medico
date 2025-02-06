@@ -5,6 +5,7 @@ import {
   FaAmbulance, FaSearch, FaChevronDown, FaComments,
   FaUserCircle, FaHospital, FaCalendarAlt 
 } from 'react-icons/fa';
+import UserNav from '../../Navbar/UserNav';
 
 const Help = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -51,6 +52,7 @@ const Help = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-20 px-4">
+      <UserNav />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div 

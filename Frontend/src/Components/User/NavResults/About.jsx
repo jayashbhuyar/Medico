@@ -4,6 +4,7 @@ import {
   FaHospital, FaUserMd, FaUsers, FaAward, 
   FaBullseye, FaHandHoldingMedical, FaHeartbeat 
 } from 'react-icons/fa';
+import UserNav from '../../Navbar/UserNav';
 
 const About = () => {
   const stats = [
@@ -33,6 +34,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-16">
+      <UserNav />
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         <motion.div 

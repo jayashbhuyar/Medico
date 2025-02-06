@@ -20,6 +20,7 @@ import axios from "axios";
 // import { toast } from "react-toastify";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserNav from '../../Navbar/UserNav';
 
 const Hospitals = () => {
   const [hospitals, setHospitals] = useState([]);
@@ -329,6 +330,7 @@ const Hospitals = () => {
 
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
+      <UserNav />
       <ToastContainer
         position="top-right"
         autoClose={3000}

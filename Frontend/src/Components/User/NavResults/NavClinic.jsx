@@ -11,6 +11,7 @@ import {
   Star,
   MessageSquare,
 } from "lucide-react";
+import UserNav from '../../Navbar/UserNav';
 
 // Add these utility functions at the top of the file
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -191,6 +192,7 @@ const NavClinic = () => {
   // Update main component return
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-white">
+      <UserNav />
       <ToastContainer
         position="top-right"
         autoClose={3000}
