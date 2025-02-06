@@ -47,7 +47,6 @@ import axios from 'axios';
 const HealthcareSearch = () => {
   const [count, setCount] = useState({ doctors: 0, patients: 0, hospitals: 0 });
   const [selectedSpecialty, setSelectedSpecialty] = useState(null);
-  const [location, setLocation] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState("doctor");
   const [isSpecialtyDropdownOpen, setIsSpecialtyDropdownOpen] = useState(false);
@@ -56,11 +55,7 @@ const HealthcareSearch = () => {
   const [hospitalSearch, setHospitalSearch] = useState("");
   const [clinicSearch, setClinicSearch] = useState("");
   const [userLocation, setUserLocation] = useState(null);
-  const [locationPermission, setLocationPermission] = useState("prompt");
-  const [searchMode, setSearchMode] = useState("search"); // 'search' or 'nearme'
-  const [userCoordinates, setUserCoordinates] = useState(null);
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [review, setReview] = useState("");
@@ -272,31 +267,6 @@ const HealthcareSearch = () => {
     { icon: <FaTooth />, name: "Dental" },
     { icon: <FaEye />, name: "Eye Care" },
     { icon: <FaStethoscope />, name: "General Medicine" },
-    // { icon: <FaLungs />, name: "Pulmonology" },
-    // { icon: <FaSyringe />, name: 'Vaccination' },
-    // { icon: <FaUserMd />, name: 'Internal Medicine' },
-    // { icon: <FaBaby />, name: 'Pediatrics' },
-    // { icon: <FaAmbulance />, name: 'Emergency Medicine' },
-    // { icon: <FaMicroscope />, name: 'Pathology' },
-    // { icon: <FaWeight />, name: 'Obesity & Nutrition' },
-    // { icon: <FaHeadSideCough />, name: 'ENT (Ear, Nose & Throat)' },
-    // { icon: <FaFirstAid />, name: 'First Aid' },
-    // { icon: <FaHandHoldingHeart />, name: 'Cardiothoracic Surgery' },
-    // { icon: <FaShieldAlt />, name: 'Immunology' },
-    // { icon: <FaCapsules />, name: 'Pharmacology' },
-    // { icon: <FaTooth />, name: 'Orthodontics' },
-    // { icon: <FaMicroscope />, name: 'Microbiology' },
-    // { icon: <FaSyringe />, name: 'Anesthesiology' },
-    // { icon: <FaBrain />, name: 'Psychiatry' },
-    // { icon: <FaStethoscope />, name: 'Geriatrics' },
-    // { icon: <FaUserMd />, name: 'Rheumatology' },
-    // { icon: <FaAmbulance />, name: 'Trauma Care' },
-    // { icon: <FaHeart />, name: 'Vascular Surgery' },
-    // { icon: <FaEye />, name: 'Ophthalmology' },
-    // { icon: <FaHandHoldingHeart />, name: 'Cardiac Surgery' },
-    // { icon: <FaWeight />, name: 'Endocrinology' },
-    // { icon: <FaMicroscope />, name: 'Genetics' },
-    // { icon: <FaStethoscope />, name: 'Family Medicine' },
   ];
 
   const specialtyOptions = [

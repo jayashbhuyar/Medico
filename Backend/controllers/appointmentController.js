@@ -90,3 +90,18 @@ exports.deleteAppointment = async (req, res) => {
     });
   }
 };
+
+exports.getAppointmentsByEmail = async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ success: false, message: 'Email is required' });
+  }
+
+  try {
+    const appointments = await Appointment.find({ organizationEmail: email });
+    res.status(200).json({ success: true, data: appointments });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+};

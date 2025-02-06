@@ -9,61 +9,72 @@ import axios from 'axios';
 import HospitalNavbar from '../Navbar/HospitalNav';
 
 const Appointments = () => {
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-    const [selectedStatus, setSelectedStatus] = useState('pending');
+    const [selectedDate, setSelectedDate] = useState('all');
+    const [selectedStatus, setSelectedStatus] = useState('all');
     const [expandedDoctor, setExpandedDoctor] = useState(null);
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchDoctors = async () => {
+        const fetchAppointments = async () => {
             try {
                 const hospitalData = JSON.parse(localStorage.getItem('hospitalData'));
                 const response = await axios.get(
-                    `http://localhost:8000/api/doctors/organization/${hospitalData.id}`,
-                    { withCredentials: false }
+                    `http://localhost:8000/api/appointments/all?email=${hospitalData.email}`
                 );
-                
+
                 if (response.data.success) {
-                    // Add mock appointments to each doctor
-                    const doctorsWithAppointments = response.data.doctors.map(doctor => ({
-                        ...doctor,
-                        appointments: [
-                            {
-                                id: 1,
-                                patientName: "Alice Johnson",
-                                time: "09:00 AM",
-                                status: "pending",
-                                phone: "+1234567890",
-                                email: "alice@example.com"
-                            },
-                            {
-                                id: 2,
-                                patientName: "Bob Wilson",
-                                time: "10:00 AM",
-                                status: "completed",
-                                phone: "+1234567891",
-                                email: "bob@example.com"
-                            }
-                        ]
-                    }));
-                    console.log(doctorsWithAppointments);
-                    setDoctors(doctorsWithAppointments);
+                    // Group appointments by doctor
+                    const appointmentsByDoctor = response.data.data.reduce((acc, appointment) => {
+                        const doctorEmail = appointment.doctorEmail;
+                        if (!acc[doctorEmail]) {
+                            acc[doctorEmail] = {
+                                _id: doctorEmail,
+                                name: appointment.doctorName,
+                                appointments: []
+                            };
+                        }
+                        acc[doctorEmail].appointments.push({
+                            id: appointment._id,
+                            patientName: `${appointment.firstName} ${appointment.lastName}`,
+                            time: `${appointment.timeSlots.start} - ${appointment.timeSlots.end}`,
+                            status: appointment.status.toLowerCase(),
+                            phone: appointment.phone,
+                            email: appointment.email,
+                            appointmentDate: new Date(appointment.appointmentDate).toLocaleDateString(),
+                            age: appointment.age
+                        });
+                        return acc;
+                    }, {});
+
+                    setDoctors(Object.values(appointmentsByDoctor));
                 }
             } catch (err) {
-                setError('Failed to fetch doctors');
-                console.error(err);
+                setError('Failed to fetch appointments');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchDoctors();
+        fetchAppointments();
     }, []);
 
-    const filteredAppointments = (doctorAppointments) => {
-        return doctorAppointments.filter(apt => apt.status === selectedStatus);
+    const filteredAppointments = (appointments) => {
+        return appointments.filter(appointment => {
+            // Convert selected date to match appointment date format
+            const formattedSelectedDate = selectedDate === 'all' ? 
+                'all' : 
+                new Date(selectedDate).toLocaleDateString();
+
+            // Compare dates and status
+            const dateMatches = selectedDate === 'all' || 
+                appointment.appointmentDate === formattedSelectedDate;
+            const statusMatches = selectedStatus === 'all' || 
+                appointment.status === selectedStatus;
+
+            return dateMatches && statusMatches;
+        });
     };
 
     if (loading) {
@@ -100,7 +111,7 @@ const Appointments = () => {
                             <input
                                 type="date"
                                 value={selectedDate}
-                                onChange={(e) => setSelectedDate(e.target.value)}
+                                onChange={(e) => setSelectedDate(e.target.value || 'all')}
                                 className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
@@ -120,7 +131,7 @@ const Appointments = () => {
                     <div className="flex flex-col items-center justify-center py-12">
                         <FaUserMd className="text-gray-400 text-5xl mb-4" />
                         <h2 className="text-xl font-semibold text-gray-700 mb-2">No Doctors Found</h2>
-                        <p className="text-gray-500">There are currently no doctors registered with this hospital.</p>
+                        <p className="text-gray-500">There are currently no appointments.</p>
                     </div>
                 ) : (
                     <div className="space-y-6">
@@ -142,20 +153,9 @@ const Appointments = () => {
                                             </div>
                                             <div>
                                                 <h3 className="text-lg font-semibold text-gray-800">{doctor.name}</h3>
-                                                <div className="flex items-center space-x-4 text-sm text-gray-600">
-                                                    <span className="flex items-center">
-                                                        <FaStethoscope className="mr-1" />
-                                                        {doctor.specialties.join(', ')}
-                                                    </span>
-                                                    <span className="flex items-center">
-                                                        <FaClock className="mr-1" />
-                                                        {doctor.timeSlots.start} - {doctor.timeSlots.end}
-                                                    </span>
-                                                    <span className="flex items-center">
-                                                        <FaCalendarAlt className="mr-1" />
-                                                        {doctor.availableDays.join(', ')}
-                                                    </span>
-                                                </div>
+                                                <p className="text-sm text-gray-600">
+                                                    {doctor.appointments.length} appointments
+                                                </p>
                                             </div>
                                         </div>
                                         <motion.div
