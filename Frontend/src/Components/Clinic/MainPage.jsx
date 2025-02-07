@@ -9,7 +9,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts';
-import HospitalNavbar from '../Navbar/ClinicNav';
+// import HospitalNavbar from '../Navbar/ClinicNav';
 import ClinicNav from '../Navbar/ClinicNav';
 
 const appointmentData = [
