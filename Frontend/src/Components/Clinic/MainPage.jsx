@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import {
   FaUserMd,
@@ -44,12 +46,13 @@ const patientStats = [
 // const clinicData=JSON.parse(localStorage.getItem('clinicData'));
 function ClinicDashboard() {
   const [dashboardData, setDashboardData] = useState({
-    todayPatients: 0,
-    appointments: 0,
+    totalDoctors: 0,
+    todayAppointments: 0,
     totalPatients: 0,
     revenue: 0,
-    weeklyAppointments: [],
-    patientDistribution: [],
+    weeklyStats: [],
+    statusStats: [],
+    recentActivities: [],
   });
   const [loading, setLoading] = useState(true);
 
@@ -61,13 +64,28 @@ function ClinicDashboard() {
           throw new Error("Clinic data not found");
         }
 
-        const response = await axios.get(
-          `http://localhost:8000/api/clinic/dashboard/${clinicData.email}`,
+        // Fetch total doctors
+        const doctorsResponse = await axios.get(
+          `http://localhost:8000/api/clinic/doctors/count/${clinicData.email}`,
           { withCredentials: true }
         );
 
-        if (response.data.success) {
-          setDashboardData(response.data.data);
+        // Fetch appointments stats
+        const appointmentsResponse = await axios.get(
+          `http://localhost:8000/api/clinic/stats/${clinicData.email}`,
+          { withCredentials: true }
+        );
+
+        if (doctorsResponse.data.success && appointmentsResponse.data.success) {
+          setDashboardData({
+            totalDoctors: doctorsResponse.data.count,
+            todayAppointments: appointmentsResponse.data.pendingCount,
+            totalPatients: appointmentsResponse.data.completedCount,
+            revenue: appointmentsResponse.data.completedRevenue,
+            weeklyStats: appointmentsResponse.data.weeklyStats,
+            statusStats: appointmentsResponse.data.statusStats,
+            recentActivities: appointmentsResponse.data.recentActivities,
+          });
         }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -109,80 +127,78 @@ function ClinicDashboard() {
         {/* Updated Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatsCard
-            icon={<FaUserInjured className="text-blue-500" />}
-            title="Today's Patients"
-            value={dashboardData.todayPatients}
-            trend={`${(
-              (dashboardData.todayPatients / dashboardData.yesterdayPatients -
-                1) *
-              100
-            ).toFixed(1)}%`}
+            title="Total Doctors"
+            value={dashboardData.totalDoctors}
+            icon={<FaUserMd />}
+            color="blue"
           />
           <StatsCard
-            icon={<FaCalendarCheck className="text-green-500" />}
-            title="Total Appointments"
-            value={dashboardData.appointments}
-            trend={`${(
-              (dashboardData.appointments / dashboardData.lastWeekAppointments -
-                1) *
-              100
-            ).toFixed(1)}%`}
+            title="Pending Appointments"
+            value={dashboardData.todayAppointments}
+            icon={<FaCalendarCheck />}
+            color="green"
           />
           <StatsCard
-            icon={<FaUserMd className="text-purple-500" />}
             title="Total Patients"
             value={dashboardData.totalPatients}
-            trend={`+${dashboardData.newPatients} new`}
+            icon={<FaUserInjured />}
+            color="purple"
           />
           <StatsCard
-            icon={<FaChartLine className="text-indigo-500" />}
             title="Revenue"
-            value={`₹${dashboardData.revenue.toLocaleString()}`}
-            trend={`${dashboardData.revenueTrend}%`}
+            value={`₹${dashboardData.revenue?.toLocaleString() || "0"}`}
+            icon={<FaChartLine />}
+            color="indigo"
           />
         </div>
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Weekly Appointments</h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-6 rounded-xl shadow-lg"
+          >
+            <h3 className="text-lg font-semibold mb-4">Weekly Appointments</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={dashboardData.weeklyAppointments}>
+              <AreaChart data={dashboardData.weeklyStats}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
                 <Area
                   type="monotone"
-                  dataKey="count"
-                  stroke="#3B82F6"
-                  fill="#93C5FD"
+                  dataKey="appointments"
+                  stroke="#6366F1"
+                  fill="#818CF8"
                 />
               </AreaChart>
             </ResponsiveContainer>
-          </div>
+          </motion.div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Patient Distribution</h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-6 rounded-xl shadow-lg"
+          >
+            <h3 className="text-lg font-semibold mb-4">Appointment Status</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={dashboardData.patientDistribution}
-                  cx="50%"
-                  cy="50%"
+                  data={dashboardData.statusStats}
                   innerRadius={60}
                   outerRadius={80}
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {dashboardData.patientDistribution.map((entry, index) => (
+                  {dashboardData.statusStats.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
-          </div>
+          </motion.div>
         </div>
 
         {/* Quick Actions */}
@@ -208,18 +224,22 @@ function ClinicDashboard() {
   );
 }
 
-const StatsCard = ({ icon, title, value, trend }) => (
+const StatsCard = ({ title, value, icon, color }) => (
   <motion.div
-    whileHover={{ scale: 1.02 }}
-    className="bg-white p-6 rounded-xl shadow-sm"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className={`bg-white p-6 rounded-xl shadow-lg border-b-4 border-${color}-500`}
   >
-    <div className="flex justify-between items-center">
-      <div>
-        {icon}
-        <h3 className="text-gray-600 mt-2">{title}</h3>
-        <p className="text-2xl font-bold">{value}</p>
+    <div className="flex items-center">
+      <div
+        className={`flex-shrink-0 h-12 w-12 rounded-full bg-${color}-100 flex items-center justify-center`}
+      >
+        <span className={`text-${color}-600 text-2xl`}>{icon}</span>
       </div>
-      <span className="text-green-500 text-sm">{trend}</span>
+      <div className="ml-4">
+        <h3 className="text-sm font-medium text-gray-500">{title}</h3>
+        <p className="text-2xl font-semibold text-gray-900">{value}</p>
+      </div>
     </div>
   </motion.div>
 );

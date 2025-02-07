@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const clinicController = require("../controllers/clinicDashController");
-// const { protect } = require('../middleware/authMiddleware');
+const { getDoctorsCount, getClinicStats } = require("../controllers/clinicDashController");
 
-router.get("/dashboard/:email", clinicController.getClinicDashboard);
+// Dashboard routes
+router.get('/doctors/count/:email', getDoctorsCount);
+router.get('/stats/:email', getClinicStats);
 
 module.exports = router;
