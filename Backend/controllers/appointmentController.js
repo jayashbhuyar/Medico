@@ -105,3 +105,112 @@ exports.getAppointmentsByEmail = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error', error: error.message });
   }
 };
+
+// const Appointment = require('../models/appointment');
+
+// Get appointments for doctors
+exports.getDoctorAppointments = async (req, res) => {
+  // console.log('getDoctorAppointments');
+    try {
+        const { email, organizationEmail } = req.query;
+
+        if (!email || !organizationEmail) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email and organization email are required'
+            });
+        }
+
+        const appointments = await Appointment.find({
+            $and: [
+                { doctorEmail: email },
+                { organizationEmail: organizationEmail }
+            ]
+        }).sort({ appointmentDate: -1 }); // Sort by date descending
+
+        res.status(200).json({
+            success: true,
+            count: appointments.length,
+            data: appointments
+        });
+    } catch (error) {
+        console.error('Error fetching doctor appointments:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching appointments',
+            error: error.message
+        });
+    }
+};
+
+// Get appointments for consultants
+exports.getConsultantAppointments = async (req, res) => {
+  // console.log('getConsultantAppointments');
+    try {
+        const { email } = req.query;
+
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Consultant email is required'
+            });
+        }
+
+        const appointments = await Appointment.find({
+            consultantEmail: email
+        }).sort({ appointmentDate: -1 }); // Sort by date descending
+
+        res.status(200).json({
+            success: true,
+            count: appointments.length,
+            data: appointments
+        });
+    } catch (error) {
+        console.error('Error fetching consultant appointments:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching appointments',
+            error: error.message
+        });
+    }
+};
+
+// Update appointment status
+exports.updateAppointmentStatus = async (req, res) => {
+    try {
+        const { appointmentId } = req.params;
+        const { status } = req.body;
+
+        if (!['pending', 'completed', 'cancelled'].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid status value'
+            });
+        }
+
+        const appointment = await Appointment.findByIdAndUpdate(
+            appointmentId,
+            { status },
+            { new: true, runValidators: true }
+        );
+
+        if (!appointment) {
+            return res.status(404).json({
+                success: false,
+                message: 'Appointment not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: appointment
+        });
+    } catch (error) {
+        console.error('Error updating appointment:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating appointment',
+            error: error.message
+        });
+    }
+};

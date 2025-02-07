@@ -36,6 +36,7 @@ import HospitalProfile from './Components/Hospital/HospitalProfile'
 import ReviewPage from './Pages/ReviewPage'
 import ProfilePage from './Components/User/ProfilePage'
 import ConsultantDashboard from './Components/Consultant/ConsultantDashboard'
+import ConsultantAppointments from './Components/Consultant/ConsultantAppointment'
 
 function App() {
   return (
@@ -78,6 +79,7 @@ function App() {
         <Route path="/hospital/profile" element={<HospitalProfile />} />
         <Route path="/reviewpage" element={<ReviewPage />} />
         <Route path='/consultant/dashboard' element={<ConsultantDashboard />} />
+        <Route path='/consultant/appointments' element={<ConsultantAppointments />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>

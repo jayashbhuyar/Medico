@@ -163,6 +163,7 @@ exports.login = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
+                organizationEmail: user.organizationEmail,
                 organizationName: user.organizationName,
                 organizationType: user.organizationType,
                 state: user.state,
@@ -194,3 +195,5 @@ exports.login = async (req, res) => {
         });
     }
 };
+
+
