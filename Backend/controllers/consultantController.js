@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const cloudinary = require("../config/cloudinary");
 const Consultant = require("../models/consultantReg");
+const Doctor = require("../models/addDoctor");
+
 
 
 exports.register = async (req, res) => {
@@ -85,44 +87,110 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, userId, password } = req.body;
+        let user;
+        let isConsultant = true; // Flag to track user type
 
-        const user = await Consultant.findOne({ email });
-        if (!user) {
-            res.status(400).json({
+        // Check if login is via email or userId
+        if (email) {
+            user = await Consultant.findOne({ email });
+            if (!user) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Email not registered!'
+                });
+            }
+        } else if (userId) {
+            user = await Consultant.findOne({ userId });
+            if (!user) {
+                user = await Doctor.findOne({ userId });
+                isConsultant = false;
+                if (!user) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'User ID not found!'
+                    });
+                }
+            }
+        } else {
+            return res.status(400).json({
                 success: false,
-                message: 'Email not exists!'
-            })
+                message: 'Please provide email or user ID'
+            });
         }
 
+        // Verify password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({
-                status: 'error',
+                success: false,
                 message: 'Invalid credentials'
             });
         }
 
-        // Create token
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: '7d'
-        });
+        // Create JWT token
+        const token = jwt.sign(
+            { 
+                id: user._id,
+                role: isConsultant ? 'Consultant' : 'Doctor'
+            }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '7d' }
+        );
+
+        // Prepare response based on user type
+        let userResponse;
+        
+        if (isConsultant) {
+            // Consultant response structure
+            userResponse = {
+                id: user._id,
+                doctorName: user.doctorName,
+                email: user.email,
+                phone: user.phone,
+                state: user.state,
+                city: user.city,
+                address: user.address,
+                specialization: user.specialization,
+                experience: user.experience,
+                userId: user.userId,
+                role: 'Consultant'
+            };
+        } else {
+            // Doctor response structure
+            userResponse = {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                organizationName: user.organizationName,
+                organizationType: user.organizationType,
+                state: user.state,
+                city: user.city,
+                address: user.address,
+                degrees: user.degrees,
+                specialties: user.specialties,
+                experience: user.experience,
+                consultationFees: user.consultationFees,
+                availableDays: user.availableDays,
+                timeSlots: user.timeSlots,
+                userId: user.userId,
+                role: 'Doctor'
+            };
+        }
+
         res.status(200).json({
-            status: 'success',
+            success: true,
             token,
-            data: {
-                user: {
-                    id: user._id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email
-                }
-            }
+            data: { user: userResponse }
         });
+        // console.log('Login successful:', user);
+
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({
-            status: 'error',
-            message: error.message
+            success: false,
+            message: 'Internal server error'
         });
     }
-}
+};

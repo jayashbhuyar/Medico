@@ -1,31 +1,48 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaEnvelope, FaLock, FaUserMd } from 'react-icons/fa';
-import { motion } from 'framer-motion';
-import { toast, Toaster } from 'react-hot-toast';
-import axios from 'axios'
-import Cookies from 'js-cookie';
+import { FaEnvelope, FaLock, FaUserMd, FaIdCard } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { toast, Toaster } from "react-hot-toast";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { Switch } from "@headlessui/react";
 
 function ConsultantLogin() {
+  const [loginMethod, setLoginMethod] = useState("email"); // 'email' or 'userId'
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    userId: "",
+    password: "",
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
+  };
+
+  const toggleLoginMethod = () => {
+    setLoginMethod((prev) => (prev === "email" ? "userId" : "email"));
+    setFormData((prev) => ({
+      ...prev,
+      email: "",
+      userId: "",
+    }));
+    setErrors({});
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.password) newErrors.password = 'Password is required';
+    if (loginMethod === "email") {
+      if (!formData.email) newErrors.email = "Email is required";
+    } else {
+      if (!formData.userId) newErrors.userId = "User ID is required";
+    }
+    if (!formData.password) newErrors.password = "Password is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -41,36 +58,57 @@ function ConsultantLogin() {
 
       try {
         console.log("📡 Sending request to API...");
-        const response = await axios.post('http://localhost:8000/api/consultant/login', formData);
+        const loginData = {
+          ...(loginMethod === "email"
+            ? { email: formData.email }
+            : { userId: formData.userId }),
+          password: formData.password,
+        };
+
+        const response = await axios.post(
+          "http://localhost:8000/api/consultant/login",
+          loginData
+        );
 
         console.log("✅ API Response received:", response);
 
         const { message, token, hospital } = response.data;
         console.log("📦 Extracted data:", { message, token, hospital });
+         // Store user data in localStorage
+  const doctorData = response.data.data.user;
+  localStorage.setItem("doctorData", JSON.stringify(doctorData));
+  
+        console.log("📦 Extracted data:", { message, token, hospital });
+
 
         if (token) {
-          console.log("🔐 Token received, storing in cookies and localStorage...");
-          Cookies.set('hospitalToken', token, {
+          console.log(
+            "🔐 Token received, storing in cookies and localStorage..."
+          );
+          Cookies.set("hospitalToken", token, {
             expires: 7,
             // secure: true,
-            sameSite: 'Strict'
+            sameSite: "Strict",
           });
 
           // Store entire hospital data in localStorage
           // localStorage.setItem('hospitalToken', token);
-          localStorage.setItem('hospitalData', JSON.stringify(hospital));
+          // localStorage.setItem("hospitalData", JSON.stringify(hospital.data.user));
 
-          toast.success('Login successful!', { duration: 2000, position: 'top-right' });
+          toast.success("Login successful!", {
+            duration: 2000,
+            position: "top-right",
+          });
 
           console.log("🚀 Navigating to dashboard...");
-          navigate('/consultant/dashboard');
+          navigate("/consultant/dashboard");
         } else {
           console.warn("⚠️ No token received:", message);
-          toast.error(message || 'Login failed!');
+          toast.error(message || "Login failed!");
         }
       } catch (error) {
         console.error("❌ Login error:", error);
-        toast.error(error.response?.data?.message || 'Invalid credentials');
+        toast.error(error.response?.data?.message || "Invalid credentials");
       } finally {
         console.log("🔄 Setting loading to false");
         setLoading(false);
@@ -102,26 +140,80 @@ function ConsultantLogin() {
           </h2>
         </div>
 
+        <div className="flex items-center justify-center gap-3 px-4">
+          <span
+            className={`text-sm ${
+              loginMethod === "email" ? "text-blue-600" : "text-gray-500"
+            }`}
+          >
+            Email
+          </span>
+          <Switch
+            checked={loginMethod === "userId"}
+            onChange={toggleLoginMethod}
+            className={`${
+              loginMethod === "userId" ? "bg-blue-600" : "bg-gray-200"
+            } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none`}
+          >
+            <span className="sr-only">Toggle login method</span>
+            <span
+              className={`${
+                loginMethod === "userId" ? "translate-x-6" : "translate-x-1"
+              } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+            />
+          </Switch>
+          <span
+            className={`text-sm ${
+              loginMethod === "userId" ? "text-blue-600" : "text-gray-500"
+            }`}
+          >
+            User ID
+          </span>
+        </div>
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label className="flex items-center text-gray-600 mb-1">
-                <FaEnvelope className="mr-2 text-blue-500" />
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'
+            {loginMethod === "email" ? (
+              <div>
+                <label className="flex items-center text-gray-600 mb-1">
+                  <FaEnvelope className="mr-2 text-blue-500" />
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${
+                    errors.email ? "border-red-500" : "border-gray-300"
                   } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-                placeholder="Enter your email"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-              )}
-            </div>
+                  placeholder="Enter your email"
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
+              </div>
+            ) : (
+              <div>
+                <label className="flex items-center text-gray-600 mb-1">
+                  <FaIdCard className="mr-2 text-blue-500" />
+                  User ID
+                </label>
+                <input
+                  type="text"
+                  name="userId"
+                  value={formData.userId}
+                  onChange={handleInputChange}
+                  className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${
+                    errors.userId ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                  placeholder="Enter your User ID"
+                />
+                {errors.userId && (
+                  <p className="text-red-500 text-sm mt-1">{errors.userId}</p>
+                )}
+              </div>
+            )}
 
             <div>
               <label className="flex items-center text-gray-600 mb-1">
@@ -133,8 +225,9 @@ function ConsultantLogin() {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'
-                  } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${
+                  errors.password ? "border-red-500" : "border-gray-300"
+                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                 placeholder="Enter your password"
               />
               {errors.password && (
