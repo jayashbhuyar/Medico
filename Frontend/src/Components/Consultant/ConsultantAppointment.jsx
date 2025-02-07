@@ -33,14 +33,9 @@ const ConsultantAppointments = () => {
         if (doctorData.role === "Doctor") {
           // For doctors, fetch appointments matching both doctor's email and organization email
           response = await axios.get(
-            `http://localhost:8000/api/appointments/clinic?email=${doctorData.email}&organizationEmail=${doctorData.organizationEmail}`
+            `http://localhost:8000/api/appointments/doctor?email=${doctorData.email}&organizationEmail=${doctorData.organizationEmail}`
           );
-        } else if (doctorData.role === "Consultant") {
-          // For consultants, fetch appointments using their email
-          response = await axios.get(
-            `http://localhost:8000/api/appointments/consultant?email=${doctorData.email}`
-          );
-        }
+        } 
 
         if (response.data.success) {
           // Group appointments by doctor
