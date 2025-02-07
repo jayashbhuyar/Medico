@@ -69,15 +69,15 @@ const ConsultantNav = () => {
                             </Link>
                         </li>
                         <li>
-                            <Link to="/consultant/reports" className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/consultant/reports' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`}>
+                            <Link to="/consultant/dashboard" className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/consultant/reports' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`}>
                                 <FaChartLine className="mr-2" /> Reports
                             </Link>
                         </li>
-                        <li>
+                        {/* <li>
                             <button onClick={handleLogout} className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:text-red-800">
                                 <FaSignOutAlt className="mr-2" /> Logout
                             </button>
-                        </li>
+                        </li> */}
                     </ul>
 
                     {/* Profile Menu */}
