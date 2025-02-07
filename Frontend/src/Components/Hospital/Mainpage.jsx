@@ -1,61 +1,116 @@
-import React from 'react';
-// import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { 
-  FaUserMd, FaCalendarCheck, FaChartLine, 
-  FaUserInjured, FaClock, FaCheckCircle 
-} from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, PieChart, Pie, Cell
-} from 'recharts';
-import HospitalNavbar from '../Navbar/HospitalNav';
-
-const data = [
-  { name: 'Mon', appointments: 4 },
-  { name: 'Tue', appointments: 3 },
-  { name: 'Wed', appointments: 2 },
-  { name: 'Thu', appointments: 6 },
-  { name: 'Fri', appointments: 8 },
-  { name: 'Sat', appointments: 9 },
-  { name: 'Sun', appointments: 3 }
-];
-
-const pieData = [
-  { name: 'Completed', value: 400, color: '#10B981' },
-  { name: 'Pending', value: 300, color: '#F59E0B' },
-  { name: 'Cancelled', value: 100, color: '#EF4444' }
-];
+  FaUserMd,
+  FaCalendarCheck,
+  FaChartLine,
+  FaUserInjured,
+  FaClock,
+  FaCheckCircle,
+} from "react-icons/fa";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import HospitalNavbar from "../Navbar/HospitalNav";
+// import LoadingSpinner from "../LoadingSpinner";
 
 function HospitalDashboard() {
+  const [dashboardData, setDashboardData] = useState({
+    totalDoctors: 0,
+    todayAppointments: 0,
+    totalPatients: 0,
+    revenue: 0, // Make sure this is initialized to 0
+    weeklyStats: [],
+    statusStats: [],
+    recentActivities: [],
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const hospitalData = JSON.parse(localStorage.getItem("hospitalData"));
+        if (!hospitalData?.email) {
+          throw new Error("Hospital data not found");
+        }
+
+        // Fetch total doctors
+        const doctorsResponse = await axios.get(
+          `http://localhost:8000/api/v2/doctors/count/${hospitalData.email}`,
+          { withCredentials: true }
+        );
+
+        // Fetch appointments stats
+        const appointmentsResponse = await axios.get(
+          `http://localhost:8000/api/v2/doctors/stats/${hospitalData.email}`,
+          { withCredentials: true }
+        );
+
+        if (doctorsResponse.data.success && appointmentsResponse.data.success) {
+          setDashboardData({
+            totalDoctors: doctorsResponse.data.count,
+            todayAppointments: appointmentsResponse.data.pendingCount,
+            totalPatients: appointmentsResponse.data.completedCount,
+            revenue: appointmentsResponse.data.completedRevenue, // Changed to completedRevenue
+            weeklyStats: appointmentsResponse.data.weeklyStats,
+            statusStats: appointmentsResponse.data.statusStats,
+            recentActivities: appointmentsResponse.data.recentActivities,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+        toast.error("Failed to fetch dashboard data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return "Loading...";
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <HospitalNavbar />
-      
+
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {/* Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatsCard 
+          <StatsCard
             title="Total Doctors"
-            value="24"
+            value={dashboardData.totalDoctors}
             icon={<FaUserMd />}
             color="blue"
           />
-          <StatsCard 
-            title="Today's Appointments"
-            value="12"
+          <StatsCard
+            title="Pending Appointments" // Changed from "Today's Appointments"
+            value={dashboardData.todayAppointments}
             icon={<FaCalendarCheck />}
             color="green"
           />
-          <StatsCard 
+          <StatsCard
             title="Total Patients"
-            value="1,248"
+            value={dashboardData.totalPatients}
             icon={<FaUserInjured />}
             color="purple"
           />
-          <StatsCard 
+          <StatsCard
             title="Revenue"
-            value="₹45,678"
+            value={`₹${dashboardData.revenue?.toLocaleString() || "0"}`}
             icon={<FaChartLine />}
             color="indigo"
           />
@@ -63,29 +118,29 @@ function HospitalDashboard() {
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-white p-6 rounded-xl shadow-lg"
           >
             <h3 className="text-lg font-semibold mb-4">Weekly Appointments</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={data}>
+              <AreaChart data={dashboardData.weeklyStats}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Area 
-                  type="monotone" 
-                  dataKey="appointments" 
-                  stroke="#6366F1" 
-                  fill="#818CF8" 
+                <Area
+                  type="monotone"
+                  dataKey="appointments"
+                  stroke="#6366F1"
+                  fill="#818CF8"
                 />
               </AreaChart>
             </ResponsiveContainer>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -95,13 +150,13 @@ function HospitalDashboard() {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={pieData}
+                  data={dashboardData.statusStats}
                   innerRadius={60}
                   outerRadius={80}
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {pieData.map((entry, index) => (
+                  {dashboardData.statusStats.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -113,7 +168,7 @@ function HospitalDashboard() {
 
         {/* Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
@@ -121,26 +176,31 @@ function HospitalDashboard() {
           >
             <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
             <div className="space-y-4">
-              {[1, 2, 3].map((item) => (
-                <div key={item} className="flex items-center p-4 bg-gray-50 rounded-lg">
+              {dashboardData.recentActivities.map((activity, index) => (
+                <div
+                  key={index}
+                  className="flex items-center p-4 bg-gray-50 rounded-lg"
+                >
                   <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                     <FaClock className="text-blue-600" />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-900">
-                      New appointment scheduled
+                      {activity.title}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Dr. Smith with Patient #12345
+                      {activity.description}
                     </p>
                   </div>
-                  <span className="ml-auto text-xs text-gray-500">2 min ago</span>
+                  <span className="ml-auto text-xs text-gray-500">
+                    {activity.time}
+                  </span>
                 </div>
               ))}
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
@@ -172,7 +232,9 @@ const StatsCard = ({ title, value, icon, color }) => (
     className={`bg-white p-6 rounded-xl shadow-lg border-b-4 border-${color}-500`}
   >
     <div className="flex items-center">
-      <div className={`flex-shrink-0 h-12 w-12 rounded-full bg-${color}-100 flex items-center justify-center`}>
+      <div
+        className={`flex-shrink-0 h-12 w-12 rounded-full bg-${color}-100 flex items-center justify-center`}
+      >
         <span className={`text-${color}-600 text-2xl`}>{icon}</span>
       </div>
       <div className="ml-4">

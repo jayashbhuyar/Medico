@@ -18,6 +18,8 @@ const userRoutes = require('./routes/userRoutes'); // Add this line
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const { validateToken, authenticateToken } = require('./middleware/authMiddleware');
 const consultantRoute = require('./routes/consultantRoutes')
+const hospitalDashRoutes = require('./routes/hospitalDashRoutes');
+const clinicDashRoutes = require('./routes/clinicDashRoutes');
 
 const app = express();
 
@@ -53,6 +55,7 @@ app.use('/api/clinics', clinicRoutes);
 app.use('/api/token/validate', validateToken)
 app.use('/api/search', nearbyRoutes);
 app.use("/api/search", searchRoutes);
+app.use("/api/v2/doctors", hospitalDashRoutes);
 app.use("/api/doctors", doctorRoutes);
 // Routes
 app.use('/api/user/v2', usernavRoutes);
@@ -60,9 +63,10 @@ app.use("/api/user/hospitals", usernavRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use('/api/webreviews', webReviewRoutes);
 app.use('/api/users', userRoutes); // Add this line
+app.use('/api/clinic/daashboard', clinicRoutes);
 
 app.use('/api/appointments', appointmentRoutes);
-app.use('/api/consultant', consultantRoute)
+app.use('/api/consultant', clinicDashRoutes)
 // Base route
 app.get("/", (req, res) => {
   res.send("Medico API is running");

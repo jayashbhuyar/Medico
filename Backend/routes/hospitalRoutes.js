@@ -13,6 +13,7 @@ const {validateToken} = require("../middleware/authMiddleware");
 // router.get("/validate",authMiddleware);
 router.post("/register", register);
 router.post("/login", login);
+router.get('hospital/:email')
 
 // Protected routes - require authentication
 // router.get('/profile', authMiddleware, getProfile);
