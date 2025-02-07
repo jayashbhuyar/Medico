@@ -21,6 +21,7 @@ const consultantRoute = require('./routes/consultantRoutes')
 const hospitalDashRoutes = require('./routes/hospitalDashRoutes');
 const clinicDashRoutes = require('./routes/clinicDashRoutes');
 
+
 const app = express();
 
 // Middleware
@@ -64,6 +65,7 @@ app.use("/api/v1/reviews", reviewRoutes);
 app.use('/api/webreviews', webReviewRoutes);
 app.use('/api/users', userRoutes); // Add this line
 app.use('/api/clinic/daashboard', clinicRoutes);
+app.use('/api/consultant', consultantRoute);
 
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/consultant', clinicDashRoutes)
