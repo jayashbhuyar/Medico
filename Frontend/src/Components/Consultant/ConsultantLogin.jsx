@@ -85,7 +85,7 @@ function ConsultantLogin() {
           console.log(
             "🔐 Token received, storing in cookies and localStorage..."
           );
-          Cookies.set("hospitalToken", token, {
+          Cookies.set("consultantToken", token, {
             expires: 7,
             // secure: true,
             sameSite: "Strict",

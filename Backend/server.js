@@ -42,6 +42,13 @@ app.use(
   })
 );
 
+// Add logging middleware before routes
+app.use((req, res, next) => {
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI, {
