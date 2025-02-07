@@ -386,22 +386,27 @@ const DoctorCard = ({ doctor, distance, onViewProfile, onBooking }) => {
         </div>
 
         <div className="mt-6 flex gap-2">
-          <button
-            onClick={onViewProfile}
-            className="flex-1 border-2 border-blue-600 text-blue-600 py-2 px-4 
-                   rounded-lg hover:bg-blue-50 transition duration-300"
-          >
-            View Profile
-          </button>
-          <a
-            href={`https://www.google.com/maps/dir/?api=1&destination=${doctor.latitude},${doctor.longitude}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-          >
-            <FaMapMarkerAlt />
-          </a>
-        </div>
+  <button
+    onClick={onViewProfile}
+    className="flex-1 bg-blue-50 text-blue-600 py-2 px-4 
+             rounded hover:bg-blue-100 transition-all duration-200
+             flex items-center justify-center gap-2"
+  >
+    <FaUserMd className="w-4 h-4" />
+    View Profile
+  </button>
+  <a
+    href={`https://www.google.com/maps/dir/?api=1&destination=${doctor.latitude},${doctor.longitude}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="flex-1 bg-green-50 text-green-600 py-2 px-4 
+             rounded hover:bg-green-100 transition-all duration-200
+             flex items-center justify-center gap-2"
+  >
+    <FaMapMarkerAlt className="w-4 h-4" />
+    Get Directions
+  </a>
+</div>
       </div>
     </motion.div>
   );
