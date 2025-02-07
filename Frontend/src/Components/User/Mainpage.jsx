@@ -39,10 +39,11 @@ import {
   FaCapsules,
   FaHeartbeat,
 } from "react-icons/fa";
+
 import UserNav from "../Navbar/UserNav";
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 
 const HealthcareSearch = () => {
   const [count, setCount] = useState({ doctors: 0, patients: 0, hospitals: 0 });
@@ -316,53 +317,33 @@ const HealthcareSearch = () => {
     },
   ];
 
-  const testimonials = [
-    {
-      name: "John Smith",
-      review: "Amazing service! Found the perfect doctor for my needs.",
-      rating: 5,
-      image: "https://via.placeholder.com/60",
-    },
-    {
-      name: "Sarah Johnson",
-      review: "Quick and easy appointment booking process.",
-      rating: 5,
-      image: "https://via.placeholder.com/60",
-    },
-  ];
-
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Get email from localStorage if exists
-    const userEmail = localStorage.getItem('userEmail') || 'guest@guest.com';
-    const userType = localStorage.getItem('userEmail') ? 'User' : 'Guest';
-  
+    const userEmail = localStorage.getItem("userEmail") || "guest@guest.com";
+    const userType = localStorage.getItem("userEmail") ? "User" : "Guest";
+
     try {
-      const response = await axios.post('http://localhost:8000/api/webreviews/create', {
-        email: userEmail,
-        userType,
-        rating,
-        review
-      });
-  
+      const response = await axios.post(
+        "http://localhost:8000/api/webreviews/create",
+        {
+          email: userEmail,
+          userType,
+          rating,
+          review,
+        }
+      );
+
       if (response.data.success) {
-        toast.success('Thank you for your feedback!');
+        toast.success("Thank you for your feedback!");
         setRating(0);
-        setReview('');
+        setReview("");
         setShowReviewModal(false);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to submit review');
+      toast.error(error.response?.data?.message || "Failed to submit review");
     }
-  };
-
-  const scrollToReviews = () => {
-    reviewSectionRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-    setShowReviewForm(true);
   };
 
   return (
@@ -492,22 +473,6 @@ const HealthcareSearch = () => {
                   </div>
                 </div>
 
-                {/* <div className="flex-1 min-w-[200px]"></div>
-                  <div className="relative">
-                    <FaMapMarkerAlt className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      placeholder="Location"
-                      className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 
-                                 bg-white text-gray-800 placeholder-gray-500
-                                 focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                 shadow-sm transition duration-200"
-                    />
-                  </div>
-                </div> */}
-
                 <div className="flex flex-col sm:flex-row gap-2">
                   <button
                     onClick={debouncedSearch}
@@ -527,22 +492,6 @@ const HealthcareSearch = () => {
                       </>
                     )}
                   </button>
-
-                  {/* New Near Me button - only show for doctor/hospital/clinic */}
-                  {/* {searchType !== 'specialty' && (
-                    <button
-                      onClick={handleNearMeSearch}
-                      disabled={isLoading}
-                      className="px-6 py-3 bg-green-600 text-white rounded-lg flex items-center gap-2 
-                                 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed
-                                 transition-all duration-300"
-                    >
-                      <FaMapMarkerAlt className="mr-2" />
-                      {isLoading ? "Searching Nearby..." : "Find Near Me"}
-
-                    </button>
-                    
-                  )} */}
                 </div>
               </div>
             </div>
@@ -615,58 +564,6 @@ const HealthcareSearch = () => {
         </div>
       </div>
 
-      <section className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-gray-800 mb-8">
-          Featured Specialists
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map((doctor) => (
-            <motion.div
-              key={doctor}
-              whileHover={{ y: -10 }}
-              className="bg-white rounded-xl shadow-xl overflow-hidden"
-            >
-              <div className="relative">
-                <img
-                  src={`https://via.placeholder.com/300x200?text=Doctor${doctor}`}
-                  alt="Doctor"
-                  className="w-full h-48 object-cover"
-                />
-                <div className="absolute top-4 right-4">
-                  <span
-                    className="bg-green-500 text-white px-3 py-1 rounded-full 
-                                 text-sm flex items-center"
-                  >
-                    <FaVideo className="mr-1" />
-                    Available
-                  </span>
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-lg mb-1">Dr. John Doe</h3>
-                <p className="text-gray-600 text-sm mb-2">Cardiologist</p>
-                <div className="flex items-center text-yellow-400 mb-2">
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStar className="text-gray-300" />
-                  <span className="text-gray-600 text-sm ml-2">
-                    (127 reviews)
-                  </span>
-                </div>
-                <div className="text-gray-600 text-sm mb-2">
-                  Consultation Fee: $100
-                </div>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300">
-                  Book Appointment
-                </button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
       <section className="bg-blue-50 py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
@@ -687,63 +584,6 @@ const HealthcareSearch = () => {
           </div>
         </div>
       </section>
-
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-800 mb-12 text-center">
-            What Our Patients Say
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ y: -5 }}
-                className="bg-white rounded-xl shadow-lg p-6 relative"
-              >
-                <FaQuoteRight className="absolute top-4 right-4 text-blue-100 text-4xl" />
-                <div className="flex items-center mb-4">
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="w-12 h-12 rounded-full mr-4"
-                  />
-                  <div>
-                    <h4 className="font-semibold">{testimonial.name}</h4>
-                    <div className="flex text-yellow-400">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <FaStar key={i} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <p className="text-gray-600">{testimonial.review}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-blue-50 py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-800 mb-8">
-            Health Packages
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {healthPackages.map((pkg) => (
-              <PackageCard key={pkg.title} {...pkg} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 bg-gradient-to-b from-white to-blue-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-800 mb-12 text-center">
-            Patient Testimonials
-          </h2>
-        </div>
-      </section>
-
       <Toaster position="top-right" />
 
       {/* Floating Review Button */}
@@ -820,7 +660,9 @@ const HealthcareSearch = () => {
 
                 {/* Review Text */}
                 <div className="space-y-2">
-                  <label className="text-gray-700 font-medium">Your Review</label>
+                  <label className="text-gray-700 font-medium">
+                    Your Review
+                  </label>
                   <textarea
                     value={review}
                     onChange={(e) => setReview(e.target.value)}
@@ -845,51 +687,5 @@ const HealthcareSearch = () => {
     </div>
   );
 };
-
-const FeatureCard = ({ icon, title, description }) => (
-  <motion.div
-    whileHover={{ y: -5 }}
-    className="bg-white rounded-xl shadow-lg p-6 transition duration-300 transform hover:scale-105"
-  >
-    <div className="text-blue-600 mb-4">{icon}</div>
-    <h3 className="text-xl font-semibold mb-2">{title}</h3>
-    <p className="text-gray-600">{description}</p>
-  </motion.div>
-);
-
-const healthPackages = [
-  {
-    title: "Basic Health Checkup",
-    price: "$99",
-    features: ["Blood Test", "ECG", "Physical Examination"],
-  },
-  {
-    title: "Advanced Health Checkup",
-    price: "$199",
-    features: ["Blood Test", "ECG", "MRI", "Consultation"],
-  },
-  {
-    title: "Premium Health Checkup",
-    price: "$299",
-    features: ["Blood Test", "ECG", "MRI", "Consultation", "Full Body Scan"],
-  },
-];
-
-const PackageCard = ({ title, price, features }) => (
-  <motion.div
-    whileHover={{ y: -5 }}
-    className="bg-white rounded-xl shadow-lg p-6 transition duration-300 transform hover:scale-105"
-  >
-    <h3 className="text-xl font-semibold mb-2">{title}</h3>
-    <p className="text-3xl font-bold text-blue-600 mb-4">{price}</p>
-    <ul className="space-y-2">
-      {features.map((feature) => (
-        <li key={feature} className="flex items-center text-gray-600">
-          <FaCheck className="text-green-500 mr-2" /> {feature}
-        </li>
-      ))}
-    </ul>
-  </motion.div>
-);
 
 export default HealthcareSearch;
