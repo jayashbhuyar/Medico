@@ -15,8 +15,9 @@ import {
 import axios from "axios";
 import ConsultantNavbar from "../Navbar/ConsultantNav";
 import { toast } from "react-toastify";
+import ClinicNav from "../Navbar/ClinicNav";
 
-const ConsultantAppointments = () => {
+const ClinicAppointment = () => {
   const [selectedDate, setSelectedDate] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [expandedDoctor, setExpandedDoctor] = useState(null);
@@ -27,35 +28,30 @@ const ConsultantAppointments = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const doctorData = JSON.parse(localStorage.getItem("doctorData"));
+        const clinicData = JSON.parse(localStorage.getItem("clinicData"));
         let response;
-
-        if (doctorData.role === "Doctor") {
+        console.log(clinicData)
+        
           // For doctors, fetch appointments matching both doctor's email and organization email
           response = await axios.get(
-            `http://localhost:8000/api/appointments/clinic?email=${doctorData.email}&organizationEmail=${doctorData.organizationEmail}`
+            `http://localhost:8000/api/appointments/all?email=${clinicData.email}`
           );
-        } else if (doctorData.role === "Consultant") {
-          // For consultants, fetch appointments using their email
-          response = await axios.get(
-            `http://localhost:8000/api/appointments/consultant?email=${doctorData.email}`
-          );
-        }
-
+        
+        console.log(response);
         if (response.data.success) {
           // Group appointments by doctor
           const appointmentsByDoctor = response.data.data.reduce(
             (acc, appointment) => {
               const doctorEmail =
-                doctorData.role === "Doctor"
-                  ? doctorData.email
+                clinicData.role === "Doctor"
+                  ? clinicData.email
                   : appointment.doctorEmail;
               if (!acc[doctorEmail]) {
                 acc[doctorEmail] = {
                   _id: doctorEmail,
                   name:
-                    doctorData.role === "Doctor"
-                      ? doctorData.name
+                    clinicData.role === "Doctor"
+                      ? clinicData.name
                       : appointment.doctorName,
                   appointments: [],
                 };
@@ -137,7 +133,7 @@ const ConsultantAppointments = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <ConsultantNavbar />
+        <ClinicNav />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
@@ -148,7 +144,7 @@ const ConsultantAppointments = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <ConsultantNavbar />
+        <ClinicNav />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
           <div className="text-red-500 font-medium">{error}</div>
         </div>
@@ -158,7 +154,7 @@ const ConsultantAppointments = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ConsultantNavbar />
+      <ClinicNav />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-800">Appointments</h1>
@@ -378,4 +374,4 @@ const ConsultantAppointments = () => {
   );
 };
 
-export default ConsultantAppointments;
+export default ClinicAppointment

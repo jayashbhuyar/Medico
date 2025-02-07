@@ -1,4 +1,4 @@
-const Appointment = require('../models/Appointments');
+const Appointment = require("../models/Appointments");
 
 // Create Appointment
 exports.createAppointment = async (req, res) => {
@@ -6,12 +6,12 @@ exports.createAppointment = async (req, res) => {
     const appointment = await Appointment.create(req.body);
     res.status(201).json({
       success: true,
-      data: appointment
+      data: appointment,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -23,12 +23,12 @@ exports.getAppointments = async (req, res) => {
     res.status(200).json({
       success: true,
       count: appointments.length,
-      data: appointments
+      data: appointments,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -40,17 +40,17 @@ exports.getAppointment = async (req, res) => {
     if (!appointment) {
       return res.status(404).json({
         success: false,
-        message: 'Appointment not found'
+        message: "Appointment not found",
       });
     }
     res.status(200).json({
       success: true,
-      data: appointment
+      data: appointment,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -65,12 +65,12 @@ exports.updateAppointment = async (req, res) => {
     );
     res.status(200).json({
       success: true,
-      data: appointment
+      data: appointment,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -81,12 +81,12 @@ exports.deleteAppointment = async (req, res) => {
     await Appointment.findByIdAndDelete(req.params.id);
     res.status(200).json({
       success: true,
-      data: {}
+      data: {},
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -95,83 +95,83 @@ exports.getAppointmentsByEmail = async (req, res) => {
   const { email } = req.query;
 
   if (!email) {
-    return res.status(400).json({ success: false, message: 'Email is required' });
+    return res
+      .status(400)
+      .json({ success: false, message: "Email is required" });
   }
 
   try {
     const appointments = await Appointment.find({ organizationEmail: email });
     res.status(200).json({ success: true, data: appointments });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: error.message });
   }
 };
-
 
 // Get appointments for doctors
 exports.getDoctorAppointments = async (req, res) => {
   // console.log('getDoctorAppointments');
-    try {
-        const { email, organizationEmail } = req.query;
-
-        if (!email || !organizationEmail) {
-            return res.status(400).json({
-                success: false,
-                message: 'Email and organization email are required'
-            });
-        }
-
-        const appointments = await Appointment.find({
-            $and: [
-                { doctorEmail: email },
-                { organizationEmail: organizationEmail }
-            ]
-        }).sort({ appointmentDate: -1 }); // Sort by date descending
-
-        res.status(200).json({
-            success: true,
-            count: appointments.length,
-            data: appointments
-        });
-    } catch (error) {
-        console.error('Error fetching doctor appointments:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching appointments',
-            error: error.message
-        });
+  try {
+    const { email, organizationEmail } = req.query;
+    console.log(email, organizationEmail);
+    if (!email || !organizationEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and organization email are required",
+      });
     }
+
+    const appointments = await Appointment.find({
+      $and: [{ doctorEmail: email }, { organizationEmail: organizationEmail }],
+    }).sort({ appointmentDate: -1 }); // Sort by date descending
+
+    res.status(200).json({
+      success: true,
+      count: appointments.length,
+      data: appointments,
+    });
+  } catch (error) {
+    console.error("Error fetching doctor appointments:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching appointments",
+      error: error.message,
+    });
+  }
 };
 
 // Get appointments for consultants
 exports.getConsultantAppointments = async (req, res) => {
   // console.log('getConsultantAppointments');
-    try {
-        const { email } = req.query;
+  try {
+    const { email } = req.query;
 
-        if (!email) {
-            return res.status(400).json({
-                success: false,
-                message: 'Consultant email is required'
-            });
-        }
-
-        const appointments = await Appointment.find({
-            consultantEmail: email
-        }).sort({ appointmentDate: -1 }); // Sort by date descending
-
-        res.status(200).json({
-            success: true,
-            count: appointments.length,
-            data: appointments
-        });
-    } catch (error) {
-        console.error('Error fetching consultant appointments:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching appointments',
-            error: error.message
-        });
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Consultant email is required",
+      });
     }
+
+    const appointments = await Appointment.find({
+      consultantEmail: email,
+    }).sort({ appointmentDate: -1 }); // Sort by date descending
+
+    res.status(200).json({
+      success: true,
+      count: appointments.length,
+      data: appointments,
+    });
+  } catch (error) {
+    console.error("Error fetching consultant appointments:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching appointments",
+      error: error.message,
+    });
+  }
 };
 
 // Update appointment status
@@ -180,12 +180,12 @@ exports.updateAppointmentStatus = async (req, res) => {
     const { appointmentId } = req.params;
     var { status } = req.body;
     status = status.charAt(0).toUpperCase() + status.slice(1);
-    console.log('Updating appointment:', appointmentId, 'to status:', status);
+    console.log("Updating appointment:", appointmentId, "to status:", status);
 
-    if (!['Confirmed', 'Cancelled', 'Completed'].includes(status)) {
+    if (!["Confirmed", "Cancelled", "Completed"].includes(status)) {
       return res.status(400).json({
         success: false,
-        message: 'Status must be either Confirmed, Cancelled or Completed'
+        message: "Status must be either Confirmed, Cancelled or Completed",
       });
     }
 
@@ -198,43 +198,43 @@ exports.updateAppointmentStatus = async (req, res) => {
     if (!appointment) {
       return res.status(404).json({
         success: false,
-        message: 'Appointment not found'
+        message: "Appointment not found",
       });
     }
 
-    console.log('Appointment updated successfully:', appointment);
+    console.log("Appointment updated successfully:", appointment);
     res.status(200).json({
       success: true,
-      data: appointment
+      data: appointment,
     });
   } catch (error) {
-    console.error('Error updating appointment status:', error);
+    console.error("Error updating appointment status:", error);
     res.status(500).json({
       success: false,
-      message: 'Error updating appointment status',
-      error: error.message
+      message: "Error updating appointment status",
+      error: error.message,
     });
   }
 };
 
-
 exports.getUserAppointments = async (req, res) => {
   try {
     const { email } = req.params;
-    
-    const appointments = await Appointment.find({ email })
-      .sort({ appointmentDate: -1 });
-    
+
+    const appointments = await Appointment.find({ email }).sort({
+      appointmentDate: -1,
+    });
+
     res.status(200).json({
       success: true,
       count: appointments.length,
-      data: appointments
+      data: appointments,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error fetching appointments',
-      error: error.message
+      message: "Error fetching appointments",
+      error: error.message,
     });
   }
 };

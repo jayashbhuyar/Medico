@@ -25,16 +25,7 @@ const ClinicNav = () => {
 
   const navigation = [
     { name: 'Dashboard', path: '/clinic/dashboard', icon: <FaChartLine /> },
-    { 
-      name: 'Appointments', 
-      icon: <FaCalendarCheck />,
-      dropdown: true,
-      items: [
-        { name: 'Completed', path: '/clinic/appointments/completed', icon: <FaCheckCircle /> },
-        { name: 'Pending', path: '/clinic/appointments/pending', icon: <FaClock /> },
-        { name: 'Cancelled', path: '/clinic/appointments/cancelled', icon: <FaTimesCircle /> }
-      ]
-    },
+    { name: 'Appointments', path: '/clinic/appointments', icon: <FaCalendarCheck /> },
     { 
       name: 'Doctors', 
       icon: <FaUserNurse />,
@@ -52,8 +43,7 @@ const ClinicNav = () => {
         { name: 'All Patients', path: '/clinic/patients/all', icon: <FaUsers /> },
         { name: 'Add Patient', path: '/addpatient', icon: <FaUserPlus /> }
       ]
-    },
-    { name: 'Prescriptions', path: '/clinic/prescriptions', icon: <FaPrescription /> }
+    }
   ];
 
   // Handle click outside
