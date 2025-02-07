@@ -106,7 +106,6 @@ exports.getAppointmentsByEmail = async (req, res) => {
   }
 };
 
-// const Appointment = require('../models/appointment');
 
 // Get appointments for doctors
 exports.getDoctorAppointments = async (req, res) => {
@@ -177,42 +176,45 @@ exports.getConsultantAppointments = async (req, res) => {
 
 // Update appointment status
 exports.updateAppointmentStatus = async (req, res) => {
-    try {
-        const { appointmentId } = req.params;
-        const { status } = req.body;
+  try {
+    const { appointmentId } = req.params;
+    var { status } = req.body;
+    status = status.charAt(0).toUpperCase() + status.slice(1);
+    console.log('Updating appointment:', appointmentId, 'to status:', status);
 
-        if (!['pending', 'completed', 'cancelled'].includes(status)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid status value'
-            });
-        }
-
-        const appointment = await Appointment.findByIdAndUpdate(
-            appointmentId,
-            { status },
-            { new: true, runValidators: true }
-        );
-
-        if (!appointment) {
-            return res.status(404).json({
-                success: false,
-                message: 'Appointment not found'
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            data: appointment
-        });
-    } catch (error) {
-        console.error('Error updating appointment:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error updating appointment',
-            error: error.message
-        });
+    if (!['Confirmed', 'Cancelled', 'Completed'].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Status must be either Confirmed, Cancelled or Completed'
+      });
     }
+
+    const appointment = await Appointment.findByIdAndUpdate(
+      appointmentId,
+      { status },
+      { new: true, runValidators: true }
+    );
+
+    if (!appointment) {
+      return res.status(404).json({
+        success: false,
+        message: 'Appointment not found'
+      });
+    }
+
+    console.log('Appointment updated successfully:', appointment);
+    res.status(200).json({
+      success: true,
+      data: appointment
+    });
+  } catch (error) {
+    console.error('Error updating appointment status:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating appointment status',
+      error: error.message
+    });
+  }
 };
 
 

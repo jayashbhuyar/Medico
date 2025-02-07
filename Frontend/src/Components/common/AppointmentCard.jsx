@@ -68,6 +68,7 @@ const AppointmentCard = ({ doctor, onClose }) => {
         doctorName: doctor.name,
         doctorEmail: doctor.email,
         appointmentDate: selectedDate,
+        fees: doctor.consultationFees,
         timeSlots: {
           start: selectedTime,
           end: new Date(new Date(`2000/01/01 ${selectedTime}`).getTime() + 30*60000)

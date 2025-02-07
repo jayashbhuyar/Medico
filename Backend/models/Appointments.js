@@ -67,6 +67,10 @@ const appointmentSchema = new mongoose.Schema({
     trim: true,
     lowercase: true
   },
+  fees: {
+    type: Number,
+    required: [true, 'Fees is required']
+  },
 
   // Appointment Date
   appointmentDate: {

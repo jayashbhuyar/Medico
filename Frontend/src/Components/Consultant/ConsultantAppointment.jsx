@@ -10,11 +10,11 @@ import {
   FaPhone,
   FaEnvelope,
   FaUserMd,
-  FaStethoscope,
   FaCalendarAlt,
 } from "react-icons/fa";
 import axios from "axios";
 import ConsultantNavbar from "../Navbar/ConsultantNav";
+import { toast } from "react-toastify";
 
 const ConsultantAppointments = () => {
   const [selectedDate, setSelectedDate] = useState("all");
@@ -93,20 +93,42 @@ const ConsultantAppointments = () => {
     fetchAppointments();
   }, []);
 
-  const filteredAppointments = (appointments) => {
-    return appointments.filter((appointment) => {
-      // Convert selected date to match appointment date format
-      const formattedSelectedDate =
-        selectedDate === "all"
-          ? "all"
-          : new Date(selectedDate).toLocaleDateString();
+  const handleStatusUpdate = async (appointmentId, newStatus) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:8000/api/appointments/${appointmentId}/status`,
+        { status: newStatus }
+      );
 
-      // Compare dates and status
+      if (response.data.success) {
+        // Update local state to reflect the change
+        setDoctors(
+          doctors.map((doctor) => ({
+            ...doctor,
+            appointments: doctor.appointments.map((apt) =>
+              apt.id === appointmentId
+                ? { ...apt, status: newStatus.toLowerCase() }
+                : apt
+            ),
+          }))
+        );
+        toast.success(`Appointment ${newStatus} successfully`);
+      }
+    } catch (error) {
+      toast.error("Failed to update appointment status");
+      console.error(error);
+    }
+  };
+
+  const filteredAppointments = (appointments) => {
+    return appointments.filter((apt) => {
       const dateMatches =
         selectedDate === "all" ||
-        appointment.appointmentDate === formattedSelectedDate;
-      const statusMatches =
-        selectedStatus === "all" || appointment.status === selectedStatus;
+        apt.appointmentDate === new Date(selectedDate).toLocaleDateString();
+
+      const statusMatches = 
+        selectedStatus === "all" || 
+        apt.status.toLowerCase() === selectedStatus.toLowerCase();
 
       return dateMatches && statusMatches;
     });
@@ -136,7 +158,7 @@ const ConsultantAppointments = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-        <ConsultantNavbar />
+      <ConsultantNavbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-800">Appointments</h1>
@@ -155,9 +177,11 @@ const ConsultantAppointments = () => {
               onChange={(e) => setSelectedStatus(e.target.value)}
               className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="pending">Pending</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="all">All</option>
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
             </select>
           </div>
         </div>
@@ -240,6 +264,12 @@ const ConsultantAppointments = () => {
                                           {appointment.patientName}
                                         </span>
                                       </div>
+                                      <div className="flex items-center mt-1 space-x-2 text-sm text-gray-600">
+                                        <FaCalendarAlt className="text-gray-400 w-4 h-4" />
+                                        <span className="text-sm text-gray-600">
+                                          {appointment.appointmentDate}
+                                        </span>
+                                      </div>
                                       <div className="text-sm text-gray-600 mt-1">
                                         <div className="flex items-center space-x-2">
                                           <FaClock className="text-gray-400" />
@@ -255,12 +285,74 @@ const ConsultantAppointments = () => {
                                         </div>
                                       </div>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                      {appointment.status === "completed" && (
-                                        <FaCheckCircle className="text-green-500" />
+                                    <div className="flex flex-col gap-2">
+                                      <div className="flex items-center space-x-2">
+                                        {appointment.status === "completed" && (
+                                          <FaCheckCircle className="text-green-500" />
+                                        )}
+                                        {appointment.status === "cancelled" && (
+                                          <FaTimesCircle className="text-red-500" />
+                                        )}
+                                      </div>
+                                      {appointment.status === "pending" && (
+                                        <div className="flex gap-2">
+                                          <button
+                                            onClick={() =>
+                                              handleStatusUpdate(
+                                                appointment.id,
+                                                "confirmed"
+                                              )
+                                            }
+                                            className="px-3 py-1 bg-green-100 text-green-700 rounded-lg 
+                           hover:bg-green-200 transition-colors flex items-center gap-1"
+                                          >
+                                            <FaCheckCircle className="w-4 h-4" />
+                                            Accept
+                                          </button>
+                                          <button
+                                            onClick={() =>
+                                              handleStatusUpdate(
+                                                appointment.id,
+                                                "cancelled"
+                                              )
+                                            }
+                                            className="px-3 py-1 bg-red-100 text-red-700 rounded-lg 
+                           hover:bg-red-200 transition-colors flex items-center gap-1"
+                                          >
+                                            <FaTimesCircle className="w-4 h-4" />
+                                            Reject
+                                          </button>
+                                        </div>
                                       )}
-                                      {appointment.status === "cancelled" && (
-                                        <FaTimesCircle className="text-red-500" />
+                                      {appointment.status === "confirmed" && (
+                                        <div className="flex gap-2">
+                                          <button
+                                            onClick={() =>
+                                              handleStatusUpdate(
+                                                appointment.id,
+                                                "completed"
+                                              )
+                                            }
+                                            className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg 
+                           hover:bg-blue-200 transition-colors flex items-center gap-1"
+                                          >
+                                            <FaCheckCircle className="w-4 h-4" />
+                                            Complete
+                                          </button>
+                                          <button
+                                            onClick={() =>
+                                              handleStatusUpdate(
+                                                appointment.id,
+                                                "cancelled"
+                                              )
+                                            }
+                                            className="px-3 py-1 bg-red-100 text-red-700 rounded-lg
+                           hover:bg-red-200 transition-colors flex items-center gap-1"
+                                          >
+                                            <FaTimesCircle className="w-4 h-4" />
+                                            Cancel
+                                          </button>
+                                        </div>
                                       )}
                                     </div>
                                   </div>
