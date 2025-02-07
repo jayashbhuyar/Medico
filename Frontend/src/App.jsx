@@ -37,6 +37,7 @@ import ReviewPage from './Pages/ReviewPage'
 import ProfilePage from './Components/User/ProfilePage'
 import ConsultantDashboard from './Components/Consultant/ConsultantDashboard'
 import ConsultantAppointments from './Components/Consultant/ConsultantAppointment'
+import UserAppointments from './Components/User/UserAppointments'
 
 function App() {
   return (
@@ -80,6 +81,9 @@ function App() {
         <Route path="/reviewpage" element={<ReviewPage />} />
         <Route path='/consultant/dashboard' element={<ConsultantDashboard />} />
         <Route path='/consultant/appointments' element={<ConsultantAppointments />} />
+        <Route path='/user/appointments' element={<UserAppointments />} />
+
+       
         {/* Add more routes as needed */}
       </Routes>
     </Router>

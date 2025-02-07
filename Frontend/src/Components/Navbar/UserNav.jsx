@@ -323,6 +323,14 @@ const UserNav = () => {
                           <FaUser className="text-blue-600 w-5 h-5" />
                           <span className="text-gray-700 font-medium">My Profile</span>
                         </Link>
+                        <Link
+                          to="/user/appointments"
+                          className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 
+                                   rounded-xl transition-colors"
+                        >
+                          <FaUser className="text-blue-600 w-5 h-5" />
+                          <span className="text-gray-700 font-medium">My Appointments</span>
+                        </Link>
 
                         <button
                           onClick={handleLogout}
@@ -387,6 +395,13 @@ const UserNav = () => {
                           >
                             <FaUser className="text-blue-600" />
                             <span>Profile</span>
+                          </Link>
+                          <Link
+                            to="/user/appointments"
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors"
+                          >
+                            <FaUser className="text-blue-600" />
+                            <span>My Appointments</span>
                           </Link>
 
                           <button

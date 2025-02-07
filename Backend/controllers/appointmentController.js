@@ -214,3 +214,25 @@ exports.updateAppointmentStatus = async (req, res) => {
         });
     }
 };
+
+
+exports.getUserAppointments = async (req, res) => {
+  try {
+    const { email } = req.params;
+    
+    const appointments = await Appointment.find({ email })
+      .sort({ appointmentDate: -1 });
+    
+    res.status(200).json({
+      success: true,
+      count: appointments.length,
+      data: appointments
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching appointments',
+      error: error.message
+    });
+  }
+};

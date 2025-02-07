@@ -5,6 +5,7 @@ const appointmentController = require('../controllers/appointmentController');
 // CRUD Routes
 router.post('/create', appointmentController.createAppointment);
 router.get('/doctor', appointmentController.getDoctorAppointments);
+router.get('/user/:email', appointmentController.getUserAppointments);
 router.get('/all', appointmentController.getAppointmentsByEmail);
 router.get('/:id', appointmentController.getAppointment);
 router.patch('/update/:id', appointmentController.updateAppointment);
