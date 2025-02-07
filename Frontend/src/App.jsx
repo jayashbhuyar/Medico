@@ -40,6 +40,7 @@ import ConsultantAppointments from './Components/Consultant/ConsultantAppointmen
 import UserAppointments from './Components/User/UserAppointments'
 import ClinicAppointment from './Components/Clinic/ClinicAppointment'
 import ConsultantProfile from './Components/Consultant/ConsultantProfile'
+import ClinicProfile from './Components/Clinic/ClinicProfile'
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
         <Route path="/clinic/appointments" element={<ClinicAppointment />} />
         <Route path="/userprofile" element={<ProfilePage />} />
         <Route path="/consultantprofile" element={<ConsultantProfile />} />
+        <Route path="/clinicprofile" element={<ClinicProfile />} />
         <Route path="/clinicresults" element={<ClinicResults />} />
         <Route path="/userlogin" element={<UserLogin />} />
         <Route path="/usernavhospitals" element={<Hospitals />} />
