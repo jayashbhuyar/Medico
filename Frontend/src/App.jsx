@@ -41,6 +41,7 @@ import UserAppointments from './Components/User/UserAppointments'
 import ClinicAppointment from './Components/Clinic/ClinicAppointment'
 import ConsultantProfile from './Components/Consultant/ConsultantProfile'
 import ClinicProfile from './Components/Clinic/ClinicProfile'
+import SiteMap from './Components/User/SiteMap'
 
 function App() {
   return (
@@ -88,6 +89,7 @@ function App() {
         <Route path='/consultant/dashboard' element={<ConsultantDashboard />} />
         <Route path='/consultant/appointments' element={<ConsultantAppointments />} />
         <Route path='/user/appointments' element={<UserAppointments />} />
+        <Route path="/sitemap" element={<SiteMap/>} />
 
        
         {/* Add more routes as needed */}
