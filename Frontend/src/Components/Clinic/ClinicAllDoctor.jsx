@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUserMd, FaClock, FaEnvelope, FaPhone, FaMoneyBill, FaCalendarAlt, FaEye } from 'react-icons/fa';
-import { toast } from 'react-hot-toast';
+import {
+  FaUserMd,
+  FaClock,
+  FaEnvelope,
+  FaPhone,
+  FaMoneyBill,
+  FaCalendarAlt,
+  FaEye,
+  FaTrash,
+} from "react-icons/fa";
+import { toast } from "react-hot-toast";
 
 const DoctorCard = ({ doctor, onViewDetails }) => (
   <motion.div
@@ -15,7 +24,10 @@ const DoctorCard = ({ doctor, onViewDetails }) => (
         <h3 className="text-xl font-semibold text-gray-800">{doctor.name}</h3>
         <div className="flex flex-wrap gap-2 mt-2">
           {doctor.specialties.map((specialty, index) => (
-            <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+            <span
+              key={index}
+              className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs"
+            >
               {specialty}
             </span>
           ))}
@@ -62,7 +74,10 @@ const Section = ({ title, children }) => (
 const InfoRow = ({ icon, text, label }) => (
   <div className="flex items-center text-gray-600">
     {icon}
-    <span className="ml-2 text-sm">{label && <strong>{label}: </strong>}{text}</span>
+    <span className="ml-2 text-sm">
+      {label && <strong>{label}: </strong>}
+      {text}
+    </span>
   </div>
 );
 
@@ -191,6 +206,34 @@ const ClinicAllDoctors = () => {
         left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
       });
+    }
+  };
+
+  const deleteDoctor = async (doctorId) => {
+    if (!window.confirm("Are you sure you want to delete this doctor?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/doctors/delete/${doctorId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success("Doctor deleted successfully");
+        setDoctors(doctors.filter((doc) => doc._id !== doctorId));
+      } else {
+        throw new Error(data.message || "Failed to delete doctor");
+      }
+    } catch (error) {
+      console.error("Delete doctor error:", error);
+      toast.error(error.message || "Failed to delete doctor");
     }
   };
 
@@ -338,15 +381,23 @@ const ClinicAllDoctors = () => {
                       ₹{doctor.consultationFees}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => {
-                          setSelectedDoctor(doctor);
-                          setShowModal(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-900 flex items-center gap-2"
-                      >
-                        <FaEye /> View
-                      </button>
+                      <div className="flex items-center justify-end gap-4">
+                        <button
+                          onClick={() => {
+                            setSelectedDoctor(doctor);
+                            setShowModal(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-900 flex items-center gap-2"
+                        >
+                          <FaEye /> View
+                        </button>
+                        <button
+                          onClick={() => deleteDoctor(doctor._id)}
+                          className="text-red-600 hover:text-red-900 flex items-center gap-2"
+                        >
+                          <FaTrash /> Delete
+                        </button>
+                      </div>
                     </td>
                   </motion.tr>
                 ))}
