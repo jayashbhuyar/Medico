@@ -129,7 +129,57 @@ const getAllDoctors = async (req, res) => {
   }
 };
 
+const deleteDoctor = async (req, res) => {
+  try {
+    const doctorId = req.params.id;
+
+    // First check if the doctor exists
+    const doctor = await Doctor.findById(doctorId);
+
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "Doctor not found",
+      });
+    }
+
+    // If doctor has a profile image, delete it from Cloudinary
+    if (doctor.profileImage) {
+      try {
+        // Get the public_id from the Cloudinary URL
+        const urlParts = doctor.profileImage.split("/");
+        const imageName = urlParts[urlParts.length - 1];
+        const publicId = `doctors/${imageName.split(".")[0]}`;
+
+        // Delete image from Cloudinary
+        const cloudinaryResult = await cloudinary.uploader.destroy(publicId);
+
+        if (cloudinaryResult.result !== "ok") {
+          console.error("Cloudinary deletion failed:", cloudinaryResult);
+        }
+      } catch (cloudinaryError) {
+        console.error("Error deleting image from Cloudinary:", cloudinaryError);
+      }
+    }
+
+    // Delete the doctor from database
+    await Doctor.findByIdAndDelete(doctorId);
+
+    res.status(200).json({
+      success: true,
+      message: "Doctor and associated image deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error in deleteDoctor:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete doctor",
+    });
+  }
+};
+
 module.exports = {
   addDoctor,
-  getAllDoctors
+  getAllDoctors,
+  deleteDoctor,
 };

@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUserMd, FaClock, FaEnvelope, FaPhone, FaMoneyBill, FaCalendarAlt, FaEye } from 'react-icons/fa';
-import { toast } from 'react-hot-toast';
+import {
+  FaUserMd,
+  FaClock,
+  FaEnvelope,
+  FaPhone,
+  FaMoneyBill,
+  FaCalendarAlt,
+  FaEye,
+  FaTrash,
+} from "react-icons/fa";
+import { toast } from "react-hot-toast";
 
 const DoctorCard = ({ doctor, onViewDetails }) => (
   <motion.div
@@ -206,6 +215,33 @@ const AllDoctors = () => {
     }
   };
 
+  const deleteDoctor = async (doctorId) => {
+    if (window.confirm("Are you sure you want to delete this doctor?")) {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/doctors/delete/${doctorId}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+          toast.success("Doctor deleted successfully");
+          // Update the doctors list
+          setDoctors(doctors.filter((doctor) => doctor._id !== doctorId));
+        } else {
+          toast.error(data.message || "Failed to delete doctor");
+        }
+      } catch (error) {
+        console.error("Error deleting doctor:", error);
+        toast.error("Something went wrong while deleting the doctor");
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -350,15 +386,23 @@ const AllDoctors = () => {
                       ₹{doctor.consultationFees}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => {
-                          setSelectedDoctor(doctor);
-                          setShowModal(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-900 flex items-center gap-2"
-                      >
-                        <FaEye /> View
-                      </button>
+                      <div className="flex items-center justify-end gap-4">
+                        <button
+                          onClick={() => {
+                            setSelectedDoctor(doctor);
+                            setShowModal(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-900 flex items-center gap-2"
+                        >
+                          <FaEye /> View
+                        </button>
+                        <button
+                          onClick={() => deleteDoctor(doctor._id)}
+                          className="text-red-600 hover:text-red-900 flex items-center gap-2"
+                        >
+                          <FaTrash /> Delete
+                        </button>
+                      </div>
                     </td>
                   </motion.tr>
                 ))}
