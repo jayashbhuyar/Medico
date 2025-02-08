@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useCallback, memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { FaUserMd, FaGraduationCap, FaClock, FaKey, FaEnvelope, FaPhone, FaMoneyBill } from 'react-icons/fa';
-import { toast } from 'react-hot-toast';
+import {
+  FaUserMd,
+  FaGraduationCap,
+  FaClock,
+  FaKey,
+  FaEnvelope,
+  FaPhone,
+  FaMoneyBill,
+  FaFileAlt,
+} from "react-icons/fa";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-const InputField = React.memo(({ 
-  icon, 
-  label, 
-  error, 
-  required, 
-  ...props 
-}) => (
+const InputField = React.memo(({ icon, label, error, required, ...props }) => (
   <div className="space-y-2">
     <div className="flex items-center text-gray-600 mb-1">
       {icon && React.cloneElement(icon, { className: "mr-2 text-blue-500" })}
@@ -45,7 +48,7 @@ const AddDoctor = () => {
   // Protect against null hospitalData
   useEffect(() => {
     if (!hospitalData) {
-      navigate('/login');
+      navigate("/login");
     }
   }, [hospitalData, navigate]);
 
@@ -53,15 +56,15 @@ const AddDoctor = () => {
   const [errors, setErrors] = useState({}); // Add error state
   const [formData, setFormData] = useState({
     // Organization data from localStorage
-    organizationId: hospitalData?.id || '',
-    organizationType: hospitalData?.role || '', // Add role from localStorage
-    organizationName: hospitalData?.hospitalName || '',
-    organizationEmail: hospitalData?.email || '',
-    state: hospitalData?.state || '',
-    city: hospitalData?.city || '',
-    address: hospitalData?.address || '',
-    latitude: hospitalData?.latitude || '',
-    longitude: hospitalData?.longitude || '',
+    organizationId: hospitalData?.id || "",
+    organizationType: hospitalData?.role || "", // Add role from localStorage
+    organizationName: hospitalData?.hospitalName || "",
+    organizationEmail: hospitalData?.email || "",
+    state: hospitalData?.state || "",
+    city: hospitalData?.city || "",
+    address: hospitalData?.address || "",
+    latitude: hospitalData?.latitude || "",
+    longitude: hospitalData?.longitude || "",
 
     // User input data
     name: "",
@@ -80,6 +83,8 @@ const AddDoctor = () => {
     userId: "",
     password: "",
     confirmPassword: "",
+    description: "",
+    profileImage: null,
   });
 
   const degrees = [
@@ -204,94 +209,157 @@ const AddDoctor = () => {
     return errors;
   };
 
+  // Update validateFields function with more specific error messages
   const validateFields = () => {
-    const requiredFields = {
-      name: "Doctor's Name",
-      email: "Doctor's Email",
-      degrees: "Degrees",
-      experience: "Years of Experience",
-      specialties: "Specialties",
-      consultationFees: "Consultation Fees",
-      availableDays: "Available Days",
-      timeSlots: {
-        start: "Start Time",
-        end: "End Time",
-      },
-      userId: "User ID",
-      password: "Password",
-      confirmPassword: "Confirm Password",
-    };
+    const errors = [];
 
-    const missingFields = [];
+    // Basic Information validation
+    if (!formData.name?.trim()) {
+      errors.push("Doctor's name is required");
+    }
+    if (!formData.email?.trim()) {
+      errors.push("Doctor's email is required");
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.push("Invalid email format");
+    }
+    if (!formData.phone?.trim() || !/^\d{10}$/.test(formData.phone)) {
+      errors.push("Valid 10-digit phone number is required");
+    }
 
-    // Check basic fields
-    Object.entries(requiredFields).forEach(([key, label]) => {
-      if (
-        key === "degrees" ||
-        key === "specialties" ||
-        key === "availableDays"
-      ) {
-        if (!formData[key].length) {
-          missingFields.push(label);
+    // Description validation
+    if (!formData.description?.trim()) {
+      errors.push("Description is required");
+    } else if (formData.description.length < 50) {
+      errors.push("Description must be at least 50 characters");
+    }
+
+    // Education & Experience validation
+    if (!formData.degrees?.length) {
+      errors.push("Select at least one degree");
+    }
+    if (!formData.specialties?.length) {
+      errors.push("Select at least one specialty");
+    }
+    if (!formData.experience) {
+      errors.push("Years of experience is required");
+    }
+    if (!formData.consultationFees) {
+      errors.push("Consultation fees is required");
+    }
+
+    // Availability validation
+    if (!formData.availableDays?.length) {
+      errors.push("Select available days");
+    }
+    if (!formData.timeSlots.start || !formData.timeSlots.end) {
+      errors.push("Time slots are required");
+    }
+
+    // Account validation
+    if (!formData.userId?.trim()) {
+      errors.push("User ID is required");
+    }
+    if (!formData.password?.trim()) {
+      errors.push("Password is required");
+    } else if (formData.password.length < 6) {
+      errors.push("Password must be at least 6 characters");
+    }
+    if (formData.password !== formData.confirmPassword) {
+      errors.push("Passwords don't match");
+    }
+
+    if (errors.length > 0) {
+      // Show all errors in a single toast
+      toast.error(
+        <div>
+          <strong>Please fix the following errors:</strong>
+          <ul className="list-disc pl-4 mt-2">
+            {errors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        </div>,
+        {
+          duration: 5000, // Show for 5 seconds
+          style: {
+            maxWidth: "500px",
+          },
         }
-      } else if (key === "timeSlots") {
-        if (!formData.timeSlots.start) missingFields.push("Start Time");
-        if (!formData.timeSlots.end) missingFields.push("End Time");
-      } else if (!formData[key]) {
-        missingFields.push(label);
-      }
-    });
-
-    if (missingFields.length > 0) {
-      toast.error(`Missing required fields: ${missingFields.join(", ")}`);
-      console.log(missingFields.join(", "));
+      );
       return false;
     }
 
     return true;
   };
 
+  // Update the handleSubmit function with better error handling
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateFields()) {
       return;
-    } else {
-      console.log("Form validated");
     }
 
-    const hospitalToken = localStorage.getItem("hospitalToken");
-    console.log("Hospital Token:", hospitalToken);
+    // Validate image
+    if (!formData.profileImage) {
+      toast.error("Profile image is required");
+      return;
+    }
 
-    console.log("Form Data to be sent:", formData);
+    // Validate description
+    if (!formData.description || formData.description.length < 50) {
+      toast.error("Description must be at least 50 characters long");
+      return;
+    }
+
+    const formDataToSend = new FormData();
 
     try {
+      // Append all form data
+      Object.keys(formData).forEach((key) => {
+        if (key === "profileImage" && formData[key] instanceof File) {
+          formDataToSend.append("profileImage", formData[key]);
+        } else if (
+          typeof formData[key] === "object" &&
+          !(formData[key] instanceof File)
+        ) {
+          formDataToSend.append(key, JSON.stringify(formData[key]));
+        } else {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
+
       const response = await fetch("http://localhost:8000/api/doctors/add", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Authorization: `Bearer ${hospitalToken}`,
-        },
         credentials: "include",
-        body: JSON.stringify({
-          ...formData,
-        }),
+        body: formDataToSend,
       });
 
       const data = await response.json();
-      console.log("Response Data:", data);
 
       if (data.success) {
         toast.success("Doctor added successfully!");
-        alert("Doctor added successfully!");
         navigate("/hospital/dashboard");
-        // navigate
       } else {
-        toast.error(data.message || "Failed to add doctor");
+        // Show specific error messages
+        if (data.message.includes("duplicate")) {
+          toast.error("This user ID or email is already in use");
+        } else if (data.message.includes("validation")) {
+          toast.error("Please check all required fields");
+        } else {
+          toast.error(data.message || "Failed to add doctor");
+        }
       }
     } catch (error) {
-      toast.error("Something went wrong. Please try again.");
-      console.error(error);
+      console.error("Error adding doctor:", error);
+      if (error.message.includes("NetworkError")) {
+        toast.error("Network error. Please check your connection");
+      } else if (error.message.includes("Unauthorized")) {
+        toast.error("Session expired. Please login again");
+        navigate("/login");
+      } else {
+        toast.error("Something went wrong. Please try again");
+      }
     }
   };
 
@@ -344,7 +412,7 @@ const AddDoctor = () => {
             error={errors.name}
             required
           />
-          
+
           <InputField
             icon={<FaPhone />}
             label="Phone Number"
@@ -383,7 +451,14 @@ const AddDoctor = () => {
         </div>
       </motion.div>
     ),
-    [formData.name, formData.email, formData.phone, formData.alternatePhone, handleInputChange, errors]
+    [
+      formData.name,
+      formData.email,
+      formData.phone,
+      formData.alternatePhone,
+      handleInputChange,
+      errors,
+    ]
   );
 
   const MultiSelect = ({ options, selected, onChange, label }) => {
@@ -612,6 +687,75 @@ const AddDoctor = () => {
     ]
   );
 
+  const DescriptionAndImage = useMemo(
+    () => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <div className="flex items-center text-gray-600 mb-1">
+            <FaFileAlt className="mr-2 text-blue-500" />
+            <label>
+              Doctor's Description <span className="text-red-500">*</span>
+            </label>
+          </div>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-3 rounded-lg border 
+              ${errors.description ? "border-red-500" : "border-gray-300"} 
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              bg-white/50 backdrop-blur-sm`}
+            rows="4"
+            placeholder="Enter detailed description about doctor's experience, expertise, and achievements..."
+            required
+            minLength={50}
+            maxLength={1000}
+          />
+          {errors.description && (
+            <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+          )}
+          <p className="text-sm text-gray-500">
+            {formData.description.length}/1000 characters
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center text-gray-600 mb-1">
+            <FaUserMd className="mr-2 text-blue-500" />
+            <label>
+              Profile Image <span className="text-red-500">*</span>
+            </label>
+          </div>
+          <input
+            type="file"
+            name="profileImage"
+            accept="image/*"
+            onChange={(e) => {
+              setFormData((prev) => ({
+                ...prev,
+                profileImage: e.target.files[0],
+              }));
+            }}
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500
+                     bg-white/50 backdrop-blur-sm"
+            required
+          />
+          {formData.profileImage && (
+            <div className="mt-2">
+              <img
+                src={URL.createObjectURL(formData.profileImage)}
+                alt="Profile Preview"
+                className="w-32 h-32 object-cover rounded-lg"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    ),
+    [formData.description, formData.profileImage, handleInputChange, errors]
+  );
+
   return (
     <div
       className="min-h-screen py-12 px-4 sm:px-6 lg:px-8"
@@ -646,6 +790,7 @@ const AddDoctor = () => {
                   Basic Information
                 </h3>
                 {BasicInfo}
+                <div className="mt-6">{DescriptionAndImage}</div>
               </motion.div>
             )}
 

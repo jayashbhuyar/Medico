@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useCallback, memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { FaUserMd, FaGraduationCap, FaClock, FaKey, FaEnvelope, FaPhone, FaMoneyBill } from 'react-icons/fa';
-import { toast } from 'react-hot-toast';
+import {
+  FaUserMd,
+  FaGraduationCap,
+  FaClock,
+  FaKey,
+  FaEnvelope,
+  FaPhone,
+  FaMoneyBill,
+  FaFileAlt,
+} from "react-icons/fa";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
-const InputField = React.memo(({ 
-  icon, 
-  label, 
-  error, 
-  required, 
-  ...props 
-}) => (
+import axios from "axios";
+const InputField = React.memo(({ icon, label, error, required, ...props }) => (
   <div className="space-y-2">
     <div className="flex items-center text-gray-600 mb-1">
       {icon && React.cloneElement(icon, { className: "mr-2 text-blue-500" })}
@@ -31,38 +34,40 @@ const InputField = React.memo(({
 
 const ClinicAddDoctor = () => {
   const navigate = useNavigate();
-  const clinicData = JSON.parse(localStorage.getItem('clinicData'));
+  const clinicData = JSON.parse(localStorage.getItem("clinicData"));
 
   const [formData, setFormData] = useState({
     // Organization Details
-    
-    organizationId: clinicData?.id || '',
-    organizationType: 'Clinic',
-    organizationName: clinicData?.clinicName || '',
-    organizationEmail: clinicData?.email || '',
-    state: clinicData?.state || '',
-    city: clinicData?.city || '',
-    address: clinicData?.address || '',
-    latitude: clinicData?.latitude || '',
-    longitude: clinicData?.longitude || '',
+
+    organizationId: clinicData?.id || "",
+    organizationType: "Clinic",
+    organizationName: clinicData?.clinicName || "",
+    organizationEmail: clinicData?.email || "",
+    state: clinicData?.state || "",
+    city: clinicData?.city || "",
+    address: clinicData?.address || "",
+    latitude: clinicData?.latitude || "",
+    longitude: clinicData?.longitude || "",
 
     // Doctor Details
-    name: '',
-    email: '',
-    phone: '',
-    alternatePhone: '',
+    name: "",
+    email: "",
+    phone: "",
+    alternatePhone: "",
     degrees: [],
-    experience: '',
+    experience: "",
     specialties: [],
-    consultationFees: '',
+    consultationFees: "",
     availableDays: [],
     timeSlots: {
-      start: '',
-      end: ''
+      start: "",
+      end: "",
     },
-    userId: '',
-    password: '',
-    confirmPassword: ''
+    userId: "",
+    password: "",
+    confirmPassword: "",
+    description: "",
+    profileImage: null,
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -158,78 +163,89 @@ const ClinicAddDoctor = () => {
 
   const validateFields = () => {
     const errors = [];
-    
-    if (!formData.name?.trim()) errors.push('Name is required');
-    if (!formData.email?.trim()) errors.push('Email is required');
-    if (!formData.phone?.trim()) errors.push('Phone is required');
-    if (!formData.experience || isNaN(formData.experience)) errors.push('Valid experience is required');
-    if (!formData.consultationFees || isNaN(formData.consultationFees)) errors.push('Valid consultation fee is required');
-    if (!formData.degrees?.length) errors.push('At least one degree is required');
-    if (!formData.specialties?.length) errors.push('At least one specialty is required');
-    if (!formData.availableDays?.length) errors.push('Available days are required');
-    if (!formData.timeSlots?.start || !formData.timeSlots?.end) errors.push('Time slots are required');
-    if (!formData.userId?.trim()) errors.push('User ID is required');
-    if (!formData.password?.trim()) errors.push('Password is required');
-    
+
+    if (!formData.name?.trim()) errors.push("Name is required");
+    if (!formData.email?.trim()) errors.push("Email is required");
+    if (!formData.phone?.trim()) errors.push("Phone is required");
+    if (!formData.experience || isNaN(formData.experience))
+      errors.push("Valid experience is required");
+    if (!formData.consultationFees || isNaN(formData.consultationFees))
+      errors.push("Valid consultation fee is required");
+    if (!formData.degrees?.length)
+      errors.push("At least one degree is required");
+    if (!formData.specialties?.length)
+      errors.push("At least one specialty is required");
+    if (!formData.availableDays?.length)
+      errors.push("Available days are required");
+    if (!formData.timeSlots?.start || !formData.timeSlots?.end)
+      errors.push("Time slots are required");
+    if (!formData.userId?.trim()) errors.push("User ID is required");
+    if (!formData.password?.trim()) errors.push("Password is required");
+
     return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
-      // Validate and format data
-      const formattedData = {
-        ...formData,
-        organizationId: clinicData.id,
-        organizationType: 'Clinic',
-        organizationName: clinicData.clinicName,
-        organizationEmail: clinicData.email,
-        state: clinicData.state,
-        city: clinicData.city,
-        address: clinicData.address,
-        latitude: parseFloat(clinicData.latitude),
-        longitude: parseFloat(clinicData.longitude),
-        experience: parseInt(formData.experience),
-        consultationFees: parseInt(formData.consultationFees),
-        degrees: formData.degrees || [],
-        specialties: formData.specialties || [],
-        availableDays: formData.availableDays || [],
-        timeSlots: {
-          start: formData.timeSlots.start,
-          end: formData.timeSlots.end
-        }
-      };
+      // Create FormData instance
+      const formDataToSend = new FormData();
 
-      console.log('Formatted doctor data:', formattedData);
-
-      const response = await axios.post(
-        'http://localhost:8000/api/doctors/add',
-        formattedData,
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      );
-
-      if (response.data.success) {
-        toast.success('Doctor added successfully');
-        navigate('/clinic/dashboard');
+      // Validate image and description
+      if (!formData.profileImage) {
+        toast.error("Profile image is required");
+        return;
       }
 
-    } catch (error) {
-      console.error('Error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
+      if (!formData.description || formData.description.length < 50) {
+        toast.error("Description must be at least 50 characters long");
+        return;
+      }
+
+      // Append all form data
+      Object.keys(formData).forEach((key) => {
+        if (key === "profileImage" && formData[key] instanceof File) {
+          formDataToSend.append("profileImage", formData[key]);
+        } else if (
+          typeof formData[key] === "object" &&
+          !(formData[key] instanceof File)
+        ) {
+          formDataToSend.append(key, JSON.stringify(formData[key]));
+        } else {
+          formDataToSend.append(key, formData[key]);
+        }
       });
 
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
+      const response = await fetch("http://localhost:8000/api/doctors/add", {
+        method: "POST",
+        credentials: "include",
+        body: formDataToSend,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success("Doctor added successfully!");
+        navigate("/clinic/dashboard");
       } else {
-        toast.error('Failed to add doctor. Please try again.');
+        if (data.message.includes("duplicate")) {
+          toast.error("This user ID or email is already in use");
+        } else if (data.message.includes("validation")) {
+          toast.error("Please check all required fields");
+        } else {
+          toast.error(data.message || "Failed to add doctor");
+        }
+      }
+    } catch (error) {
+      console.error("Error adding doctor:", error);
+      if (error.message.includes("NetworkError")) {
+        toast.error("Network error. Please check your connection");
+      } else if (error.message.includes("Unauthorized")) {
+        toast.error("Session expired. Please login again");
+        navigate("/login");
+      } else {
+        toast.error("Something went wrong. Please try again");
       }
     }
   };
@@ -283,7 +299,7 @@ const ClinicAddDoctor = () => {
             error={errors.name}
             required
           />
-          
+
           <InputField
             icon={<FaPhone />}
             label="Phone Number"
@@ -322,7 +338,14 @@ const ClinicAddDoctor = () => {
         </div>
       </motion.div>
     ),
-    [formData.name, formData.email, formData.phone, formData.alternatePhone, handleInputChange, errors]
+    [
+      formData.name,
+      formData.email,
+      formData.phone,
+      formData.alternatePhone,
+      handleInputChange,
+      errors,
+    ]
   );
 
   const MultiSelect = ({ options, selected, onChange, label }) => {
@@ -551,6 +574,75 @@ const ClinicAddDoctor = () => {
     ]
   );
 
+  const DescriptionAndImage = useMemo(
+    () => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <div className="flex items-center text-gray-600 mb-1">
+            <FaFileAlt className="mr-2 text-blue-500" />
+            <label>
+              Doctor's Description <span className="text-red-500">*</span>
+            </label>
+          </div>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-3 rounded-lg border 
+              ${errors.description ? "border-red-500" : "border-gray-300"} 
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              bg-white/50 backdrop-blur-sm`}
+            rows="4"
+            placeholder="Enter detailed description about doctor's experience, expertise, and achievements..."
+            required
+            minLength={50}
+            maxLength={1000}
+          />
+          {errors.description && (
+            <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+          )}
+          <p className="text-sm text-gray-500">
+            {formData.description.length}/1000 characters
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center text-gray-600 mb-1">
+            <FaUserMd className="mr-2 text-blue-500" />
+            <label>
+              Profile Image <span className="text-red-500">*</span>
+            </label>
+          </div>
+          <input
+            type="file"
+            name="profileImage"
+            accept="image/*"
+            onChange={(e) => {
+              setFormData((prev) => ({
+                ...prev,
+                profileImage: e.target.files[0],
+              }));
+            }}
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500
+                     bg-white/50 backdrop-blur-sm"
+            required
+          />
+          {formData.profileImage && (
+            <div className="mt-2">
+              <img
+                src={URL.createObjectURL(formData.profileImage)}
+                alt="Profile Preview"
+                className="w-32 h-32 object-cover rounded-lg"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    ),
+    [formData.description, formData.profileImage, handleInputChange, errors]
+  );
+
   return (
     <div
       className="min-h-screen py-12 px-4 sm:px-6 lg:px-8"
@@ -585,6 +677,7 @@ const ClinicAddDoctor = () => {
                   Basic Information
                 </h3>
                 {BasicInfo}
+                <div className="mt-6">{DescriptionAndImage}</div>
               </motion.div>
             )}
 

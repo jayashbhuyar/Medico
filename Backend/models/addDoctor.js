@@ -40,13 +40,13 @@ const doctorSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: -90,
-      max: 90
+      max: 90,
     },
     longitude: {
       type: Number,
       required: true,
       min: -180,
-      max: 180
+      max: 180,
     },
 
     // Doctor Personal Info
@@ -54,6 +54,17 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       required: [true, "Name is required"],
       trim: true,
+    },
+    description: {
+      type: String,
+      required: [true, "Description is required"],
+      trim: true,
+      minlength: [50, "Description must be at least 50 characters"],
+      maxlength: [1000, "Description cannot exceed 1000 characters"],
+    },
+    profileImage: {
+      type: String, // Store the URL/path of the uploaded image
+      required: [true, "Profile image is required"],
     },
     email: {
       type: String,
@@ -194,15 +205,5 @@ doctorSchema.pre('save', async function (next) {
   next();
 });
 
-// Hash password before saving
-// doctorSchema.pre('save', async function(next) {
-//   if (!this.isModified('password')) return next();
-//   try {
-//     this.password = await bcrypt.hash(this.password, 12);
-//     next();
-//   } catch (error) {
-//     next(error);
-//   }
-// });
 
 module.exports = mongoose.model("Doctor", doctorSchema);
