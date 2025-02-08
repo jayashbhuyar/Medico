@@ -80,7 +80,7 @@ const DoctorResults = () => {
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12 mt-16">
         <div className="container mx-auto px-4">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-5xl font-bold mb-4"
@@ -101,7 +101,7 @@ const DoctorResults = () => {
               <FaFilter />
               <span>Sort by:</span>
             </div>
-            
+
             <motion.select
               whileTap={{ scale: 0.95 }}
               value={sortBy}
@@ -153,7 +153,7 @@ const DoctorResults = () => {
               <tbody className="divide-y divide-gray-200 bg-white">
                 <AnimatePresence>
                   {sortedDoctors.map((doctor, index) => (
-                    <motion.tr 
+                    <motion.tr
                       key={doctor._id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -163,32 +163,65 @@ const DoctorResults = () => {
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <FaUserMd className="w-6 h-6 text-blue-600" />
+                          <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center">
+                            {doctor.profileImage ? (
+                              <img
+                                src={doctor.profileImage}
+                                alt={doctor.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src =
+                                    "https://via.placeholder.com/48?text=Dr";
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-blue-100 flex items-center justify-center">
+                                <FaUserMd className="w-6 h-6 text-blue-600" />
+                              </div>
+                            )}
                           </div>
                           <div>
-                            <div className="font-medium text-gray-900">{doctor.name}</div>
-                            <div className="text-sm text-gray-500">{doctor.degrees?.join(", ")}</div>
+                            <div className="font-medium text-gray-900">
+                              {doctor.name}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {doctor.degrees?.join(", ")}
+                            </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{doctor.specialties?.join(", ")}</div>
+                        <div className="text-sm text-gray-900">
+                          {doctor.specialties?.join(", ")}
+                        </div>
                         <div className="flex items-center mt-1">
                           {[...Array(5)].map((_, i) => (
-                            <FaStar 
+                            <FaStar
                               key={i}
-                              className={`w-4 h-4 ${i < (doctor.rating || 0) ? 'text-yellow-400' : 'text-gray-200'}`}
+                              className={`w-4 h-4 ${
+                                i < (doctor.rating || 0)
+                                  ? "text-yellow-400"
+                                  : "text-gray-200"
+                              }`}
                             />
                           ))}
-                          <span className="ml-2 text-sm text-gray-600">{doctor.experience} years exp.</span>
+                          <span className="ml-2 text-sm text-gray-600">
+                            {doctor.experience} years exp.
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{doctor.city}, {doctor.state}</div>
+                        <div className="text-sm text-gray-900">
+                          {doctor.city}, {doctor.state}
+                        </div>
                         {userLocation && (
                           <div className="text-sm text-blue-600 mt-1">
-                            {calculateDistance(doctor.latitude, doctor.longitude)} km away
+                            {calculateDistance(
+                              doctor.latitude,
+                              doctor.longitude
+                            )}{" "}
+                            km away
                           </div>
                         )}
                       </td>
@@ -235,7 +268,10 @@ const DoctorResults = () => {
         {showProfile && selectedDoctor && (
           <DoctorProfile
             doctor={selectedDoctor}
-            distance={calculateDistance(selectedDoctor.latitude, selectedDoctor.longitude)}
+            distance={calculateDistance(
+              selectedDoctor.latitude,
+              selectedDoctor.longitude
+            )}
             onClose={() => {
               setShowProfile(false);
               setSelectedDoctor(null);
