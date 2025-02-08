@@ -5,142 +5,167 @@ import {
   FaUserMd,
   FaUser,
   FaSearch,
-  FaStar,
+//   FaClinic,
   FaQuestionCircle,
+  FaHome,
+  FaCalendarAlt,
 } from "react-icons/fa";
 
 const SiteMap = () => {
-  const sections = [
+  const platformOverview = {
+    title: "Medico Platform Overview",
+    description:
+      "A comprehensive healthcare management system connecting patients, hospitals, clinics, and consultants.",
+    features: [
+      "Centralized Healthcare Management",
+      "Easy Appointment Booking",
+      "Real-time Doctor Search",
+      "Digital Medical Records",
+      "Review & Rating System",
+    ],
+  };
+
+  const navigationTree = [
     {
-      title: "User Portal",
-      icon: <FaUser className="text-blue-500" />,
+      title: "Main Portal",
+      icon: <FaHome className="text-blue-600" />,
+      description: "Start your healthcare journey",
       items: [
-        { name: "User Login", path: "/userlogin" },
-        { name: "Healthcare Search", path: "/healthcare-search" },
-        { name: "User Dashboard", path: "/user/mainpage" },
-        { name: "My Appointments", path: "/user/appointments" },
-        { name: "Profile Settings", path: "/profile" },
+        { name: "Landing Page", path: "/", badge: "Start Here" },
+        { name: "Healthcare Search", path: "/patientpage", badge: "Popular" },
+        { name: "Doctor Registration", path: "/doctorpage" },
+        { name: "Reviews", path: "/reviewpage" },
       ],
     },
     {
-      title: "Hospital Services",
-      icon: <FaHospital className="text-green-500" />,
+      title: "Patient Services",
+      icon: <FaUser className="text-green-600" />,
+      description: "Access healthcare services",
+      items: [
+        { name: "User Login", path: "/userlogin", badge: "Required" },
+        { name: "User Dashboard", path: "/usermainpage" },
+        { name: "My Appointments", path: "/user/appointments" },
+        { name: "My Profile", path: "/userprofile" },
+        { name: "Search Doctors", path: "/usernavdoctors" },
+      ],
+    },
+    {
+      title: "Hospital Hub",
+      icon: <FaHospital className="text-red-600" />,
+      description: "Hospital management portal",
       items: [
         { name: "Hospital Registration", path: "/hospitalregistration" },
         { name: "Hospital Login", path: "/hospitallogin" },
-        { name: "Hospital Dashboard", path: "/hospital/dashboard" },
-        { name: "Add Doctor", path: "/hospital/add-doctor" },
-        { name: "View All Doctors", path: "/hospital/all-doctors" },
+        { name: "Dashboard", path: "/hospital/dashboard" },
+        { name: "Manage Doctors", path: "/hospital/alldoctors" },
+        { name: "Add Doctor", path: "/hospital/adddoctor" },
         { name: "Hospital Profile", path: "/hospital/profile" },
-        { name: "Manage Appointments", path: "/hospital/appointments" },
+        { name: "Appointments", path: "/hospital/appointments" },
       ],
     },
     {
-      title: "Clinic Management",
-      icon: <FaHospital className="text-purple-500" />,
+      title: "Clinic Center",
+      icon: <FaHospital className="text-purple-600" />,
+      description: "Clinic management system",
       items: [
         { name: "Clinic Registration", path: "/clinicregistration" },
         { name: "Clinic Login", path: "/cliniclogin" },
-        { name: "Clinic Dashboard", path: "/clinic/dashboard" },
-        { name: "Add Doctor", path: "/clinic/add-doctor" },
-        { name: "All Doctors", path: "/clinic/all-doctors" },
-        { name: "Clinic Profile", path: "/clinic/profile" },
-        { name: "Clinic Appointments", path: "/clinic/appointments" },
+        { name: "Dashboard", path: "/clinic/dashboard" },
+        { name: "Add Doctor", path: "/clinicadddoctor" },
+        { name: "All Doctors", path: "/clinicalldoctors" },
+        { name: "Profile", path: "/clinicprofile" },
+        { name: "Appointments", path: "/clinic/appointments" },
       ],
     },
     {
       title: "Consultant Portal",
-      icon: <FaUserMd className="text-red-500" />,
+      icon: <FaUserMd className="text-yellow-600" />,
+      description: "For medical consultants",
       items: [
-        { name: "Consultant Registration", path: "/consultantregistration" },
-        { name: "Consultant Login", path: "/consultantlogin" },
-        { name: "Consultant Dashboard", path: "/consultant/dashboard" },
-        { name: "My Appointments", path: "/consultant/appointments" },
-        { name: "Profile Settings", path: "/consultant/profile" },
+        { name: "Registration", path: "/consultantregistration" },
+        { name: "Login", path: "/consultantlogin" },
+        { name: "Dashboard", path: "/consultant/dashboard" },
+        { name: "Appointments", path: "/consultant/appointments" },
+        { name: "Profile", path: "/consultantprofile" },
       ],
     },
     {
-      title: "Search Features",
-      icon: <FaSearch className="text-yellow-500" />,
+      title: "Search & Discovery",
+      icon: <FaSearch className="text-indigo-600" />,
+      description: "Find healthcare services",
       items: [
-        { name: "Search by Specialty", path: "/specialty-results" },
-        { name: "Find Doctors", path: "/doctor-results" },
-        { name: "Find Hospitals", path: "/hospital-results" },
-        { name: "Find Clinics", path: "/clinic-results" },
-        { name: "Doctor Profiles", path: "/doctor/profile" },
+        { name: "Specialty Search", path: "/specialtyresults" },
+        { name: "Find Doctors", path: "/doctorresults" },
+        { name: "Find Hospitals", path: "/hospitalresults" },
+        { name: "Find Clinics", path: "/clinicresults" },
       ],
     },
     {
-      title: "Additional Resources",
-      icon: <FaQuestionCircle className="text-indigo-500" />,
+      title: "Help & Support",
+      icon: <FaQuestionCircle className="text-teal-600" />,
+      description: "Get assistance",
       items: [
-        { name: "About Us", path: "/about" },
-        { name: "Help Center", path: "/help" },
-        { name: "Reviews", path: "/reviews" },
-        { name: "Navigation Guide", path: "/nav-help" },
+        { name: "About Us", path: "/usernavabout" },
+        { name: "Help Center", path: "/usernavhelp" },
+        { name: "Navigation Guide", path: "/sitemap" },
       ],
     },
   ];
 
-  const quickInfo = {
-    title: "How to Use Medico Platform",
-    steps: [
-      "1. Register/Login based on your role (User/Hospital/Clinic/Consultant)",
-      "2. Complete your profile information",
-      "3. Users can search for healthcare services",
-      "4. Book appointments with doctors or clinics",
-      "5. Manage appointments and view medical records",
-      "6. Leave reviews and feedback for services",
-    ],
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4">
       <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Welcome to Medico
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            Medico Platform Map
           </h1>
-          <p className="text-lg text-gray-600">
-            Your Complete Healthcare Management Platform
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            {platformOverview.description}
           </p>
-        </div>
-
-        {/* Quick Start Guide */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-semibold mb-4">{quickInfo.title}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {quickInfo.steps.map((step, index) => (
-              <div key={index} className="flex items-start space-x-2">
-                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <span className="text-blue-600 text-sm">{index + 1}</span>
-                </div>
-                <p className="text-gray-700">{step}</p>
-              </div>
+          <div className="flex flex-wrap justify-center gap-4 mt-6">
+            {platformOverview.features.map((feature, index) => (
+              <span
+                key={index}
+                className="px-4 py-2 bg-white rounded-full shadow-sm text-gray-700"
+              >
+                {feature}
+              </span>
             ))}
           </div>
         </div>
 
-        {/* Main Navigation Sections */}
+        {/* Navigation Tree */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {sections.map((section, index) => (
+          {navigationTree.map((section, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow"
+              className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow border border-gray-100"
             >
-              <div className="flex items-center mb-4">
-                {section.icon}
-                <h2 className="text-xl font-semibold ml-2">{section.title}</h2>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 bg-gray-50 rounded-lg">{section.icon}</div>
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    {section.title}
+                  </h2>
+                  <p className="text-sm text-gray-500">{section.description}</p>
+                </div>
               </div>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {section.items.map((item, itemIndex) => (
                   <li key={itemIndex}>
                     <Link
                       to={item.path}
-                      className="text-gray-600 hover:text-blue-600 flex items-center group"
+                      className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 group transition-colors"
                     >
-                      <span className="w-2 h-2 bg-gray-300 rounded-full mr-2 group-hover:bg-blue-500 transition-colors"></span>
-                      {item.name}
+                      <span className="text-gray-600 group-hover:text-blue-600">
+                        {item.name}
+                      </span>
+                      {item.badge && (
+                        <span className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">
+                          {item.badge}
+                        </span>
+                      )}
                     </Link>
                   </li>
                 ))}
