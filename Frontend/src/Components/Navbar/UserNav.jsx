@@ -23,6 +23,7 @@ import {
   FaUser,
   FaSignOutAlt,
   FaCog,
+  FaSitemap,
 } from "react-icons/fa";
 import Cookies from 'js-cookie';
 
@@ -104,6 +105,17 @@ const UserNav = () => {
       path: "/usernavdoctors",
       icon: <FaUserMd className="w-5 h-5" />,
     },
+   
+    {
+      name: "About Us",
+      path: "/usernavabout",
+      icon: <FaInfoCircle className="w-5 h-5" />,
+    },
+    {
+      name: "SiteMap",
+      path: "/sitemap",
+      icon: <FaSitemap className="w-5 h-5" />,
+    },
     {
       name: "Emergency",
       icon: <FaPhoneAlt className="w-5 h-5 text-red-500" />,
@@ -129,16 +141,6 @@ const UserNav = () => {
           icon: <FaPhoneVolume className="w-5 h-5 text-purple-500" />,
         },
       ],
-    },
-    {
-      name: "About Us",
-      path: "/usernavabout",
-      icon: <FaInfoCircle className="w-5 h-5" />,
-    },
-    {
-      name: "Help",
-      path: "/usernavhelp",
-      icon: <FaRegQuestionCircle className="w-5 h-5" />,
     },
   ];
 
