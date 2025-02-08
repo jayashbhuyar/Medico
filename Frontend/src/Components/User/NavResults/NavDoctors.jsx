@@ -330,8 +330,22 @@ const DoctorCard = ({ doctor, distance, onViewProfile, onBooking }) => {
     >
       <div className="p-6">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-            <FaUserMd className="w-8 h-8 text-blue-600" />
+          <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center">
+            {doctor.profileImage ? (
+              <img
+                src={doctor.profileImage}
+                alt={doctor.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://via.placeholder.com/64?text=Dr";
+                }}
+              />
+            ) : (
+              <div className="w-full h-full bg-blue-100 flex items-center justify-center">
+                <FaUserMd className="w-8 h-8 text-blue-600" />
+              </div>
+            )}
           </div>
           <div>
             <h3 className="font-semibold text-lg">{doctor.name}</h3>
@@ -386,27 +400,27 @@ const DoctorCard = ({ doctor, distance, onViewProfile, onBooking }) => {
         </div>
 
         <div className="mt-6 flex gap-2">
-  <button
-    onClick={onViewProfile}
-    className="flex-1 bg-blue-50 text-blue-600 py-2 px-4 
+          <button
+            onClick={onViewProfile}
+            className="flex-1 bg-blue-50 text-blue-600 py-2 px-4 
              rounded hover:bg-blue-100 transition-all duration-200
              flex items-center justify-center gap-2"
-  >
-    <FaUserMd className="w-4 h-4" />
-    View Profile
-  </button>
-  <a
-    href={`https://www.google.com/maps/dir/?api=1&destination=${doctor.latitude},${doctor.longitude}`}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="flex-1 bg-green-50 text-green-600 py-2 px-4 
+          >
+            <FaUserMd className="w-4 h-4" />
+            View Profile
+          </button>
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${doctor.latitude},${doctor.longitude}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 bg-green-50 text-green-600 py-2 px-4 
              rounded hover:bg-green-100 transition-all duration-200
              flex items-center justify-center gap-2"
-  >
-    <FaMapMarkerAlt className="w-4 h-4" />
-    Get Directions
-  </a>
-</div>
+          >
+            <FaMapMarkerAlt className="w-4 h-4" />
+            Get Directions
+          </a>
+        </div>
       </div>
     </motion.div>
   );

@@ -29,16 +29,37 @@ const DoctorProfile = ({ doctor, distance, onClose }) => {
             {/* Doctor Header */}
             <div className="flex justify-between items-start mb-6">
               <div className="flex gap-4">
-                <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
-                  <FaUserMd className="w-10 h-10 text-blue-600" />
+                <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center">
+                  {doctor.profileImage ? (
+                    <img
+                      src={doctor.profileImage}
+                      alt={doctor.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://via.placeholder.com/80?text=Dr";
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-blue-100 flex items-center justify-center">
+                      <FaUserMd className="w-10 h-10 text-blue-600" />
+                    </div>
+                  )}
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold">{doctor.name}</h2>
                   <p className="text-gray-600">{doctor.degrees.join(", ")}</p>
-                  <p className="text-blue-600">{doctor.experience} years experience</p>
+                  <p className="text-blue-600">
+                    {doctor.experience} years experience
+                  </p>
                 </div>
               </div>
-              <button onClick={onClose} className="text-gray-500 hover:text-gray-700">×</button>
+              <button
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ×
+              </button>
             </div>
 
             {/* Contact Info */}
@@ -62,6 +83,16 @@ const DoctorProfile = ({ doctor, distance, onClose }) => {
               </div>
             </div>
 
+            {/* Description */}
+            <div className="mb-6">
+              <h3 className="font-semibold mb-3">About Doctor</h3>
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-gray-700 leading-relaxed">
+                  {doctor.description}
+                </p>
+              </div>
+            </div>
+
             {/* Organization Info */}
             <div className="mb-6">
               <h3 className="font-semibold mb-2">Practice Location</h3>
@@ -72,7 +103,11 @@ const DoctorProfile = ({ doctor, distance, onClose }) => {
               <p className="flex items-center text-gray-600 mt-1">
                 <FaMapMarkerAlt className="mr-2" />
                 {doctor.address}, {doctor.city}, {doctor.state}
-                {distance && <span className="ml-2 text-blue-600">({distance} km away)</span>}
+                {distance && (
+                  <span className="ml-2 text-blue-600">
+                    ({distance} km away)
+                  </span>
+                )}
               </p>
             </div>
 
@@ -81,7 +116,10 @@ const DoctorProfile = ({ doctor, distance, onClose }) => {
               <h3 className="font-semibold mb-2">Specializations</h3>
               <div className="flex flex-wrap gap-2">
                 {doctor.specialties.map((specialty, index) => (
-                  <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                  >
                     {specialty}
                   </span>
                 ))}
@@ -92,13 +130,13 @@ const DoctorProfile = ({ doctor, distance, onClose }) => {
             <div className="mb-6">
               <h3 className="font-semibold mb-2">Available Days</h3>
               <div className="grid grid-cols-3 gap-2">
-                {daysOfWeek.map(day => (
+                {daysOfWeek.map((day) => (
                   <div
                     key={day}
                     className={`p-2 text-center rounded ${
                       doctor.availableDays.includes(day)
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-400'
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-400"
                     }`}
                   >
                     {day}
