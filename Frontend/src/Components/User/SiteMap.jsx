@@ -10,6 +10,7 @@ import {
   FaHome,
   FaCalendarAlt,
 } from "react-icons/fa";
+import UserNav from "../Navbar/UserNav";
 
 const SiteMap = () => {
   const platformOverview = {
@@ -114,7 +115,8 @@ const SiteMap = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
+        <UserNav />
+      <div className="max-w-7xl mx-auto mt-12">
         {/* Header Section */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
