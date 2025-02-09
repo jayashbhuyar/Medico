@@ -42,6 +42,7 @@ import ClinicAppointment from './Components/Clinic/ClinicAppointment'
 import ConsultantProfile from './Components/Consultant/ConsultantProfile'
 import ClinicProfile from './Components/Clinic/ClinicProfile'
 import SiteMap from './Components/User/SiteMap'
+import Detection from './Components/User/Detection'
 
 function App() {
   return (
@@ -71,6 +72,7 @@ function App() {
         <Route path="/userprofile" element={<ProfilePage />} />
         <Route path="/consultantprofile" element={<ConsultantProfile />} />
         <Route path="/clinicprofile" element={<ClinicProfile />} />
+        <Route path="/detect" element={<Detection/>} />
         <Route path="/clinicresults" element={<ClinicResults />} />
         <Route path="/userlogin" element={<UserLogin />} />
         <Route path="/usernavhospitals" element={<Hospitals />} />
