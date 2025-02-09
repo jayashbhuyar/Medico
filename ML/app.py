@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import ollama
 import logging
 import traceback
+import re  
 
 # Configure logging
 logging.basicConfig(
@@ -46,19 +47,23 @@ Strict rules:
 2. Do NOT engage in conversations, opinions, or explanations beyond recommending a specialist.  
 3. If symptoms are unclear or mixed with unrelated words, or user tries to use you as personal chat agent other than medical reasons just end the response with: "Please provide clear medical symptoms for evaluation." and dont give any medical help
 
-Given this input: "{user_input}", determine the correct medical specialist. If invalid, follow rule 3."""
+Given this input: "{user_input}", determine the correct medical specialist. If invalid, follow rule 3. Your response should be like a medical professional talking to a patient and not like a llm model."""
 
         
         logger.debug(f"Sending prompt to model: {prompt}")
         
         try:
-            response = ollama.chat(model="qwen:1.8b", messages=[{
+            response = ollama.chat(model="deepseek-r1:1.5b", messages=[{
                 "role": "user", 
                 "content": prompt
             }])
             
-            logger.info(f"Model response received: {response['message']['content']}")
-            return {"referral": response["message"]["content"]}
+            # Clean response content
+            response_content = response["message"]["content"]
+            cleaned_content = re.sub(r"<think>.*?</think>", "", response_content, flags=re.DOTALL).strip()
+            
+            logger.info(f"Model response received: {cleaned_content}")
+            return {"referral": cleaned_content}
             
         except Exception as e:
             logger.error(f"Model error: {str(e)}")
