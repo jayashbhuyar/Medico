@@ -99,48 +99,43 @@ const Detection = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Warning Banner */}
-      <div className="bg-amber-50 border-b border-amber-200">
-        <div className="max-w-7xl mx-auto px-4 py-3">
+      <div className="sticky top-0 z-50 bg-amber-50 border-b border-amber-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex items-center gap-2 text-amber-800">
             <FaExclamationTriangle className="text-amber-600" />
             <p className="text-sm">
-              <span className="font-semibold">Beta Testing:</span> This AI
-              symptom analyzer is under development. Results are for reference
-              only and should not replace professional medical advice.
+              <span className="font-semibold">Beta Testing:</span> Results are
+              for reference only.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header with new styling */}
-        <div className="mb-6 bg-white p-6 rounded-xl shadow-sm border border-blue-100">
-          <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+      <div className="max-w-4xl mx-auto px-4 py-4 h-[calc(100vh-40px)] flex flex-col">
+        {/* Header */}
+        <div className="mb-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-blue-100">
+          <h1 className="text-xl font-bold text-gray-800 flex items-center gap-3">
             <div className="p-2 bg-blue-50 rounded-lg">
-              <FaRobot className="text-blue-500 text-3xl" />
+              <FaRobot className="text-blue-500 text-2xl" />
             </div>
             AI Symptom Analyzer
           </h1>
-          <p className="text-gray-600 mt-3 pl-14">
-            Describe your symptoms in detail, and I'll help you identify which
-            medical specialist you should consult.
-          </p>
         </div>
 
-        {/* Chat Container with updated styling */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        {/* Chat Container */}
+        <div className="flex-1 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
           <div
             ref={chatContainerRef}
-            className="h-[500px] overflow-y-auto p-6 space-y-4 bg-gray-50"
+            className="flex-1 overflow-y-auto p-4 space-y-3"
           >
             {messages.length === 0 && (
-              <div className="text-center p-8 bg-white rounded-lg border border-gray-100">
-                <FaRobot className="text-blue-500 text-4xl mx-auto mb-3" />
+              <div className="text-center p-6 bg-white/50 rounded-lg border border-gray-100">
+                <FaRobot className="text-blue-500 text-3xl mx-auto mb-2" />
                 <p className="text-gray-600">
-                  👋 Hello! Please describe your symptoms in detail, and I'll
-                  help you find the appropriate specialist.
+                  Describe your symptoms in detail for specialist
+                  recommendations
                 </p>
               </div>
             )}
@@ -148,37 +143,35 @@ const Detection = () => {
               <Message key={idx} {...msg} />
             ))}
             {loading && (
-              <div className="flex items-center justify-center gap-3 p-4 bg-white rounded-lg border border-gray-100">
+              <div className="flex items-center justify-center gap-2 p-3 bg-white/50 rounded-lg">
                 <FaSpinner className="animate-spin text-blue-500" />
-                <span className="text-gray-600">
-                  Analyzing your symptoms...
-                </span>
+                <span className="text-gray-600">Analyzing...</span>
               </div>
             )}
           </div>
 
-          {/* Input Form with updated styling */}
-          <div className="border-t p-4 bg-white rounded-b-xl">
-            <form onSubmit={handleSubmit} className="flex gap-3">
+          {/* Input Form */}
+          <div className="border-t p-3 bg-white/90">
+            <form onSubmit={handleSubmit} className="flex gap-2">
               <textarea
                 value={symptoms}
                 onChange={(e) => setSymptoms(e.target.value)}
                 className="flex-1 rounded-xl border-gray-200 focus:border-blue-500 
-                         focus:ring-2 focus:ring-blue-100 resize-none bg-gray-50
-                         transition-all duration-200"
+                         focus:ring-1 focus:ring-blue-500 resize-none bg-white
+                         transition-all duration-200 text-sm"
                 placeholder="Describe your symptoms here..."
-                rows={2}
+                rows={1}
               />
               <button
                 type="submit"
                 disabled={loading || !symptoms.trim()}
-                className="px-5 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 
+                className="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 
                          disabled:bg-gray-300 disabled:cursor-not-allowed
-                         flex items-center gap-2 transition-all duration-200 h-fit
-                         hover:shadow-md active:scale-95"
+                         flex items-center gap-2 transition-all duration-200
+                         hover:shadow-md active:scale-95 h-[38px]"
               >
-                <FaPaperPlane />
-                <span className="hidden sm:inline">Send</span>
+                <FaPaperPlane className="text-sm" />
+                <span className="hidden sm:inline text-sm">Send</span>
               </button>
             </form>
           </div>
