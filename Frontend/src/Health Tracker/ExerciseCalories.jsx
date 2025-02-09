@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { FaSearch, FaSpinner } from 'react-icons/fa';
 
-const API_URL = "http://localhost:5000/api/nutrition";
+const API_URL = "http://localhost:5000/v2/natural/exercise";
 
 const ExerciseCalories = () => {
   const [query, setQuery] = useState('');
@@ -16,7 +16,7 @@ const ExerciseCalories = () => {
     setError(null);
 
     try {
-      const response = await axios.post(`${API_URL}/exercise`, { query });
+      const response = await axios.post(API_URL, { query });
       setResult(response.data);
     } catch (error) {
       setError('Failed to calculate exercise calories. Please try again.');
