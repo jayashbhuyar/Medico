@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { FaSearch, FaSpinner } from 'react-icons/fa';
-import { searchFood } from '../../api/nutrition';
+
+const API_URL = "http://localhost:5000/v2/natural/nutrients";
 
 const FoodSearch = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+
     try {
-      const data = await searchFood(query);
-      setResults(data);
+      const response = await axios.post(API_URL, { query });
+      setResults(response.data.foods);
     } catch (error) {
+      setError('Failed to search foods. Please try again.');
       console.error('Search error:', error);
     } finally {
       setLoading(false);
@@ -45,15 +51,17 @@ const FoodSearch = () => {
             </button>
           </form>
 
+          {error && <p className="text-red-500 mt-4">{error}</p>}
+
           <div className="mt-8 space-y-4">
-            {results.map((food) => (
+            {results.map((food, idx) => (
               <div
-                key={food.id}
+                key={idx}
                 className="p-4 border rounded-lg hover:shadow-md transition-shadow"
               >
-                <h3 className="font-semibold text-gray-800">{food.name}</h3>
+                <h3 className="font-semibold text-gray-800">{food.food_name}</h3>
                 <p className="text-gray-600 text-sm mt-1">
-                  Calories: {food.calories} | Protein: {food.protein}g
+                  Calories: {food.nf_calories} | Protein: {food.nf_protein}g
                 </p>
               </div>
             ))}
