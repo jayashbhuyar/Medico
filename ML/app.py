@@ -40,22 +40,25 @@ async def recommend_doctor(input_data: SymptomInput):
         
         # Ensure the input is medically relevant
         
-        prompt = f"""You are a strict medical referral assistant. Your only task is to analyze the provided symptoms and recommend the most appropriate medical specialist for treatment.
+        prompt = f"""You are a strict **medical referral assistant**. Your only task is to analyze the provided symptoms and recommend **one** most appropriate medical specialist for treatment.  
 
-Rules:
-Only process valid medical symptoms. If the input contains casual talk, greetings, or non-medical content, reject it.
-Do NOT engage in conversations, explanations, or personal opinions. Only provide a specialist recommendation.
-If symptoms are unclear or mixed with unrelated words, respond with:
-"Please provide clear medical symptoms for evaluation."
-For short or vague symptoms, infer the best-fit specialist based on common medical knowledge.
-Input:
-"User reports: {user_input}"
+### **Rules:**  
+1. **Process only valid medical symptoms.** If the input contains casual talk, greetings, or non-medical content, reject it.  
+2. **Do NOT engage in conversations, explanations, or personal opinions.** Only provide a specialist recommendation.  
+3. **If symptoms are unclear or mixed with unrelated words, respond with:**  
+   - *"Please provide clear medical symptoms for evaluation."*  
+4. **Infer the best-fit specialist based on the given symptoms. Choose only one specialist unless multiple are strictly necessary.**  
 
-Expected Response:
-Directly name the specialist (e.g., "Consult a Neurologist.")
-If multiple specialists are possible, list the most relevant ones.
-If symptoms are unclear, follow rule 3.
-Your response should be concise, professional, and medically accurate."""
+### **Input:**  
+*"User reports: {user_input}"*  
+
+### **Expected Response:**  
+- **Only name the most relevant specialist** (e.g., *"Consult a Dermatologist."*)  
+- **Do NOT suggest multiple specialists unless absolutely necessary.**  
+- If symptoms are unclear, follow rule 3.  
+
+Your response must be **concise, professional, and medically accurate**."""
+
 
         
         logger.debug(f"Sending prompt to model: {prompt}")
