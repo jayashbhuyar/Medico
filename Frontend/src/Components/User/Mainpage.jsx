@@ -38,12 +38,14 @@ import {
   FaShieldAlt,
   FaCapsules,
   FaHeartbeat,
+  FaRobot,
 } from "react-icons/fa";
 
 import UserNav from "../Navbar/UserNav";
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import DetectButton from "./DetectButton";
 
 const HealthcareSearch = () => {
   const [count, setCount] = useState({ doctors: 0, patients: 0, hospitals: 0 });
@@ -349,6 +351,7 @@ const HealthcareSearch = () => {
   return (
     <div className="relative min-h-screen">
       <UserNav />
+      <DetectButton />
       <div className="relative h-screen">
         <video
           autoPlay
@@ -585,6 +588,32 @@ const HealthcareSearch = () => {
         </div>
       </section>
       <Toaster position="top-right" />
+      
+
+      {/* Floating Symptom Checker Button */}
+      {/* <motion.button
+        initial={{ scale: 1 }}
+        animate={{
+          scale: [1, 1.1, 1],
+          boxShadow: [
+            "0 0 0 0 rgba(52, 211, 153, 0.7)",
+            "0 0 0 10px rgba(52, 211, 153, 0)",
+          ],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          repeatType: "reverse",
+        }}
+        onClick={() => navigate("/detect")}
+        className="fixed top-20 left-28 z-[9998] bg-green-500 text-white px-6 py-3 
+                  rounded-full shadow-xl hover:bg-green-600 transition-all duration-300
+                  flex items-center gap-2 cursor-pointer transform hover:scale-105"
+      >
+        <FaRobot className="h-5 w-5" />
+        <span className="hidden md:inline">Check Disease</span>
+      </motion.button> */}
+      
 
       {/* Floating Review Button */}
       <motion.button

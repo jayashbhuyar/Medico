@@ -43,6 +43,7 @@ import ConsultantProfile from './Components/Consultant/ConsultantProfile'
 import ClinicProfile from './Components/Clinic/ClinicProfile'
 import SiteMap from './Components/User/SiteMap'
 import Detection from './Components/User/Detection'
+import DetectButton from './Components/User/DetectButton'
 
 function App() {
   return (
@@ -92,6 +93,7 @@ function App() {
         <Route path='/consultant/appointments' element={<ConsultantAppointments />} />
         <Route path='/user/appointments' element={<UserAppointments />} />
         <Route path="/sitemap" element={<SiteMap/>} />
+        <Route path="/detectbutton" element={<DetectButton/>} />
 
        
         {/* Add more routes as needed */}
