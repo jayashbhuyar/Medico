@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API_URL = "http://localhost:5000/api/nutrition";
+const API_URL = "http://localhost:5000/v2/nutrition/dailycalories";
 
 const DailyCalories = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ const DailyCalories = () => {
     setError(null);
 
     try {
-      const response = await axios.post(`${API_URL}/dailycalories`, formData);
+      const response = await axios.post(API_URL, formData);
       setResult(response.data);
     } catch (error) {
       setError('Failed to calculate calories. Please try again.');
