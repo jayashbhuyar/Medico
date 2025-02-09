@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API_URL = "http://localhost:5000/v2/nutrition/dailycalories";
+const API_URL = "http://localhost:8000/api/health/v2/calculate/dailycalories";
 
 const DailyCalories = () => {
   const [formData, setFormData] = useState({

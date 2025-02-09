@@ -3,7 +3,7 @@ import axios from 'axios';
 import { debounce } from 'lodash';
 import { FaSearch, FaSpinner } from 'react-icons/fa';
 
-const API_URL = "http://localhost:5000/v2/search/instant";
+const API_URL = "http://localhost:8000/api/health/v2/food/search";
 
 const InstantFoodDetails = () => {
   const [query, setQuery] = useState('');

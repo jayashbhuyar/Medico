@@ -79,7 +79,7 @@ app.use('/api/v1/consultant', consultantDashRoutes);
 
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/clinic', clinicDashRoutes)
-app.use('/api/health', healthRoutes);
+app.use('/api/health/v2', healthRoutes);
 // Base route
 app.get("/", (req, res) => {
   res.send("Medico API is running");

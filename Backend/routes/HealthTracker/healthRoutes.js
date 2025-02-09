@@ -9,6 +9,6 @@ router.get('/food/upc', healthController.getFoodByUPC);
 
 // Exercise and calories routes
 router.post('/exercise/calories', healthController.getExerciseCalories);
-router.post('/calculate/daily-calories', healthController.calculateDailyCalories);
+router.post('/calculate/dailycalories', healthController.calculateDailyCalories);
 
 module.exports = router;

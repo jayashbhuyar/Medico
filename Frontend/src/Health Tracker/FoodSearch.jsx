@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { FaSearch, FaSpinner } from 'react-icons/fa';
 
-const API_URL = "http://localhost:5000/v2/natural/nutrients";
+const API_URL = "http://localhost:8000/api/health/v2/food/nutrition";
 
 const FoodSearch = () => {
   const [query, setQuery] = useState('');
