@@ -101,51 +101,129 @@ exports.getExerciseCalories = async (req, res) => {
 // Calculate daily calorie needs
 exports.calculateDailyCalories = async (req, res) => {
     try {
-      // console.log("Request body:", req.body);
       const { gender, age, height_cm, weight_kg, activity_level } = req.body;
 
-      // Basic validation
-      if (!gender || !age || !height_cm || !weight_kg || !activity_level) {
+      // Enhanced validation
+      const validationErrors = [];
+
+      if (!gender || !["male", "female"].includes(gender.toLowerCase())) {
+        validationErrors.push("Valid gender (male/female) is required");
+      }
+
+      if (!age || age < 15 || age > 80) {
+        validationErrors.push("Age must be between 15 and 80 years");
+      }
+
+      if (!height_cm || height_cm < 130 || height_cm > 230) {
+        validationErrors.push("Height must be between 130cm and 230cm");
+      }
+
+      if (!weight_kg || weight_kg < 40 || weight_kg > 160) {
+        validationErrors.push("Weight must be between 40kg and 160kg");
+      }
+
+      const validActivityLevels = [
+        "sedentary",
+        "light",
+        "moderate",
+        "active",
+        "very_active",
+      ];
+      if (
+        !activity_level ||
+        !validActivityLevels.includes(activity_level.toLowerCase())
+      ) {
+        validationErrors.push(
+          `Activity level must be one of: ${validActivityLevels.join(", ")}`
+        );
+      }
+
+      if (validationErrors.length > 0) {
         return res.status(400).json({
-          error:
-            "All fields (gender, age, height, weight, activity_level) are required",
+          error: "Validation failed",
+          details: validationErrors,
         });
       }
 
       // Calculate BMR using Mifflin-St Jeor Equation
-      let bmr;
-      if (gender.toLowerCase() === "male") {
-        bmr = 10 * weight_kg + 6.25 * height_cm - 5 * age + 5;
-      } else {
-        bmr = 10 * weight_kg + 6.25 * height_cm - 5 * age - 161;
-      }
+      const normalizedGender = gender.toLowerCase();
+      const normalizedActivity = activity_level.toLowerCase();
 
-      // Activity multipliers
+      // Activity multipliers with descriptions
       const activityMultipliers = {
-        sedentary: 1.2,
-        light: 1.375,
-        moderate: 1.55,
-        active: 1.725,
-        very_active: 1.9,
+        sedentary: {
+          factor: 1.2,
+          description: "Little or no exercise, desk job",
+        },
+        light: {
+          factor: 1.375,
+          description: "Light exercise 1-3 days/week",
+        },
+        moderate: {
+          factor: 1.55,
+          description: "Moderate exercise 3-5 days/week",
+        },
+        active: {
+          factor: 1.725,
+          description: "Heavy exercise 6-7 days/week",
+        },
+        very_active: {
+          factor: 1.9,
+          description:
+            "Very heavy exercise, physical job or training twice/day",
+        },
       };
 
+      // Calculate BMR
+      const bmr =
+        normalizedGender === "male"
+          ? 10 * weight_kg + 6.25 * height_cm - 5 * age + 5
+          : 10 * weight_kg + 6.25 * height_cm - 5 * age - 161;
+
       const dailyCalories = Math.round(
-        bmr * activityMultipliers[activity_level]
+        bmr * activityMultipliers[normalizedActivity].factor
       );
 
+      // Calculate macronutrient recommendations
+      const macros = {
+        protein: {
+          grams: Math.round((dailyCalories * 0.3) / 4), // 30% of calories, 4 calories per gram
+          calories: Math.round(dailyCalories * 0.3),
+        },
+        carbs: {
+          grams: Math.round((dailyCalories * 0.45) / 4), // 45% of calories, 4 calories per gram
+          calories: Math.round(dailyCalories * 0.45),
+        },
+        fats: {
+          grams: Math.round((dailyCalories * 0.25) / 9), // 25% of calories, 9 calories per gram
+          calories: Math.round(dailyCalories * 0.25),
+        },
+      };
+
       res.json({
-        daily_calories: dailyCalories,
-        bmr: Math.round(bmr),
-        activity_level: activity_level,
+        success: true,
+        data: {
+          daily_calories: dailyCalories,
+          bmr: Math.round(bmr),
+          activity_level: normalizedActivity,
+          activity_description:
+            activityMultipliers[normalizedActivity].description,
+          macronutrient_goals: macros,
+          weight_goals: {
+            weight_loss: Math.round(dailyCalories - 500), // 500 calorie deficit
+            weight_gain: Math.round(dailyCalories + 500), // 500 calorie surplus
+            maintenance: dailyCalories,
+          },
+        },
         message: "Daily calorie needs calculated successfully",
       });
-      // console.log("Daily calories:", dailyCalories);
     } catch (error) {
-        console.error("Daily calories calculation error:", error);
-        res.status(500).json({
-            error: "Failed to calculate daily calorie needs",
-            details: error.message
-        });
+      console.error("Daily calories calculation error:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to calculate daily calorie needs",
+        details: error.message,
+      });
     }
 };
 
