@@ -4,6 +4,7 @@ import {
   FaUser, FaEnvelope, FaPhone, FaCalendar, 
   FaMars, FaHome, FaEdit, FaBell
 } from 'react-icons/fa';
+import UserNav from '../Navbar/UserNav';
 
 const ProfilePage = () => {
   const [userData, setUserData] = useState(null);
@@ -56,29 +57,43 @@ const ProfilePage = () => {
 
   if (loading) {
     return (
+      <>
+
+      
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
       </div>
+      </>
     );
   }
 
   if (error) {
     return (
+      <>
+      <UserNav />
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-red-500">{error}</div>
       </div>
+      </>
     );
   }
 
   if (!userData) {
     return (
+      <>
+      <UserNav />
+      
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-gray-500">No user data available</div>
       </div>
+      </>
     );
   }
 
   return (
+    <>
+    <UserNav />
+    
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 h-64">
@@ -173,6 +188,7 @@ const ProfilePage = () => {
         </motion.div>
       </div>
     </div>
+    </>
   );
 };
 

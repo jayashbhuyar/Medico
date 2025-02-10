@@ -6,21 +6,30 @@ import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import AppointmentCard from '../../common/AppointmentCard';
 
+
 const DoctorProfile = ({ doctor, distance, onClose }) => {
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
-  const userToken = Cookies.get('userToken');
-  const userData = JSON.parse(localStorage.getItem('userData'));
+  const userToken = Cookies.get("userToken");
+  const userData = JSON.parse(localStorage.getItem("userData"));
 
   const handleBookAppointment = () => {
     if (!userToken || !userData) {
-      toast.error('Please login to book appointment');
+      toast.error("Please login to book appointment");
       return;
     }
     setShowAppointmentModal(true);
   };
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
   return (
     <>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
