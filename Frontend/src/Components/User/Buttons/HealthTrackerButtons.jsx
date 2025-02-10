@@ -43,6 +43,13 @@ const HealthTrackerButton = () => {
       description: "Instant food nutrition details",
       color: "from-purple-500 to-purple-600",
     },
+    {
+        title: "BMI Calculator",
+        icon: <Scale className="h-4 w-4" />,
+        path: "/bmitracker",
+        description: "Calculate and track your BMI",
+        color: "from-indigo-500 to-purple-600",
+      }
   ];
 
   return (
