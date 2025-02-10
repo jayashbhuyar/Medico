@@ -48,7 +48,7 @@ const HealthTrackerButton = () => {
   return (
     <>
       {/* Floating Button Container */}
-      <div className="fixed top-36 right-4 md:top-40 md:right-8 z-[9997]">
+      <div className="fixed top-36 right-4 md:top-44 md:right-7 z-[9997]">
         {/* Tooltip */}
         <AnimatePresence>
           {isHovered && !showMenu && (
