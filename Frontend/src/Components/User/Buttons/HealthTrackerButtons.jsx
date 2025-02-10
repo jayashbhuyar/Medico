@@ -5,6 +5,7 @@ import {
   CalendarDays, 
   Dumbbell, 
   Apple,
+  Scale,
   Search
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";

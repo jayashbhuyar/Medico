@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Scale, ArrowRight, Activity, Info } from 'lucide-react';
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Activity, Info, Scale } from "lucide-react";
 
 const BMITracker = () => {
   const [height, setHeight] = useState('');

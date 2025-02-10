@@ -49,6 +49,8 @@ import Exercisecalories from "./Health Tracker/ExerciseCalories";
 import FoodSearch from "./Health Tracker/FoodSearch";
 import InstantFoodDetails from "./Health Tracker/instantFoodDetails";
 import HealthTrackerButton from './Components/User/Buttons/HealthTrackerButtons'
+import BMITracker from './Health Tracker/BMITracker'
+
 
 function App() {
   return (
@@ -104,6 +106,7 @@ function App() {
         <Route path="/foodsearch" element={<FoodSearch />} />
         <Route path="/instantfooddetails" element={<InstantFoodDetails />} />
         <Route path="/healthtrackerbutton" element={<HealthTrackerButton />} />
+        <Route path="/bmitracker" element={<BMITracker />} />
 
        
         {/* Add more routes as needed */}
