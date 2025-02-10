@@ -263,8 +263,9 @@ const Hospitals = () => {
         <div className="mt-4 flex gap-3 justify-center md:justify-start">
           <button
             onClick={() => fetchHospitalDetails(hospital._id)}
-            className="flex items-center gap-1 px-4 py-1.5 bg-blue-500 text-white text-sm font-medium 
-                       rounded-full hover:bg-blue-600 transition-all"
+            className="w-auto bg-blue-50 text-blue-600 py-1.5 px-3 
+            rounded hover:bg-blue-100 transition-all duration-200
+            flex items-center justify-center gap-2 text-sm"
           >
             <Info className="w-4 h-4" />
             Details
@@ -273,8 +274,9 @@ const Hospitals = () => {
             href={`https://www.google.com/maps?q=${hospital.latitude},${hospital.longitude}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 px-4 py-1.5 border border-gray-300 text-gray-700 text-sm font-medium 
-                       rounded-full hover:bg-gray-100 transition-all"
+            className="w-auto flex items-center gap-2 px-3 py-1.5 border border-gray-300 
+            text-gray-700 text-sm font-medium rounded hover:bg-gray-100 
+            transition-all"
           >
             <Navigation className="w-4 h-4" />
             Directions
@@ -284,9 +286,9 @@ const Hospitals = () => {
               setSelectedHospital(hospital);
               setShowReviewModal(true);
             }}
-            className="flex-1 bg-green-50 text-green-600 py-2 px-4 
-             rounded hover:bg-green-100 transition-all duration-200
-             flex items-center justify-center gap-2"
+            className="w-auto bg-green-50 text-green-600 py-1.5 px-3 
+            rounded hover:bg-green-100 transition-all duration-200
+            flex items-center justify-center gap-2 text-sm"
           >
             <Star className="w-4 h-4" />
             Add Review
@@ -294,9 +296,9 @@ const Hospitals = () => {
 
           <button
             onClick={() => fetchHospitalReviews(hospital)}
-            className="flex-1 bg-blue-50 text-blue-600 py-2 px-4 
-             rounded hover:bg-blue-100 transition-all duration-200
-             flex items-center justify-center gap-2"
+            className="w-auto bg-blue-50 text-blue-600 py-1.5 px-3 
+            rounded hover:bg-blue-100 transition-all duration-200
+            flex items-center justify-center gap-2 text-sm"
           >
             <MessageSquare className="w-4 h-4" />
             Show Reviews
