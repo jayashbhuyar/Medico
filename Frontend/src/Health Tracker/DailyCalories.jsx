@@ -21,6 +21,7 @@ const DailyCalories = () => {
     setError(null);
 
     try {
+      console.log('formData:', formData);
       const response = await axios.post(API_URL, formData);
       setResult(response.data);
     } catch (error) {
