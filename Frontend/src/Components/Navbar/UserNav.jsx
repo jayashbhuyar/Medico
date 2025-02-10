@@ -214,7 +214,7 @@ const UserNav = () => {
                                   ? "bg-gradient-to-r from-blue-500/90 to-indigo-600/90 text-white shadow-md"
                                   : isScrolled
                                   ? "text-gray-700 hover:bg-gray-50/90"
-                                  : "text-gray-100 hover:bg-white/20"
+                                  : "text-black hover:bg-white/20"
                               }
                               transition-all duration-300`}
                   >
@@ -241,10 +241,10 @@ const UserNav = () => {
                     className={`flex items-center px-4 py-2 rounded-xl relative
                               ${
                                 location.pathname === item.path
-                                  ? "bg-gradient-to-r from-blue-500/90 to-indigo-600/90 text-white shadow-md"
+                                  ? "bg-gradient-to-r from-blue-500/90 to-indigo-600/90 text-black shadow-md"
                                   : isScrolled
                                   ? "text-gray-700 hover:bg-gray-50/90"
-                                  : "text-gray-100 hover:bg-white/20"
+                                  : "text-black hover:bg-white/20"
                               }
                               transition-all duration-300`}
                   >
