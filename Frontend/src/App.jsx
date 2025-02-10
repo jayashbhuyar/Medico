@@ -98,6 +98,10 @@ function App() {
         <Route path='/user/appointments' element={<UserAppointments />} />
         <Route path="/sitemap" element={<SiteMap/>} />
         <Route path="/detectbutton" element={<DetectButton/>} />
+        <Route path="/dailycalories" element={<DailyCalories />} />
+        <Route path="/exercisecalories" element={<Exercisecalories />} />
+        <Route path="/foodsearch" element={<FoodSearch />} />
+        <Route path="/instantfooddetails" element={<InstantFoodDetails />} />
 
        
         {/* Add more routes as needed */}
