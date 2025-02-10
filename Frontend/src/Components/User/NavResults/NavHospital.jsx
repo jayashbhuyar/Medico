@@ -284,18 +284,21 @@ const Hospitals = () => {
               setSelectedHospital(hospital);
               setShowReviewModal(true);
             }}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg 
-                     hover:bg-green-700 flex items-center gap-2"
+            className="flex-1 bg-green-50 text-green-600 py-2 px-4 
+             rounded hover:bg-green-100 transition-all duration-200
+             flex items-center justify-center gap-2"
           >
-            <Star className="w-5 h-5" />
+            <Star className="w-4 h-4" />
             Add Review
           </button>
+
           <button
             onClick={() => fetchHospitalReviews(hospital)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg 
-                     hover:bg-blue-700 flex items-center gap-2"
+            className="flex-1 bg-blue-50 text-blue-600 py-2 px-4 
+             rounded hover:bg-blue-100 transition-all duration-200
+             flex items-center justify-center gap-2"
           >
-            <MessageSquare className="w-5 h-5" />
+            <MessageSquare className="w-4 h-4" />
             Show Reviews
           </button>
         </div>
