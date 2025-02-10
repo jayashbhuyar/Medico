@@ -46,6 +46,7 @@ import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DetectButton from "./Buttons/DetectButton";
+import HealthTrackerButton from "./Buttons/HealthTrackerButtons";
 
 const HealthcareSearch = () => {
   const [count, setCount] = useState({ doctors: 0, patients: 0, hospitals: 0 });
@@ -352,6 +353,7 @@ const HealthcareSearch = () => {
     <div className="relative min-h-screen">
       <UserNav />
       <DetectButton />
+      <HealthTrackerButton />
       <div className="relative h-screen">
         <video
           autoPlay
