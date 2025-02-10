@@ -154,7 +154,8 @@ exports.login = async (req, res) => {
                 specialization: user.specialization,
                 experience: user.experience,
                 userId: user.userId,
-                role: 'Consultant'
+                role: 'Consultant',
+                profileImage:user.profileImage
             };
         } else {
             // Doctor response structure
@@ -176,6 +177,7 @@ exports.login = async (req, res) => {
                 availableDays: user.availableDays,
                 timeSlots: user.timeSlots,
                 userId: user.userId,
+                profileImage:user.profileImage,
                 role: 'Doctor'
             };
         }

@@ -35,29 +35,33 @@ const HospitalProfile = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8">
       <div className="container mx-auto px-4">
         {/* Hero Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8"
         >
           <div className="relative h-64 bg-gradient-to-r from-blue-600 to-blue-800">
             <div className="absolute inset-0 bg-black/20"></div>
-            
+
             {/* Profile Image */}
-            <div className="absolute -bottom-16 left-8">
+            <div className="absolute -top-16 left-8">
               <div className="relative w-32 h-32">
-                {hospitalData.image ? (
-                  <img
-                    src={hospitalData.image}
-                    alt={hospitalData.hospitalName}
-                    className="w-full h-full rounded-full object-cover border-4 border-white shadow-xl"
-                  />
-                ) : (
-                  <div className="w-full h-full rounded-full bg-blue-100 border-4 border-white shadow-xl 
-                                flex items-center justify-center">
-                    <FaHospital className="w-12 h-12 text-blue-600" />
-                  </div>
-                )}
+                <div className="w-full h-full rounded-full bg-blue-100 border-4 border-white shadow-xl overflow-hidden mt-44">
+                  {hospitalData.image ? (
+                    <img
+                      src={hospitalData.image}
+                      alt={hospitalData.hospitalName}
+                      className="w-full h-full rounded-full object-cover border-4 border-white shadow-xl"
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full rounded-full bg-blue-100 border-4 border-white shadow-xl 
+                                flex items-center justify-center"
+                    >
+                      <FaHospital className="w-12 h-12 text-blue-600" />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -69,7 +73,8 @@ const HospitalProfile = () => {
               <p className="text-blue-100 flex items-center gap-2">
                 <FaMapMarkerAlt className="flex-shrink-0" />
                 <span className="truncate">
-                  {hospitalData.address}, {hospitalData.city}, {hospitalData.state}
+                  {hospitalData.address}, {hospitalData.city},{" "}
+                  {hospitalData.state}
                 </span>
               </p>
             </div>
@@ -104,11 +109,13 @@ const HospitalProfile = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Established</p>
-                <p className="text-xl font-bold text-gray-900">{hospitalData.establishedYear}</p>
+                <p className="text-xl font-bold text-gray-900">
+                  {hospitalData.establishedYear}
+                </p>
               </div>
             </div>
           </motion.div>
-          
+
           <motion.div
             whileHover={{ scale: 1.02 }}
             className="bg-white p-6 rounded-xl shadow-lg"
@@ -119,7 +126,9 @@ const HospitalProfile = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Contact</p>
-                <p className="text-xl font-bold text-gray-900">{hospitalData.phone}</p>
+                <p className="text-xl font-bold text-gray-900">
+                  {hospitalData.phone}
+                </p>
               </div>
             </div>
           </motion.div>
@@ -134,8 +143,12 @@ const HospitalProfile = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Website</p>
-                <a href={hospitalData.website} target="_blank" rel="noopener noreferrer" 
-                   className="text-xl font-bold text-blue-600 hover:underline">
+                <a
+                  href={hospitalData.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xl font-bold text-blue-600 hover:underline"
+                >
                   Visit Website
                 </a>
               </div>
@@ -146,14 +159,16 @@ const HospitalProfile = () => {
         {/* Details Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Information */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-2"
           >
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Hospital Details</h2>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Hospital Details
+                </h2>
                 <button
                   onClick={() => setIsEditing(!isEditing)}
                   className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
@@ -165,12 +180,18 @@ const HospitalProfile = () => {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Primary Contact</p>
+                    <p className="text-sm text-gray-600 mb-1">
+                      Primary Contact
+                    </p>
                     <p className="text-lg font-medium">{hospitalData.phone}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Alternate Contact</p>
-                    <p className="text-lg font-medium">{hospitalData.alternatePhone}</p>
+                    <p className="text-sm text-gray-600 mb-1">
+                      Alternate Contact
+                    </p>
+                    <p className="text-lg font-medium">
+                      {hospitalData.alternatePhone}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Email Address</p>
@@ -178,7 +199,9 @@ const HospitalProfile = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Pincode</p>
-                    <p className="text-lg font-medium">{hospitalData.pincode}</p>
+                    <p className="text-lg font-medium">
+                      {hospitalData.pincode}
+                    </p>
                   </div>
                 </div>
 
@@ -191,27 +214,33 @@ const HospitalProfile = () => {
           </motion.div>
 
           {/* Map Section */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-1"
           >
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Location</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Location
+              </h2>
               <div className="h-64 rounded-lg overflow-hidden">
-                <MapContainer 
-                  center={[hospitalData.latitude, hospitalData.longitude]} 
-                  zoom={15} 
-                  style={{ height: '100%', width: '100%' }}
+                <MapContainer
+                  center={[hospitalData.latitude, hospitalData.longitude]}
+                  zoom={15}
+                  style={{ height: "100%", width: "100%" }}
                 >
                   <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   />
-                  <Marker position={[hospitalData.latitude, hospitalData.longitude]}>
+                  <Marker
+                    position={[hospitalData.latitude, hospitalData.longitude]}
+                  >
                     <Popup>
                       <div className="p-2">
-                        <h3 className="font-semibold">{hospitalData.hospitalName}</h3>
+                        <h3 className="font-semibold">
+                          {hospitalData.hospitalName}
+                        </h3>
                         <p className="text-sm">{hospitalData.address}</p>
                       </div>
                     </Popup>
