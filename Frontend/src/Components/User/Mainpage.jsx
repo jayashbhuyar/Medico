@@ -45,7 +45,7 @@ import UserNav from "../Navbar/UserNav";
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import DetectButton from "./DetectButton";
+import DetectButton from "./Buttons/DetectButton";
 
 const HealthcareSearch = () => {
   const [count, setCount] = useState({ doctors: 0, patients: 0, hospitals: 0 });

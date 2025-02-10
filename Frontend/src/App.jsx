@@ -43,7 +43,7 @@ import ConsultantProfile from './Components/Consultant/ConsultantProfile'
 import ClinicProfile from './Components/Clinic/ClinicProfile'
 import SiteMap from './Components/User/SiteMap'
 import Detection from './Components/User/Detection'
-import DetectButton from './Components/User/DetectButton'
+import DetectButton from "./Components/User/Buttons/DetectButton";
 import DailyCalories from "./Health Tracker/DailyCalories";
 import Exercisecalories from "./Health Tracker/ExerciseCalories";
 import FoodSearch from "./Health Tracker/FoodSearch";
