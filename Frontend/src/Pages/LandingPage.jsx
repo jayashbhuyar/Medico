@@ -5,21 +5,26 @@ const Landingpage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 p-4 md:p-8 relative">
       {/* Background Video */}
-      <video
+      {/* <video
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
         autoPlay
         loop
         muted
       >
         <source
-          src="https://media.istockphoto.com/id/1500334964/video/abstract-medical-green-pixel-background-with-healthcare-symbols-heart-beat-diagram-looped.mp4?s=mp4-480x480-is&k=20&c=MN4b6y_AwXOQbrtl9XBz_uVgBfx7a2flsa8RIHy6VKk="
-          type="video/mp4"
+          src="https://static.vecteezy.com/system/resources/thumbnails/034/328/300/small/abstract-dark-blue-dna-molecular-structure-animation-video.jpg"
+          // type="video/mp4"
         />
         Your browser does not support the video tag.
-      </video>
+      </video> */}
+      <img
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+        src="https://img.freepik.com/free-vector/abstract-medical-wallpaper-template-design_53876-61802.jpg?ga=GA1.1.166966615.1706040675&semt=ais_hybrid"
+        alt="Background"
+      />
 
       <TranslateWidget />
-      
+
       {/* Added pt-16 for mobile spacing and z-20 for stacking context */}
       <div className="max-w-6xl mx-auto relative z-20 pt-16 md:pt-0">
         <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-12 text-center mt-4">
@@ -50,7 +55,9 @@ const Landingpage = () => {
                 />
               </div>
               <div className="text-center space-y-4">
-                <h2 className="text-2xl font-bold text-blue-600">Doctor Portal</h2>
+                <h2 className="text-2xl font-bold text-blue-600">
+                  Doctor Portal
+                </h2>
                 <p className="text-gray-600">
                   Access your medical practice, manage patients, and schedule
                   appointments
@@ -77,7 +84,9 @@ const Landingpage = () => {
                 />
               </div>
               <div className="text-center space-y-4">
-                <h2 className="text-2xl font-bold text-green-600">User Portal</h2>
+                <h2 className="text-2xl font-bold text-green-600">
+                  User Portal
+                </h2>
                 <p className="text-gray-600">
                   View your medical records, book appointments, and connect with
                   doctors
