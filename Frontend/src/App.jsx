@@ -47,7 +47,7 @@ import DetectButton from './Components/User/DetectButton'
 import DailyCalories from "./Health Tracker/DailyCalories";
 import Exercisecalories from "./Health Tracker/ExerciseCalories";
 import FoodSearch from "./Health Tracker/FoodSearch";
-import InstantFoodDetails from "./Health Tracker/InstantFoodDetails";
+import InstantFoodDetails from "./Health Tracker/instantFoodDetails";
 
 function App() {
   return (
