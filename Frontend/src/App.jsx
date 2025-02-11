@@ -6,6 +6,7 @@ import ClinicRegistration from './Components/Clinic/ClinicRegistration'
 import ConsultantRegistration from './Components/Consultant/ConsultantRegistration'
 import ConsultantLogin from "./Components/Consultant/ConsultantLogin";
 import ClinicLogin from './Components/Clinic/ClinicLogin'
+import DoctorProfile from './Components/User/NavResults/DoctorProfile'
 import HospitalLogin from './Components/Hospital/HospitalLogin'
 import HospitalNavbar from './Components/Navbar/HospitalNav'
 import HospitalDashboard from './Components/Hospital/Mainpage'
@@ -22,18 +23,14 @@ import ClinicResults from './Components/User/SearchResults/ClinicResult'
 import UserLogin from './Components/User/Login'
 import Hospitals from './Components/User/NavResults/NavHospital'
 import NavDoctors from './Components/User/NavResults/NavDoctors'
-import DoctorProfile from './Components/User/NavResults/DoctorProfile'
 import About from './Components/User/NavResults/About'
 import Help from './Components/User/NavResults/Help'
 import ClinicAddDoctor from './Components/Clinic/ClinicAddDoctor'
 import ClinicAllDoctors from './Components/Clinic/ClinicAllDoctor'
 import AddPatient from './Components/common/AddPatient'
-// import UserFooter from './Components/User/Footer'
-import UserMainpage from './Components/User/UserMainpage'
 import Appointments from './Components/Hospital/Appointments'
 import NavClinic from './Components/User/NavResults/NavClinic'
 import HospitalProfile from './Components/Hospital/HospitalProfile'
-import ReviewPage from './Pages/ReviewPage'
 import ProfilePage from './Components/User/ProfilePage'
 import ConsultantDashboard from './Components/Consultant/ConsultantDashboard'
 import ConsultantAppointments from './Components/Consultant/ConsultantAppointment'
@@ -41,7 +38,7 @@ import UserAppointments from './Components/User/UserAppointments'
 import ClinicAppointment from './Components/Clinic/ClinicAppointment'
 import ConsultantProfile from './Components/Consultant/ConsultantProfile'
 import ClinicProfile from './Components/Clinic/ClinicProfile'
-import SiteMap from './Components/User/SiteMap'
+import SiteMap from './Components/User/NavResults/SiteMap'
 import Detection from './Components/User/Detection'
 import DetectButton from "./Components/User/Buttons/DetectButton";
 import DailyCalories from "./Components/Health Tracker/DailyCalories";
@@ -57,59 +54,77 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Landingpage />} />
-        <Route path="/doctorpage" element={<DoctorPage />} />
-        <Route path="/hospitalregistration" element={<HospitalRegistration />} />
-        <Route path="/clinicregistration" element={<ClinicRegistration />} />
-        <Route path="/consultantregistration" element={<ConsultantRegistration />} />
-        <Route path="/consultantlogin" element={<ConsultantLogin />} />
+
+        {/* ***********Clinic Routes ************ */}
         <Route path="/cliniclogin" element={<ClinicLogin />} />
-        <Route path="/hospitallogin" element={<HospitalLogin />} />
-        <Route path="/hospitalnav" element={<HospitalNavbar />} />
-        <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
-        <Route path="/hospital/appointments" element={<Appointments />} />
         <Route path="/clinic/dashboard" element={<ClinicDashboard />} />
-        <Route path="/clinicnav" element={<ClinicNav />} />
-        <Route path="/patientpage" element={<HealthcareSearch />} />
-        <Route path="/usernav" element={<UserNav />} />
-        <Route path="/hospital/adddoctor" element={<AddDoctor />} />
-        <Route path="/hospital/alldoctors" element={<AllDoctors />} />
-        <Route path="/specialtyresults" element={<SpecialtyResults />} />
-        <Route path="/doctorresults" element={<DoctorResults />} />
-        <Route path="/hospitalresults" element={<HospitalResults />} />
-        <Route path="/clinic/appointments" element={<ClinicAppointment />} />
-        <Route path="/userprofile" element={<ProfilePage />} />
-        <Route path="/consultantprofile" element={<ConsultantProfile />} />
+        <Route path="/clinicregistration" element={<ClinicRegistration />} />
         <Route path="/clinicprofile" element={<ClinicProfile />} />
-        <Route path="/detect" element={<Detection/>} />
-        <Route path="/clinicresults" element={<ClinicResults />} />
-        <Route path="/userlogin" element={<UserLogin />} />
-        <Route path="/usernavhospitals" element={<Hospitals />} />
-        <Route path="/usernavdoctors" element={<NavDoctors />} />
-        <Route path="/doctorprofile" element={<DoctorProfile />} />
-        <Route path="/usernavabout" element={<About />} />
-        <Route path="/usernavhelp" element={<Help />} />
         <Route path="/clinicadddoctor" element={<ClinicAddDoctor />} />
         <Route path="/clinicalldoctors" element={<ClinicAllDoctors />} />
+        <Route path="/clinic/appointments" element={<ClinicAppointment />} />
+
+        {/* **************Common Routes************************** */}
         <Route path="/addpatient" element={<AddPatient />} />
-        {/* <Route path="/userfooter" element={<UserFooter />} /> */}
-        <Route path="/usermainpage" element={<UserMainpage />} />
-        <Route path="/usernavclinic" element={<NavClinic />} />
-        <Route path="/hospital/profile" element={<HospitalProfile />} />
-        <Route path="/reviewpage" element={<ReviewPage />} />
+
+        {/* *************consultant Routes**********************  */}
+        <Route path="/consultantlogin" element={<ConsultantLogin />} />
+        <Route path="/consultantregistration" element={<ConsultantRegistration />} />
         <Route path='/consultant/dashboard' element={<ConsultantDashboard />} />
         <Route path='/consultant/appointments' element={<ConsultantAppointments />} />
-        <Route path='/user/appointments' element={<UserAppointments />} />
-        <Route path="/sitemap" element={<SiteMap/>} />
-        <Route path="/detectbutton" element={<DetectButton/>} />
+        <Route path="/consultantprofile" element={<ConsultantProfile />} />
+
+        {/* **************** Health Tracker Routes **************** */}
         <Route path="/dailycalories" element={<DailyCalories />} />
         <Route path="/exercisecalories" element={<Exercisecalories />} />
         <Route path="/foodsearch" element={<FoodSearch />} />
         <Route path="/instantfooddetails" element={<InstantFoodDetails />} />
-        <Route path="/healthtrackerbutton" element={<HealthTrackerButton />} />
         <Route path="/bmitracker" element={<BMITracker />} />
 
-       
-        {/* Add more routes as needed */}
+        {/* *******************Hospital Routes******************* */}
+        <Route path="/hospitalregistration" element={<HospitalRegistration />} />
+        <Route path="/hospitallogin" element={<HospitalLogin />} />
+        <Route path="/hospital/adddoctor" element={<AddDoctor />} />
+        <Route path="/hospital/alldoctors" element={<AllDoctors />} />
+        <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
+        <Route path="/hospital/appointments" element={<Appointments />} />
+        <Route path="/hospital/profile" element={<HospitalProfile />} />
+
+        {/* ******************** Navbar Routes********************** */}
+        <Route path="/usernav" element={<UserNav />} />
+        <Route path="/hospitalnav" element={<HospitalNavbar />} />
+        <Route path="/clinicnav" element={<ClinicNav />} />
+
+        {/* ****************Buttons Routes**************** */}
+        <Route path="/detectbutton" element={<DetectButton/>} />
+        <Route path="/healthtrackerbutton" element={<HealthTrackerButton />} />
+
+        {/* ****************Nav Results Routes****************   */}
+        <Route path="/usernavhospitals" element={<Hospitals />} />
+        <Route path="/usernavclinic" element={<NavClinic />} />
+        <Route path="/usernavdoctors" element={<NavDoctors />} />
+        <Route path="/doctorprofile" element={<DoctorProfile />} />
+        <Route path="/usernavabout" element={<About />} />
+        <Route path="/usernavhelp" element={<Help />} />
+        <Route path="/sitemap" element={<SiteMap/>} />
+
+        {/* ********************Search Results Routes**************** */}
+        <Route path="/specialtyresults" element={<SpecialtyResults />} />
+        <Route path="/hospitalresults" element={<HospitalResults />} />
+        <Route path="/clinicresults" element={<ClinicResults />} />
+        <Route path="/doctorresults" element={<DoctorResults />} />
+
+          {/* ****************User Routes************* */}
+        <Route path="/patientpage" element={<HealthcareSearch />} /> {/* User Main Page */}
+        <Route path="/detect" element={<Detection/>} />
+        <Route path="/userprofile" element={<ProfilePage />} />
+        <Route path="/userlogin" element={<UserLogin />} />
+        <Route path='/user/appointments' element={<UserAppointments />} />
+
+        {/* *****************Pages Routes****************** */}
+        <Route path="/doctorpage" element={<DoctorPage />} />
+
+        {/* ******************************************************* */}
       </Routes>
     </Router>
   )

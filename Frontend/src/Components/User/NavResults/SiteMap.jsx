@@ -10,7 +10,7 @@ import {
   FaHome,
   FaCalendarAlt,
 } from "react-icons/fa";
-import UserNav from "../Navbar/UserNav";
+import UserNav from "../../Navbar/UserNav";
 
 const SiteMap = () => {
   const platformOverview = {
