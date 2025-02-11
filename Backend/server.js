@@ -6,6 +6,7 @@ const fileUpload = require('express-fileupload');
 require("dotenv").config();
 
 // Import Routes
+const { validateToken, authenticateToken } = require('./middleware/authMiddleware');
 const hospitalRoutes = require('./routes/hospitalRoutes');
 const clinicRoutes = require('./routes/clinicRoutes');
 const doctorRoutes = require("./routes/doctorRoutes");
@@ -14,9 +15,8 @@ const usernavRoutes = require('./routes/usernavRoutes')
 const nearbyRoutes = require('./routes/nearbyRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const webReviewRoutes = require('./routes/webReviewRoutes');
-const userRoutes = require('./routes/userRoutes'); // Add this line
+const userRoutes = require('./routes/userRoutes'); 
 const appointmentRoutes = require('./routes/appointmentRoutes');
-const { validateToken, authenticateToken } = require('./middleware/authMiddleware');
 const consultantRoute = require('./routes/consultantRoutes')
 const hospitalDashRoutes = require('./routes/hospitalDashRoutes');
 const clinicDashRoutes = require('./routes/clinicDashRoutes');
