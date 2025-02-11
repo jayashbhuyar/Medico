@@ -69,7 +69,7 @@ function HospitalDashboard() {
           });
         }
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        // console.error("Error fetching dashboard data:", error);
         toast.error("Failed to fetch dashboard data");
       } finally {
         setLoading(false);

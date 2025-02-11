@@ -28,7 +28,7 @@ const FoodSearch = () => {
       setResults(response.data.foods);
     } catch (error) {
       setError("Failed to search foods. Please try again.");
-      console.error("Search error:", error);
+      // console.error("Search error:", error);
     } finally {
       setLoading(false);
     }

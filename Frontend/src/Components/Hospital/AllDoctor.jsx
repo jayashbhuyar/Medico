@@ -12,72 +12,6 @@ import {
 } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 
-const DoctorCard = ({ doctor, onViewDetails }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    whileHover={{ scale: 1.02 }}
-    className="bg-white rounded-lg shadow-md p-6 m-4 border border-gray-200 transition-all"
-  >
-    <div className="flex justify-between mb-4">
-      <div>
-        <h3 className="text-xl font-semibold text-gray-800">{doctor.name}</h3>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {doctor.specialties.map((specialty, index) => (
-            <span
-              key={index}
-              className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs"
-            >
-              {specialty}
-            </span>
-          ))}
-        </div>
-      </div>
-      <div className="w-12 h-12 rounded-full overflow-hidden">
-        {doctor.profileImage ? (
-          <img
-            src={doctor.profileImage}
-            alt={doctor.name}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = "https://via.placeholder.com/48?text=Dr";
-            }}
-          />
-        ) : (
-          <div className="w-full h-full bg-blue-100 flex items-center justify-center">
-            <FaUserMd className="text-blue-600" />
-          </div>
-        )}
-      </div>
-    </div>
-
-    <div className="space-y-3 text-sm text-gray-600">
-      <div className="flex items-center">
-        <FaEnvelope className="mr-2 text-blue-500" />
-        <span>{doctor.email}</span>
-      </div>
-      <div className="flex items-center">
-        <FaPhone className="mr-2 text-green-500" />
-        <span>{doctor.phone}</span>
-      </div>
-      <div className="flex items-center font-semibold text-purple-600">
-        <FaMoneyBill className="mr-2" />
-        <span>₹{doctor.consultationFees}</span>
-      </div>
-    </div>
-
-    <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={() => onViewDetails(doctor)}
-      className="w-full mt-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-    >
-      View Details
-    </motion.button>
-  </motion.div>
-);
-
 const Section = ({ title, children }) => (
   <div>
     <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
@@ -236,7 +170,7 @@ const AllDoctors = () => {
           toast.error(data.message || "Failed to delete doctor");
         }
       } catch (error) {
-        console.error("Error deleting doctor:", error);
+        // console.error("Error deleting doctor:", error);
         toast.error("Something went wrong while deleting the doctor");
       }
     }

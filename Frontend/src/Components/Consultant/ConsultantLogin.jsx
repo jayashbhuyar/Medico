@@ -49,15 +49,15 @@ function ConsultantLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("🔹 Form submitted");
+    // console.log("🔹 Form submitted");
 
     if (validateForm()) {
-      console.log("✅ Form validation passed");
+      // console.log("✅ Form validation passed");
       setLoading(true);
       toast.dismiss();
 
       try {
-        console.log("📡 Sending request to API...");
+        // console.log("📡 Sending request to API...");
         const loginData = {
           ...(loginMethod === "email"
             ? { email: formData.email }
@@ -70,51 +70,44 @@ function ConsultantLogin() {
           loginData
         );
 
-        console.log("✅ API Response received:", response);
+        // console.log("✅ API Response received:", response);
 
         const { message, token, hospital } = response.data;
-        console.log("📦 Extracted data:", { message, token, hospital });
+        // console.log("📦 Extracted data:", { message, token, hospital });
          // Store user data in localStorage
   const doctorData = response.data.data.user;
   localStorage.setItem("doctorData", JSON.stringify(doctorData));
   
-        console.log("📦 Extracted data:", { message, token, hospital });
+        // console.log("📦 Extracted data:", { message, token, hospital });
 
 
         if (token) {
-          console.log(
-            "🔐 Token received, storing in cookies and localStorage..."
-          );
+          // console.log(
+          //   "🔐 Token received, storing in cookies and localStorage..."
+          // );
           Cookies.set("consultantToken", token, {
             expires: 7,
             // secure: true,
             sameSite: "Strict",
           });
-
-          // Store entire hospital data in localStorage
-          // localStorage.setItem('hospitalToken', token);
-          // localStorage.setItem("hospitalData", JSON.stringify(hospital.data.user));
-
           toast.success("Login successful!", {
             duration: 2000,
             position: "top-right",
           });
 
-          console.log("🚀 Navigating to dashboard...");
+          // console.log("🚀 Navigating to dashboard...");
           navigate("/consultant/dashboard");
         } else {
-          console.warn("⚠️ No token received:", message);
+          // console.warn("⚠️ No token received:", message);
           toast.error(message || "Login failed!");
         }
       } catch (error) {
-        console.error("❌ Login error:", error);
+        // console.error("❌ Login error:", error);
         toast.error(error.response?.data?.message || "Invalid credentials");
       } finally {
-        console.log("🔄 Setting loading to false");
+        // console.log("🔄 Setting loading to false");
         setLoading(false);
       }
-    } else {
-      console.warn("⚠️ Form validation failed");
     }
   };
 

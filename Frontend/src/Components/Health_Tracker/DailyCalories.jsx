@@ -47,7 +47,7 @@ const DailyCalories = () => {
       setError(
         Array.isArray(errorMessage) ? errorMessage.join(", ") : errorMessage
       );
-      console.error("Calculation error:", error);
+      // console.error("Calculation error:", error);
     } finally {
       setLoading(false);
     }

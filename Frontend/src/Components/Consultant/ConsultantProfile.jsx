@@ -34,7 +34,7 @@ const ConsultantProfile = () => {
   }, []);
 
   if (!doctorData) return <div>Loading...</div>;
-  console.log(doctorData);
+  // console.log(doctorData);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8">

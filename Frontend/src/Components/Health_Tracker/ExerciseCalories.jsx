@@ -27,7 +27,7 @@ const ExerciseCalories = () => {
       setResult(response.data);
     } catch (error) {
       setError("Failed to calculate exercise calories. Please try again.");
-      console.error("Exercise calculation error:", error);
+      // console.error("Exercise calculation error:", error);
     } finally {
       setLoading(false);
     }

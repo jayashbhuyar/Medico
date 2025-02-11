@@ -36,7 +36,7 @@ const InstantFoodDetails = () => {
       setSuggestions([...common, ...branded]);
     } catch (error) {
       setError("Failed to fetch suggestions. Please try again.");
-      console.error("Autocomplete error:", error);
+      // console.error("Autocomplete error:", error);
     } finally {
       setLoading(false);
     }

@@ -18,109 +18,93 @@ function HospitalLogin() {
   useEffect(() => {
     const validateToken = async () => {
       // Get the token from cookies
-      const token = Cookies.get('hospitalToken');
-      if(!token) {localStorage.removeItem('hospitalData');}
-      console.log("🔑 Token from cookies:", token);
+      const token = Cookies.get("hospitalToken");
+      if (!token) {
+        localStorage.removeItem("hospitalData");
+      }
 
       if (token) {
         try {
-          // Send the token to the backend for validation
-          const response = await axios.get('http://localhost:8000/api/token/validate', {
-            withCredentials: true // Make sure cookies are sent with the request
-          });
+          const response = await axios.get(
+            "http://localhost:8000/api/token/validate",
+            {
+              withCredentials: true,
+            }
+          );
 
           if (response.data.success) {
-            // Token is valid, navigate to the dashboard
-            console.log("✅ Token is valid");
-            navigate('/hospital/dashboard');
+            navigate("/hospital/dashboard");
           } else {
-            // Token is invalid, handle accordingly
-            console.warn("⚠️ Invalid token");
-            Cookies.remove('hospitalToken');
-            localStorage.removeItem('hospitalData');
-            navigate('/hospitallogin');  // Redirect to login if invalid token
+            Cookies.remove("hospitalToken");
+            localStorage.removeItem("hospitalData");
+            navigate("/hospitallogin"); // Redirect to login if invalid token
           }
         } catch (error) {
-          console.error("❌ Token validation failed:", error);
-          // Handle invalid or expired token
-          Cookies.remove('hospitalToken');
-          localStorage.removeItem('hospitalData');
-          navigate('/hospitallogin');  // Redirect to login if token validation fails
+          Cookies.remove("hospitalToken");
+          localStorage.removeItem("hospitalData");
+          navigate("/hospitallogin"); // Redirect to login if token validation fails
         }
-      } else {
-        console.log("⚠️ No token found");
       }
     };
 
     validateToken();
   }, [navigate]);
 
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.password) newErrors.password = 'Password is required';
+    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.password) newErrors.password = "Password is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  console.log("🔹 Form submitted"); // Check if function is being triggered
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (validateForm()) {
-    console.log("✅ Form validation passed"); // Check if validation is working
-    setLoading(true);
-    toast.dismiss();
+    if (validateForm()) {
+      setLoading(true);
+      toast.dismiss();
 
-    try {
-      console.log("📡 Sending request to API...");
-      const response = await axios.post('http://localhost:8000/api/hospitals/login', formData);
-      
-      console.log("✅ API Response received:", response);
-      
-      const { message, token, hospital } = response.data;
-      console.log("📦 Extracted data:", { message, token, hospital });
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/hospitals/login",
+          formData
+        );
 
-      if (token && hospital) {
-        console.log("🔐 Token received, storing in cookies and localStorage...");
-        Cookies.set('hospitalToken', token, { 
-          expires: 7, 
-          // secure: true,
-          sameSite: 'Strict' 
-        });
+        const { message, token, hospital } = response.data;
+        if (token && hospital) {
+          Cookies.set("hospitalToken", token, {
+            expires: 7,
+            // secure: true,
+            sameSite: "Strict",
+          });
 
-        // Store entire hospital data in localStorage
-        // localStorage.setItem('hospitalToken', token);
-        localStorage.setItem('hospitalData', JSON.stringify(hospital));
+          localStorage.setItem("hospitalData", JSON.stringify(hospital));
 
-        toast.success('Login successful!', { duration: 2000, position: 'top-right' });
+          toast.success("Login successful!", {
+            duration: 2000,
+            position: "top-right",
+          });
 
-        console.log("🚀 Navigating to dashboard...");
-        navigate('/hospital/dashboard');
-      } else {
-        console.warn("⚠️ No token received:", message);
-        toast.error(message || 'Login failed!');
+          navigate("/hospital/dashboard");
+        } else {
+          toast.error(message || "Login failed!");
+        }
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Invalid credentials");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("❌ Login error:", error);
-      toast.error(error.response?.data?.message || 'Invalid credentials');
-    } finally {
-      console.log("🔄 Setting loading to false");
-      setLoading(false);
     }
-  } else {
-    console.warn("⚠️ Form validation failed");
-  }
-};
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">

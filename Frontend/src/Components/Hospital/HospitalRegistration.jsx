@@ -88,46 +88,6 @@ function HospitalRegistration() {
   });
 
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   const validateToken = async () => {
-  //     // Get the token from cookies
-  //     const token = Cookies.get('hospitalToken');
-  //     if(!token) {localStorage.removeItem('hospitalData');}
-  //     console.log("🔑 Token from cookies:", token);
-
-  //     if (token) {
-  //       try {
-  //         // Send the token to the backend for validation
-  //         const response = await axios.get('http://localhost:8000/api/token/validate', {
-  //           withCredentials: true // Make sure cookies are sent with the request
-  //         });
-
-  //         if (response.data.success) {
-  //           // Token is valid, navigate to the dashboard
-  //           console.log("✅ Token is valid");
-  //           navigate('/hospital/dashboard');
-  //         } else {
-  //           // Token is invalid, handle accordingly
-  //           console.warn("⚠️ Invalid token");
-  //           Cookies.remove('hospitalToken');
-  //           localStorage.removeItem('hospitalData');
-  //           navigate('/hospitallogin');  // Redirect to login if invalid token
-  //         }
-  //       } catch (error) {
-  //         console.error("❌ Token validation failed:", error);
-  //         // Handle invalid or expired token
-  //         Cookies.remove('hospitalToken');
-  //         localStorage.removeItem('hospitalData');
-  //         navigate('/hospitallogin');  // Redirect to login if token validation fails
-  //       }
-  //     } else {
-  //       console.log("⚠️ No token found");
-  //     }
-  //   };
-
-  //   validateToken();
-  // }, [navigate]);
-  
   // Validation Functions
   const validateStep = () => {
     const newErrors = {};
@@ -209,7 +169,7 @@ function HospitalRegistration() {
           toast.success("Location fetched successfully!");
         },
         (error) => {
-          console.error("Location Error:", error);
+          // console.error("Location Error:", error);
           toast.dismiss();
           toast.error("Unable to fetch location");
         }
@@ -230,7 +190,7 @@ function HospitalRegistration() {
         setSelectedLocation({ lat: parseFloat(lat), lng: parseFloat(lon) });
       }
     } catch (error) {
-      console.error('Error searching location:', error);
+      // console.error('Error searching location:', error);
     }
   };
 
@@ -248,9 +208,6 @@ function HospitalRegistration() {
         toast.loading('Registering hospital...');
 
         const hospitalData = new FormData();
-
-        // Log form data for debugging
-        console.log('Form Data:', formData);
 
         // Required fields validation
         const requiredFields = [
@@ -283,10 +240,6 @@ function HospitalRegistration() {
           hospitalData.append('longitude', selectedLocation.lng.toString());
         }
 
-        // Log FormData content
-        for (let pair of hospitalData.entries()) {
-          console.log(pair[0], pair[1]);
-        }
 
         const response = await axios.post(
           'http://localhost:8000/api/hospitals/register',
@@ -307,8 +260,8 @@ function HospitalRegistration() {
 
       } catch (error) {
         toast.dismiss();
-        console.log('Full error:', error);
-        console.log('Error response:', error.response?.data);
+        // console.log('Full error:', error);
+        // console.log('Error response:', error.response?.data);
         
         const errorMessage = error.response?.data?.message 
           || error.message 

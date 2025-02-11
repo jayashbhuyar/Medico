@@ -78,7 +78,7 @@ const ConsultantAppointments = () => {
           setDoctors(Object.values(appointmentsByDoctor));
         }
       } catch (err) {
-        console.error("Error fetching appointments:", err);
+        // console.error("Error fetching appointments:", err);
         setError("Failed to fetch appointments");
       } finally {
         setLoading(false);
@@ -111,7 +111,7 @@ const ConsultantAppointments = () => {
       }
     } catch (error) {
       toast.error("Failed to update appointment status");
-      console.error(error);
+      // console.error(error);
     }
   };
 

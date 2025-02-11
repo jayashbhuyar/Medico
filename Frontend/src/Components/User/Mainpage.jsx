@@ -77,10 +77,6 @@ const HealthcareSearch = () => {
 
   // Memoized search handler
   const handleSearch = useCallback(async () => {
-    console.log("Search initiated:", {
-      searchType,
-      currentSearchValue: getCurrentSearchValue(),
-    });
     toast.dismiss();
 
     function getCurrentSearchValue() {
@@ -100,30 +96,21 @@ const HealthcareSearch = () => {
 
     // Validate input
     if (searchType === "specialty" && !selectedSpecialty) {
-      console.log("Validation failed: No specialty selected");
       toast.error("Please select a specialty");
       return;
     }
 
     if (searchType !== "specialty" && !currentSearchValue.trim()) {
-      console.log("Validation failed: No search term entered");
       toast.error(`Please enter ${searchType} name`);
       return;
     }
 
     setIsLoading(true);
-    console.log("Setting loading state: true");
     toast.loading("Searching...");
 
     try {
       let endpoint = "";
       let params = new URLSearchParams();
-
-      // Build endpoint and params
-      console.log("Building search parameters:", {
-        searchType,
-        currentSearchValue,
-      });
 
       switch (searchType) {
         case "doctor":
@@ -149,17 +136,10 @@ const HealthcareSearch = () => {
         params.append("lng", userLocation.longitude);
       }
 
-      console.log(
-        "Fetching from:",
-        `http://localhost:8000${endpoint}?${params}`
-      );
-
       const response = await fetch(
         `http://localhost:8000${endpoint}?${params}`
       );
       const data = await response.json();
-
-      console.log("Search response:", data);
 
       if (data.success) {
         // Navigate based on search type
@@ -203,10 +183,9 @@ const HealthcareSearch = () => {
         throw new Error(data.message);
       }
     } catch (error) {
-      console.error("Search error:", error);
       toast.error(error.message || "Search failed");
     } finally {
-      console.log("Setting loading state: false");
+
       setIsLoading(false);
       toast.dismiss();
     }
@@ -245,7 +224,6 @@ const HealthcareSearch = () => {
 
   // Handle search type change with logging
   const handleSearchTypeChange = useCallback((type) => {
-    console.log("Changing search type:", type);
     setSearchType(type);
     setSelectedSpecialty(null);
     setSearchResults([]);
@@ -590,31 +568,6 @@ const HealthcareSearch = () => {
         </div>
       </section>
       <Toaster position="top-right" />
-      
-
-      {/* Floating Symptom Checker Button */}
-      {/* <motion.button
-        initial={{ scale: 1 }}
-        animate={{
-          scale: [1, 1.1, 1],
-          boxShadow: [
-            "0 0 0 0 rgba(52, 211, 153, 0.7)",
-            "0 0 0 10px rgba(52, 211, 153, 0)",
-          ],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
-        onClick={() => navigate("/detect")}
-        className="fixed top-20 left-28 z-[9998] bg-green-500 text-white px-6 py-3 
-                  rounded-full shadow-xl hover:bg-green-600 transition-all duration-300
-                  flex items-center gap-2 cursor-pointer transform hover:scale-105"
-      >
-        <FaRobot className="h-5 w-5" />
-        <span className="hidden md:inline">Check Disease</span>
-      </motion.button> */}
       
 
       {/* Floating Review Button */}

@@ -26,7 +26,7 @@ const ProfilePage = () => {
       }
     } catch (err) {
       setError('Error loading user data');
-      console.error('Error:', err);
+      // console.error('Error:', err);
     } finally {
       setLoading(false);
     }

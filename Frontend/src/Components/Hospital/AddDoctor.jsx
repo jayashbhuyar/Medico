@@ -40,7 +40,7 @@ const AddDoctor = () => {
     try {
       return JSON.parse(localStorage.getItem("hospitalData"));
     } catch (error) {
-      console.error("Error parsing hospital data:", error);
+      // console.error("Error parsing hospital data:", error);
       return null;
     }
   }, []);
@@ -145,16 +145,6 @@ const AddDoctor = () => {
     [errors]
   );
 
-  const handleMultiSelect = (e, field) => {
-    const selectedOptions = Array.from(e.target.selectedOptions).map(
-      (option) => option.value
-    );
-    setFormData((prev) => ({
-      ...prev,
-      [field]: selectedOptions,
-    }));
-  };
-
   const handleDaySelect = (e) => {
     const day = e.target.value;
     setFormData((prev) => ({
@@ -173,40 +163,6 @@ const AddDoctor = () => {
         [timeType]: e.target.value,
       },
     }));
-  };
-
-  const validateForm = () => {
-    const errors = [];
-
-    switch (currentStep) {
-      case 1:
-        if (!formData.name) errors.push("Doctor's name is required");
-        if (!formData.email) errors.push("Doctor's email is required");
-        break;
-      case 2:
-        if (formData.degrees.length === 0)
-          errors.push("Select at least one degree");
-        if (formData.specialties.length === 0)
-          errors.push("Select at least one specialty");
-        if (!formData.experience) errors.push("Experience is required");
-        if (!formData.consultationFees)
-          errors.push("Consultation fees is required");
-        break;
-      case 3:
-        if (formData.availableDays.length === 0)
-          errors.push("Select available days");
-        if (!formData.timeSlots.start || !formData.timeSlots.end)
-          errors.push("Time slots are required");
-        break;
-      case 4:
-        if (!formData.userId) errors.push("User ID is required");
-        if (!formData.password) errors.push("Password is required");
-        if (formData.password !== formData.confirmPassword)
-          errors.push("Passwords don't match");
-        break;
-    }
-
-    return errors;
   };
 
   // Update validateFields function with more specific error messages
@@ -351,7 +307,7 @@ const AddDoctor = () => {
         }
       }
     } catch (error) {
-      console.error("Error adding doctor:", error);
+      // console.error("Error adding doctor:", error);
       if (error.message.includes("NetworkError")) {
         toast.error("Network error. Please check your connection");
       } else if (error.message.includes("Unauthorized")) {

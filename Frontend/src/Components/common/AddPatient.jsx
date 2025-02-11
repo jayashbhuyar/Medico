@@ -57,7 +57,7 @@ const AddPatient = () => {
         registrationDate: new Date().toISOString(),
         reports: files
       };
-      console.log("Form submitted:", patientData);
+      // console.log("Form submitted:", patientData);
       toast.success("Patient added successfully!");
       reset();
       setFiles([]);

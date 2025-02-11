@@ -86,7 +86,7 @@ function ConsultantRegistration() {
         setSelectedLocation({ lat: parseFloat(lat), lng: parseFloat(lon) });
       }
     } catch (error) {
-      console.error('Error searching location:', error);
+      // console.error('Error searching location:', error);
     }
   };
 
@@ -189,7 +189,7 @@ function ConsultantRegistration() {
         const hospitalData = new FormData();
 
         // Log form data for debugging
-        console.log('Form Data:', formData);
+        // console.log('Form Data:', formData);
 
         // Required fields validation
         const requiredFields = [
@@ -224,7 +224,7 @@ function ConsultantRegistration() {
 
         // Log FormData content
         for (let pair of hospitalData.entries()) {
-          console.log(pair[0], pair[1]);
+          // console.log(pair[0], pair[1]);
         }
 
         const response = await axios.post(
@@ -245,8 +245,8 @@ function ConsultantRegistration() {
 
       } catch (error) {
         toast.dismiss();
-        console.log('Full error:', error);
-        console.log('Error response:', error.response?.data);
+        // console.log('Full error:', error);
+        // console.log('Error response:', error.response?.data);
 
         const errorMessage = error.response?.data?.message
           || error.message
