@@ -22,14 +22,14 @@ const hospitalDashRoutes = require('./routes/hospitalDashRoutes');
 const clinicDashRoutes = require('./routes/clinicDashRoutes');
 const consultantDashRoutes = require('./routes/consultantDashRoutes');
 const healthRoutes = require('./routes/HealthTracker/healthRoutes');
+const findHospitalRoutes = require('./routes/FindHospital/findHospitalRoutes');
 
 
 const app = express();
-
 // Middleware
 const corsOptions = {
-  origin: true,  // This will reflect the request origin
-  credentials: true,  // Allow credentials (cookies, headers, etc.)
+  origin: true, // This will reflect the request origin
+  credentials: true, // Allow credentials (cookies, headers, etc.)
 };
 
 app.use(cors(corsOptions));
@@ -42,7 +42,6 @@ app.use(
     tempFileDir: "/tmp/",
   })
 );
-
 // Add logging middleware before routes
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
@@ -58,28 +57,29 @@ mongoose
   })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
-app.use("/api/hospitals", hospitalRoutes);
-// Add to existing routes
-app.use('/api/user/clinics', clinicRoutes);
-app.use('/api/clinics', clinicRoutes);
-app.use('/api/token/validate', validateToken)
-app.use('/api/search', nearbyRoutes);
-app.use("/api/search", searchRoutes);
-app.use("/api/v2/doctors", hospitalDashRoutes);
-app.use("/api/doctors", doctorRoutes);
-// Routes
-app.use('/api/user/v2', usernavRoutes);
-app.use("/api/user/hospitals", usernavRoutes);
-app.use("/api/v1/reviews", reviewRoutes);
-app.use('/api/webreviews', webReviewRoutes);
-app.use('/api/users', userRoutes); // Add this line
-app.use('/api/clinic/daashboard', clinicRoutes);
-app.use('/api/consultant', consultantRoute);
-app.use('/api/v1/consultant', consultantDashRoutes);
 
-app.use('/api/appointments', appointmentRoutes);
-app.use('/api/clinic', clinicDashRoutes)
-app.use('/api/health/v2', healthRoutes);
+app.use("/api/token/validate", validateToken);
+app.use("/api/doctors", doctorRoutes);
+app.use("/api/appointments", appointmentRoutes);
+app.use("/api/clinics", clinicRoutes);
+app.use("/api/clinic", clinicDashRoutes);
+app.use("/api/v1/consultant", consultantDashRoutes);
+app.use("/api/consultant", consultantRoute);
+app.use("/api/health/v2", healthRoutes);
+app.use("/api/hospitals", hospitalRoutes);
+app.use("/api/v2/doctors", hospitalDashRoutes);
+app.use("/api/user/clinics", clinicRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
+app.use("/api/user/v2", usernavRoutes);
+app.use("/api/user/hospitals", usernavRoutes);
+app.use("/api/search", nearbyRoutes);
+app.use("/api/webreviews", webReviewRoutes);
+
+app.use("/api/search", searchRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/clinic/daashboard", clinicRoutes);
+app.use("/api/v2/hospitals", findHospitalRoutes);
+
 // Base route
 app.get("/", (req, res) => {
   res.send("Medico API is running");

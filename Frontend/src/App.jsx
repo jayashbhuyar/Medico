@@ -47,6 +47,9 @@ import FoodSearch from "./Components/Health Tracker/FoodSearch";
 import InstantFoodDetails from "./Components/Health Tracker/instantFoodDetails";
 import HealthTrackerButton from './Components/User/Buttons/HealthTrackerButtons'
 import BMITracker from './Components/Health Tracker/BMITracker'
+import FindHospital from './Components/User/FindHospital/FindHospital'
+import HospitalCard from './Components/User/FindHospital/HospitalCard'
+import HospitalDetails from './Components/User/FindHospital/HospitalDetails'
 
 
 function App() {
@@ -123,6 +126,11 @@ function App() {
 
         {/* *****************Pages Routes****************** */}
         <Route path="/doctorpage" element={<DoctorPage />} />
+
+        {/* *******************Find Hospital********************* */}
+        <Route path="/findhospital" element={<FindHospital />} />
+        <Route path="/hospitalcard" element={<HospitalCard />} />
+        <Route path="/hospitaldetails" element={<HospitalDetails />} />
 
         {/* ******************************************************* */}
       </Routes>

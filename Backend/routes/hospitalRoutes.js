@@ -11,8 +11,8 @@ const {validateToken} = require("../middleware/authMiddleware");
 
 // Public routes
 // router.get("/validate",authMiddleware);
-router.post("/register", register);
-router.post("/login", login);
+router.post("/register", register);//
+router.post("/login", login);//
 router.get('hospital/:email')
 
 // Protected routes - require authentication

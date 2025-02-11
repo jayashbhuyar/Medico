@@ -36,7 +36,7 @@ const ClinicLogin = () => {
           navigate("/clinic/dashboard");
         }
       } catch (error) {
-        console.error("❌ Token validation failed:", error);
+        console.log("❌ Token validation failed:", error);
         Cookies.remove("clinicToken");
         localStorage.removeItem('clinicData');
       }

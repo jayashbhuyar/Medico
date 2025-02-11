@@ -5,9 +5,9 @@ const { addClinicDoctor, getClinicDoctors,} = require("../controllers/addClinicD
 const { getAllClinics,getNearestClinics } = require("../controllers/usernavcliniccontroller");
 
 
-router.post("/register", register);
-router.post("/login", login);
-router.get('/all', getAllClinics);
+router.post("/register", register);//
+router.post("/login", login);//
+router.get('/all', getAllClinics);//
 router.get('/nearest',getNearestClinics);
 router.post('/add', addClinicDoctor);
 router.get('/:clinicId',getClinicDoctors);
