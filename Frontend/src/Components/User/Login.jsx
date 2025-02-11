@@ -30,27 +30,20 @@ const Auth = () => {
       // Add image file if exists
       if (profilePicture) {
         formData.append('image', profilePicture); // Changed from 'profilePicture' to 'image'
-        console.log('Image being sent:', profilePicture); // Debug log
       }
 
-      // Log FormData contents
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[0] === 'image' ? 'File being sent' : pair[1]);
-      }
 
       const response = await axios.post(`http://localhost:8000${endpoint}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      console.log('Response:', response); // Debug log
       if (response.data.status === 'success') {
         Cookies.set('userToken', response.data.token, { 
           expires: 7, // 7 days
           secure: true,
           sameSite: 'strict'
         });
-        console.log(response)
         localStorage.setItem('userData', JSON.stringify(response.data.user));
         toast.success(isLogin ? 'Login successful!' : 'Registration successful!');
         setShowSuccess(true);
@@ -59,7 +52,6 @@ const Auth = () => {
         }, 3000);
       }
     } catch (error) {
-      console.error('Error during submission:', error);
       toast.error(error.response?.data?.message || 'Something went wrong');
     } finally {
       setLoading(false);

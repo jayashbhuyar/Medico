@@ -30,7 +30,6 @@ import Cookies from 'js-cookie';
 const UserNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -51,12 +50,6 @@ const UserNav = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    // Check if user is logged in by looking for token or user data in localStorage
-    const token = localStorage.getItem("token");
-    const userData = localStorage.getItem("userData");
-    setIsLoggedIn(!!token && !!userData);
-  }, []);
 
   useEffect(() => {
     const token = Cookies.get("userToken");
@@ -88,7 +81,6 @@ const UserNav = () => {
     localStorage.removeItem("userEmail");
 
     // Update state
-    setIsLoggedIn(false);
 
     // Redirect to home page
     navigate("/");

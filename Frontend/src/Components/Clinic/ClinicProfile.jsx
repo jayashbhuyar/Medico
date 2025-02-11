@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { 
   FaClinicMedical, FaMapMarkerAlt, FaPhone, FaEnvelope, 
-  FaGlobe, FaClock, FaHistory, FaPen 
+  FaGlobe, FaHistory, FaPen 
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';

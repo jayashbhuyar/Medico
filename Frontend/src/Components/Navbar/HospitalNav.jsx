@@ -4,8 +4,7 @@ import {
   FaHospital, FaUserMd, FaCalendarCheck, FaChartLine,
   FaBell, FaSearch, FaUserCircle, FaBars, FaTimes,
   FaAmbulance, FaBed, FaStethoscope, FaUserNurse,
-  FaPlusCircle, FaList, FaClock, FaCheckCircle,
-  FaTimesCircle, FaCaretDown, FaUserPlus, FaCog,
+  FaCaretDown, FaUserPlus, FaCog,
   FaSignOutAlt, FaFileMedical, FaUsers
 } from 'react-icons/fa';
 import Cookies from 'js-cookie';
@@ -55,8 +54,6 @@ const HospitalNavbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
   const data=JSON.parse(localStorage.getItem('hospitalData'));
-  // console.log(data)
-  // console.log(data.image)
   const handleLogout = () => {
     // Clear all cookies
     Object.keys(Cookies.get()).forEach(cookieName => {

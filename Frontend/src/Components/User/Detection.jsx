@@ -13,9 +13,7 @@ const Detection = () => {
   const [symptoms, setSymptoms] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [error, setError] = useState(null);
   const chatContainerRef = useRef(null);
-  const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -35,7 +33,6 @@ const Detection = () => {
     const userMessage = symptoms.trim();
     setSymptoms("");
     setLoading(true);
-    setError(null);
 
     // Add user message immediately
     const newUserMessage = { type: "user", content: userMessage };
@@ -52,7 +49,6 @@ const Detection = () => {
         { type: "bot", content: response.data.referral },
       ]);
     } catch (err) {
-      setError(err.response?.data?.detail || "Something went wrong");
       setMessages((prevMessages) => [
         ...prevMessages,
         {

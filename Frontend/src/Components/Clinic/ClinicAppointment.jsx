@@ -13,7 +13,6 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 import axios from "axios";
-import ConsultantNavbar from "../Navbar/ConsultantNav";
 import { toast } from "react-toastify";
 import ClinicNav from "../Navbar/ClinicNav";
 
@@ -30,14 +29,12 @@ const ClinicAppointment = () => {
       try {
         const clinicData = JSON.parse(localStorage.getItem("clinicData"));
         let response;
-        console.log(clinicData)
         
           // For doctors, fetch appointments matching both doctor's email and organization email
           response = await axios.get(
             `http://localhost:8000/api/appointments/all?email=${clinicData.email}`
           );
         
-        console.log(response);
         if (response.data.success) {
           // Group appointments by doctor
           const appointmentsByDoctor = response.data.data.reduce(
@@ -79,7 +76,6 @@ const ClinicAppointment = () => {
           setDoctors(Object.values(appointmentsByDoctor));
         }
       } catch (err) {
-        console.error("Error fetching appointments:", err);
         setError("Failed to fetch appointments");
       } finally {
         setLoading(false);
@@ -112,7 +108,6 @@ const ClinicAppointment = () => {
       }
     } catch (error) {
       toast.error("Failed to update appointment status");
-      console.error(error);
     }
   };
 

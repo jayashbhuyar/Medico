@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo, useMemo } from 'react';
+import React, { useState, useCallback, memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   FaUserMd,
@@ -131,15 +131,6 @@ const ClinicAddDoctor = () => {
     [errors]
   );
 
-  const handleMultiSelect = (e, field) => {
-    const selectedOptions = Array.from(e.target.selectedOptions).map(
-      (option) => option.value
-    );
-    setFormData((prev) => ({
-      ...prev,
-      [field]: selectedOptions,
-    }));
-  };
 
   const handleDaySelect = (e) => {
     const day = e.target.value;
@@ -159,30 +150,6 @@ const ClinicAddDoctor = () => {
         [timeType]: e.target.value,
       },
     }));
-  };
-
-  const validateFields = () => {
-    const errors = [];
-
-    if (!formData.name?.trim()) errors.push("Name is required");
-    if (!formData.email?.trim()) errors.push("Email is required");
-    if (!formData.phone?.trim()) errors.push("Phone is required");
-    if (!formData.experience || isNaN(formData.experience))
-      errors.push("Valid experience is required");
-    if (!formData.consultationFees || isNaN(formData.consultationFees))
-      errors.push("Valid consultation fee is required");
-    if (!formData.degrees?.length)
-      errors.push("At least one degree is required");
-    if (!formData.specialties?.length)
-      errors.push("At least one specialty is required");
-    if (!formData.availableDays?.length)
-      errors.push("Available days are required");
-    if (!formData.timeSlots?.start || !formData.timeSlots?.end)
-      errors.push("Time slots are required");
-    if (!formData.userId?.trim()) errors.push("User ID is required");
-    if (!formData.password?.trim()) errors.push("Password is required");
-
-    return errors;
   };
 
   const handleSubmit = async (e) => {
@@ -238,7 +205,6 @@ const ClinicAddDoctor = () => {
         }
       }
     } catch (error) {
-      console.error("Error adding doctor:", error);
       if (error.message.includes("NetworkError")) {
         toast.error("Network error. Please check your connection");
       } else if (error.message.includes("Unauthorized")) {

@@ -6,7 +6,6 @@ import {
   FaEnvelope,
   FaPhone,
   FaMoneyBill,
-  FaCalendarAlt,
   FaEye,
   FaTrash,
 } from "react-icons/fa";
@@ -196,18 +195,6 @@ const ClinicAllDoctors = () => {
   const [error, setError] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const scrollContainerRef = useRef(null);
-
-  const handleScroll = (direction) => {
-    const container = scrollContainerRef.current;
-    if (container) {
-      const scrollAmount = 300;
-      container.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
-  };
 
   const deleteDoctor = async (doctorId) => {
     if (!window.confirm("Are you sure you want to delete this doctor?")) {
@@ -232,7 +219,6 @@ const ClinicAllDoctors = () => {
         throw new Error(data.message || "Failed to delete doctor");
       }
     } catch (error) {
-      console.error("Delete doctor error:", error);
       toast.error(error.message || "Failed to delete doctor");
     }
   };

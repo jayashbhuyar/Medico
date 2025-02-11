@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { FaHospital, FaMapMarkerAlt, FaPhone, FaEnvelope, FaDirections, FaInfo } from 'react-icons/fa';
+import { FaMapMarkerAlt } from 'react-icons/fa';
 import { Building2, Phone, MapPin, Navigation, Info, X, Mail, Globe, Calendar, Star, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
@@ -68,7 +68,6 @@ const HospitalResults = () => {
         setShowModal(true);
       }
     } catch (error) {
-      console.error("Error:", error);
       toast.error("Failed to fetch hospital details");
     } finally {
       setLoading(false);
@@ -138,7 +137,6 @@ const HospitalResults = () => {
 
   const renderHospitalCard = (hospital) => {
     const distance = calculateDistance(hospital.latitude, hospital.longitude);
-    // console.log(hospital);
     return (
       <motion.div
         key={hospital._id}

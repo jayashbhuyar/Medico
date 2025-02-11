@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Building2,
   MapPin,
   Phone,
-  Search,
-  ArrowDownWideNarrow,
   Navigation,
   Info,
   X,
@@ -13,14 +11,12 @@ import {
   Mail,
   Calendar,
   Star,
-  Heart,
   MessageSquare,
 } from "lucide-react";
 import axios from "axios";
-// import { toast } from "react-toastify";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import UserNav from '../../Navbar/UserNav';
+import UserNav from "../../Navbar/UserNav";
 
 const Hospitals = () => {
   const [hospitals, setHospitals] = useState([]);
@@ -30,7 +26,6 @@ const Hospitals = () => {
   const [sortBy, setSortBy] = useState("distance");
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showReviews, setShowReviews] = useState(false);
   const [rating, setRating] = useState(0);
@@ -54,7 +49,6 @@ const Hospitals = () => {
       setHospitals(validatedData);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching hospitals:", error);
       setError(error.message);
       setLoading(false);
     }
@@ -62,21 +56,16 @@ const Hospitals = () => {
 
   const getLocation = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-          fetchNearestHospitals(
-            position.coords.latitude,
-            position.coords.longitude
-          );
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
+      navigator.geolocation.getCurrentPosition((position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        fetchNearestHospitals(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+      });
     }
   };
 
@@ -86,15 +75,13 @@ const Hospitals = () => {
         `http://localhost:8000/api/user/hospitals/nearest?latitude=${lat}&longitude=${lng}`
       );
       setHospitals(response.data.data);
-    } catch (error) {
-      console.error("Error fetching nearest hospitals:", error);
-    }
+    } catch (error) {}
   };
 
   const calculateDistance = (hospitalLat, hospitalLng, userLoc) => {
     if (!userLoc || !hospitalLat || !hospitalLng) return null;
 
-    const R = 6371; // Earth's radius in km
+    const R = 6371;
     const dLat = deg2rad(hospitalLat - userLoc.lat);
     const dLon = deg2rad(hospitalLng - userLoc.lng);
 
@@ -120,9 +107,7 @@ const Hospitals = () => {
       );
       setSelectedHospital(response.data.data);
       setShowModal(true);
-    } catch (error) {
-      console.error("Error fetching hospital details:", error);
-    }
+    } catch (error) {}
   };
 
   const handleReviewSubmit = async () => {
@@ -143,11 +128,10 @@ const Hospitals = () => {
         text: reviewText,
       };
 
-      const response = await axios.post(  
+      const response = await axios.post(
         "http://localhost:8000/api/v1/reviews/create",
         reviewData
       );
-
 
       if (response.data.success) {
         toast.success("Review submitted successfully!");
@@ -167,7 +151,6 @@ const Hospitals = () => {
         `http://localhost:8000/api/v1/reviews/hospital/${hospital.email}`
       );
       setHospitalReviews(response.data.data);
-      console.log(response.data.data);
       setShowReviews(true);
     } catch (error) {
       toast.error("Failed to fetch reviews");
@@ -176,8 +159,6 @@ const Hospitals = () => {
 
   if (loading) return <div>Loading hospitals...</div>;
   if (error) return <div>Error: {error}</div>;
-
-  //
 
   if (loading) {
     return (
@@ -662,8 +643,10 @@ const Hospitals = () => {
       </div>
       {/* Review Modal */}
       {showReviewModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 
-                      flex items-center justify-center">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 
+                      flex items-center justify-center"
+        >
           <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
             <h2 className="text-2xl font-bold mb-4">Write a Review</h2>
             <div className="space-y-4">
@@ -675,7 +658,7 @@ const Hospitals = () => {
                       key={star}
                       onClick={() => setRating(star)}
                       className={`text-2xl ${
-                        rating >= star ? 'text-yellow-400' : 'text-gray-300'
+                        rating >= star ? "text-yellow-400" : "text-gray-300"
                       }`}
                     >
                       ★
@@ -698,7 +681,7 @@ const Hospitals = () => {
                   onClick={() => {
                     setShowReviewModal(false);
                     setRating(0);
-                    setReviewText('');
+                    setReviewText("");
                   }}
                   className="flex-1 py-2 bg-gray-100 rounded-lg"
                 >
@@ -720,8 +703,10 @@ const Hospitals = () => {
 
       {/* Reviews Display Modal */}
       {showReviews && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 
-                      flex items-center justify-center">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 
+                      flex items-center justify-center"
+        >
           <div className="bg-white rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold">Hospital Reviews</h2>
@@ -737,8 +722,8 @@ const Hospitals = () => {
                 <div key={review._id} className="bg-gray-50 p-4 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <div className="text-yellow-400">
-                      {'★'.repeat(review.rating)}
-                      {'☆'.repeat(5 - review.rating)}
+                      {"★".repeat(review.rating)}
+                      {"☆".repeat(5 - review.rating)}
                     </div>
                     <div className="text-sm text-gray-500">
                       {new Date(review.createdAt).toLocaleDateString()}
@@ -760,6 +745,6 @@ const Hospitals = () => {
       )}
     </div>
   );
-};  
+};
 
 export default Hospitals;

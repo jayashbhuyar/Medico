@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { FaUserMd, FaStar, FaClock, FaMapMarkerAlt, FaEye, FaDirections, FaFilter } from 'react-icons/fa';
+import { FaUserMd, FaStar, FaMapMarkerAlt, FaEye, FaDirections, FaFilter } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import DoctorProfile from '../NavResults/DoctorProfile';

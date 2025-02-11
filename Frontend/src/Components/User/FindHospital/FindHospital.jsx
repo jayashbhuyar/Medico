@@ -25,7 +25,6 @@ const FindHospital = () => {
       );
       setHospitals(response.data);
     } catch (error) {
-      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
@@ -52,7 +51,6 @@ const FindHospital = () => {
 
       setHospitals(response.data);
     } catch (error) {
-      console.error("Location error:", error);
       setLocationError(
         "Unable to get your location. Please enable location services."
       );

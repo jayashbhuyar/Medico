@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { 
-  FaClinicMedical, FaMapMarkerAlt, FaPhone, FaSearch, 
-  FaFilter, FaGlobe, FaCalendar, FaDirections, FaInfo 
+  FaClinicMedical, FaMapMarkerAlt, FaPhone,  
+  FaGlobe, FaDirections, FaInfo 
 } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -69,15 +69,9 @@ const NavClinic = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
-  const [filters, setFilters] = useState({
-    city: "",
-    establishedYear: "",
-  });
   const [sortBy, setSortBy] = useState("distance");
   const [selectedClinic, setSelectedClinic] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showReviews, setShowReviews] = useState(false);
   const [rating, setRating] = useState(0);
@@ -100,16 +94,12 @@ const NavClinic = () => {
           // Also sort by distance after location is set
           setSortBy("distance");
         },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
       );
     }
   };
 
   const fetchClinics = async () => {
     try {
-      console.log("fetching clinics");
       const response = await axios.get(
         "http://localhost:8000/api/user/clinics/all"
       );
@@ -487,74 +477,6 @@ const NavClinic = () => {
   );
 };
 
-const ClinicCard = ({ clinic, distance, onViewDetails }) => (
-  <motion.div
-    whileHover={{ scale: 1.02, boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
-    className="bg-white rounded-xl p-5 flex flex-col md:flex-row items-center gap-5 
-               border border-gray-200 shadow-sm transition-all duration-300"
-  >
-    {/* Clinic Image */}
-    <div className="relative flex-shrink-0">
-      <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300 shadow">
-        {clinic.image ? (
-          <img
-            src={clinic.image}
-            alt={clinic.clinicName}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <FaClinicMedical className="w-8 h-8 text-gray-500" />
-          </div>
-        )}
-      </div>
-      {distance && (
-        <span className="absolute -bottom-2 -right-2 px-2 py-1 bg-blue-500 text-white 
-                        text-xs font-medium rounded-full shadow-md">
-          {distance} km
-        </span>
-      )}
-    </div>
-
-    {/* Clinic Info */}
-    <div className="flex-1 text-center md:text-left">
-      <h3 className="text-lg font-semibold text-gray-800">{clinic.clinicName}</h3>
-      <div className="mt-2 space-y-1 text-sm text-gray-600">
-        <p className="flex items-center justify-center md:justify-start">
-          <FaPhone className="w-4 h-4 mr-2 text-blue-500" />
-          {clinic.phone || "N/A"}
-        </p>
-        <p className="flex items-center justify-center md:justify-start">
-          <FaMapMarkerAlt className="w-4 h-4 mr-2 text-blue-500" />
-          {clinic.address}
-        </p>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="mt-4 flex gap-3 justify-center md:justify-start">
-        <button
-          onClick={onViewDetails}
-          className="flex items-center gap-1 px-4 py-1.5 bg-blue-500 text-white text-sm font-medium 
-                     rounded-full hover:bg-blue-600 transition-all"
-        >
-          <FaInfo className="w-4 h-4" />
-          Details
-        </button>
-        <a
-          href={`https://www.google.com/maps?q=${clinic.latitude},${clinic.longitude}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1 px-4 py-1.5 border border-gray-300 text-gray-700 text-sm font-medium 
-                     rounded-full hover:bg-gray-100 transition-all"
-        >
-          <FaDirections className="w-4 h-4" />
-          Directions
-        </a>
-      </div>
-    </div>
-  </motion.div>
-);
-
 const ClinicProfile = ({ clinic, onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <motion.div
@@ -666,43 +588,6 @@ const ClinicProfile = ({ clinic, onClose }) => (
         </div>
       </div>
     </motion.div>
-  </div>
-);
-
-// Add Sorting Controls
-const SortingControls = ({ sortBy, setSortBy }) => (
-  <div className="flex items-center gap-4 p-4 bg-white rounded-lg shadow-md">
-    <span className="text-gray-600">Sort by:</span>
-    <button
-      onClick={() => setSortBy("distance")}
-      className={`px-4 py-2 rounded-lg ${
-        sortBy === "distance"
-          ? "bg-green-600 text-white"
-          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-      }`}
-    >
-      Distance
-    </button>
-    <button
-      onClick={() => setSortBy("name")}
-      className={`px-4 py-2 rounded-lg ${
-        sortBy === "name"
-          ? "bg-green-600 text-white"
-          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-      }`}
-    >
-      Name
-    </button>
-    <button
-      onClick={() => setSortBy("establishedYear")}
-      className={`px-4 py-2 rounded-lg ${
-        sortBy === "establishedYear"
-          ? "bg-green-600 text-white"
-          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-      }`}
-    >
-      Established Year
-    </button>
   </div>
 );
 

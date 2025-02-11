@@ -32,11 +32,9 @@ const ClinicLogin = () => {
         });
 
         if (response.data.success) {
-          console.log("✅ Token is valid, navigating to dashboard.");
           navigate("/clinic/dashboard");
         }
       } catch (error) {
-        console.log("❌ Token validation failed:", error);
         Cookies.remove("clinicToken");
         localStorage.removeItem('clinicData');
       }
@@ -63,15 +61,12 @@ const ClinicLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("🔹 Form submitted");
 
     if (validateForm()) {
-      console.log("✅ Form validation passed");
       setLoading(true);
       toast.dismiss();
 
       try {
-        console.log("📡 Sending login request...");
         const response = await axios.post(
           "http://localhost:8000/api/clinics/login",
           formData,
@@ -82,41 +77,31 @@ const ClinicLogin = () => {
           }
         );
 
-        console.log("✅ API response received:", response);
 
         if (response.data.success) {
           const clinicData = response.data.clinic;
-          console.log("📦 Extracted clinic data:", clinicData); // Fixed variable reference
           
-          console.log("🔐 Storing token in cookies...");
           Cookies.set("clinicToken", response.data.token, {
             expires: 7,
             // secure: true,
             sameSite: "Strict",
           });
   
-          console.log("💾 Saving clinic data in localStorage...");
           localStorage.setItem(
             "clinicData",
             JSON.stringify(clinicData)
           );
   
           toast.success("🎉 Login successful!");
-          console.log("🚀 Navigating to dashboard...");
           navigate("/clinic/dashboard");
         } else {
-          console.warn("⚠️ Login failed:", response.data.message);
           toast.error(response.data.message || "Login failed");
         }
       } catch (error) {
-        console.error("❌ Login error:", error);
         toast.error(error.response?.data?.message || "Login failed");
       } finally {
-        console.log("🔄 Setting loading to false");
         setLoading(false);
       }
-    } else {
-      console.warn("⚠️ Form validation failed");
     }
   };
   

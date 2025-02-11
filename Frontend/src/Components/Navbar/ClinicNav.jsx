@@ -9,7 +9,6 @@ import {
   FaTimes,
   FaSignOutAlt,
   FaUser,
-  FaUserNurse,
   FaCaretDown,
   FaUserPlus,
   FaUsers,
@@ -20,7 +19,6 @@ const ClinicNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const location = useLocation();
   const navigate = useNavigate();
 
   const clinicData = JSON.parse(localStorage.getItem("clinicData"));

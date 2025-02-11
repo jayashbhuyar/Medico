@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  FaQuestionCircle, FaEnvelope, FaPhone, FaBook, 
+  FaPhone, FaBook, 
   FaAmbulance, FaSearch, FaChevronDown, FaComments,
   FaUserCircle, FaHospital, FaCalendarAlt 
 } from 'react-icons/fa';

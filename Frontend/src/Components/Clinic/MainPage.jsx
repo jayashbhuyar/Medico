@@ -7,11 +7,7 @@ import {
   FaCalendarCheck,
   FaChartLine,
   FaUserInjured,
-  FaClock,
-  FaCheckCircle,
-  FaClinicMedical,
   FaPrescription,
-  FaUserNurse,
 } from "react-icons/fa";
 import {
   AreaChart,
@@ -88,7 +84,6 @@ function ClinicDashboard() {
           });
         }
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
         toast.error("Failed to fetch dashboard data");
       } finally {
         setLoading(false);

@@ -1,8 +1,7 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import {useNavigate} from 'react-router-dom';
-import Cookies from 'js-cookie';
 import {
   FaClinicMedical,
   FaEnvelope,
@@ -12,7 +11,6 @@ import {
   FaGlobe,
   FaLock,
   FaImage,
-  FaCheckCircle,
   FaInfoCircle,
   FaCrosshairs,
   FaSearch,
@@ -20,8 +18,6 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast, Toaster } from "react-hot-toast";
 import axios from 'axios';
-// import { useNavigate } from "react-router-dom";
-// Add Indian States and Cities
 const INDIA_STATES_CITIES = {
   "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore"],
   Maharashtra: ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad"],
@@ -65,7 +61,6 @@ function ClinicRegistration() {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [searchAddress, setSearchAddress] = useState('');
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     clinicName: "",
     email: "",
@@ -164,8 +159,7 @@ function ClinicRegistration() {
           toast.dismiss();
           toast.success("Location fetched successfully!");
         },
-        (error) => {
-          console.error("Location Error:", error);
+        () => {
           toast.dismiss();
           toast.error("Unable to fetch location");
         }
@@ -201,48 +195,7 @@ function ClinicRegistration() {
       setStep((prev) => Math.min(prev + 1, 4));
     }
   };
-//  ***************************************
 
-// useEffect(() => {
-//   const validateToken = async () => {
-//     const token = Cookies.get('clinicToken');
-//     if(!token) {
-//       localStorage.removeItem('clinicData');
-//       return;
-//     }
-
-//     try {
-//       const response = await axios.get('http://localhost:8000/api/token/validate', {
-//         withCredentials: true,
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
-
-//       if (response.data.success) {
-//         console.log("✅ Token is valid, navigating to dashboard.");
-//         navigate("/clinic/dashboard");
-//       }
-//     } catch (error) {
-//       console.error("❌ Token validation failed:", error);
-//       Cookies.remove("clinicToken");
-//       localStorage.removeItem('clinicData');
-//     }
-//   };
-
-//   validateToken();
-// }, [navigate]);
-
-
-
-// ***************************************************
-// Add imports at the top
-// import axios from 'axios';
-
-// // Add to existing state declarations
-// const [isLoading, setIsLoading] = useState(false);
-
-// Replace existing handleSubmit function with:
 const handleSubmit = async (e) => {
   e.preventDefault();
   if (validateStep()) {
@@ -292,7 +245,6 @@ const handleSubmit = async (e) => {
       toast.dismiss();
       const errorMessage = error.response?.data?.message || error.message || 'Registration failed';
       toast.error(errorMessage);
-      console.error('Registration error:', error);
     } finally {
       setIsLoading(false);
     }

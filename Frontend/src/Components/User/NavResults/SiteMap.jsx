@@ -5,10 +5,8 @@ import {
   FaUserMd,
   FaUser,
   FaSearch,
-//   FaClinic,
   FaQuestionCircle,
   FaHome,
-  FaCalendarAlt,
 } from "react-icons/fa";
 import UserNav from "../../Navbar/UserNav";
 

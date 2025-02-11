@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  FaClinicMedical, FaMapMarkerAlt, FaPhone, FaEnvelope,
-  FaDirections, FaInfo, FaGlobe, FaClock 
+  FaClinicMedical, FaMapMarkerAlt, FaPhone, 
+  FaDirections, FaInfo, FaGlobe,  
 } from 'react-icons/fa';
 import { Star, MessageSquare } from "lucide-react";
 import { ToastContainer, toast } from 'react-toastify';
@@ -52,9 +52,6 @@ const ClinicResults = () => {
             lng: position.coords.longitude,
           });
         },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
       );
     }
   };
