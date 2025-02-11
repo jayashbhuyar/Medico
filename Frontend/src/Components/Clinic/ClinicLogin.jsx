@@ -71,6 +71,7 @@ const ClinicLogin = () => {
           "http://localhost:8000/api/clinics/login",
           formData,
           {
+            withCredentials: true,
             headers: {
               "Content-Type": "application/json",
             },
@@ -81,7 +82,7 @@ const ClinicLogin = () => {
         if (response.data.success) {
           const clinicData = response.data.clinic;
           
-          Cookies.set("clinicToken", response.data.token, {
+          Cookies.set("token", response.data.token, {
             expires: 7,
             // secure: true,
             sameSite: "Strict",

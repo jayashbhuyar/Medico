@@ -76,12 +76,15 @@ function HospitalLogin() {
       try {
         const response = await axios.post(
           "http://localhost:8000/api/hospitals/login",
-          formData
+          formData,
+          {
+            withCredentials: true,
+          }
         );
 
         const { message, token, hospital } = response.data;
         if (token && hospital) {
-          Cookies.set("hospitalToken", token, {
+          Cookies.set("token", token, {
             expires: 7,
             // secure: true,
             sameSite: "Strict",

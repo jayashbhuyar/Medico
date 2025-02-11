@@ -231,6 +231,7 @@ function ConsultantRegistration() {
           'http://localhost:8000/api/consultant/register',
           hospitalData,
           {
+              withCredentials: true,
             headers: {
               'Content-Type': 'multipart/form-data',
             }

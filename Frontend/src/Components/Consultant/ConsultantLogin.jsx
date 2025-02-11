@@ -67,7 +67,9 @@ function ConsultantLogin() {
 
         const response = await axios.post(
           "http://localhost:8000/api/consultant/login",
-          loginData
+          loginData,{
+            withCredentials: true
+          }
         );
 
         // console.log("✅ API Response received:", response);
@@ -85,7 +87,7 @@ function ConsultantLogin() {
           // console.log(
           //   "🔐 Token received, storing in cookies and localStorage..."
           // );
-          Cookies.set("consultantToken", token, {
+          Cookies.set("token", token, {
             expires: 7,
             // secure: true,
             sameSite: "Strict",

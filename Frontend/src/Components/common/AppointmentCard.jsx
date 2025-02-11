@@ -79,7 +79,9 @@ const AppointmentCard = ({ doctor, onClose }) => {
 
       const response = await axios.post(
         'http://localhost:8000/api/appointments/create',
-        appointmentData
+        appointmentData,{
+          withCredentials: true
+        }
       );
 
       if (response.data.success) {

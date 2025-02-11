@@ -39,7 +39,7 @@ const Auth = () => {
         }
       });
       if (response.data.status === 'success') {
-        Cookies.set('userToken', response.data.token, { 
+        Cookies.set('token', response.data.token, { 
           expires: 7, // 7 days
           secure: true,
           sameSite: 'strict'

@@ -32,7 +32,8 @@ const ClinicAppointment = () => {
         
           // For doctors, fetch appointments matching both doctor's email and organization email
           response = await axios.get(
-            `http://localhost:8000/api/appointments/all?email=${clinicData.email}`
+            `http://localhost:8000/api/appointments/all?email=${clinicData.email}`,
+            { withCredentials: true }
           );
         
         if (response.data.success) {
@@ -89,7 +90,10 @@ const ClinicAppointment = () => {
     try {
       const response = await axios.patch(
         `http://localhost:8000/api/appointments/${appointmentId}/status`,
-        { status: newStatus }
+        
+        { status: newStatus,
+          withCredentials: true
+         }
       );
 
       if (response.data.success) {

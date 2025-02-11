@@ -31,7 +31,8 @@ const UserAppointments = () => {
         if (!userData) throw new Error("No user data found");
 
         const response = await axios.get(
-          `http://localhost:8000/api/appointments/user/${userData.email}`
+          `http://localhost:8000/api/appointments/user/${userData.email}`,
+          { withCredentials: true }
         );
 
         if (response.data.success) {
@@ -83,7 +84,9 @@ const UserAppointments = () => {
     try {
       const response = await axios.patch(
         `http://localhost:8000/api/appointments/${appointmentId}/status`,
-        { status: newStatus }
+        { status: newStatus,
+          withCredentials: true
+         }
       );
 
       if (response.data.success) {

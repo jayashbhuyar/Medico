@@ -223,7 +223,8 @@ const handleSubmit = async (e) => {
       const response = await axios.post(
         'http://localhost:8000/api/clinics/register',
         clinicData,
-        {
+        {  
+          withCredentials: true,
           headers: {
             'Content-Type': 'multipart/form-data'
           }

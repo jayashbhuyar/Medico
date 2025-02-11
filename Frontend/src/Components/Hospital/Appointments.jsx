@@ -29,7 +29,8 @@ const Appointments = () => {
       try {
         const hospitalData = JSON.parse(localStorage.getItem("hospitalData"));
         const response = await axios.get(
-          `http://localhost:8000/api/appointments/all?email=${hospitalData.email}`
+          `http://localhost:8000/api/appointments/all?email=${hospitalData.email}`,
+          { withCredentials: true } 
         );
 
         if (response.data.success) {
