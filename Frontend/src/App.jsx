@@ -41,12 +41,12 @@ import ClinicProfile from './Components/Clinic/ClinicProfile'
 import SiteMap from './Components/User/NavResults/SiteMap'
 import Detection from './Components/User/Detection'
 import DetectButton from "./Components/User/Buttons/DetectButton";
-import DailyCalories from "./Components/Health Tracker/DailyCalories";
-import Exercisecalories from "./Components/Health Tracker/ExerciseCalories";
-import FoodSearch from "./Components/Health Tracker/FoodSearch";
-import InstantFoodDetails from "./Components/Health Tracker/instantFoodDetails";
+import DailyCalories from "./Components/Health_Tracker/DailyCalories";
+import Exercisecalories from "./Components/Health_Tracker/ExerciseCalories";
+import FoodSearch from "./Components/Health_Tracker/FoodSearch";
+import InstantFoodDetails from "./Components/Health_Tracker/InstantFoodDetails";
 import HealthTrackerButton from './Components/User/Buttons/HealthTrackerButtons'
-import BMITracker from './Components/Health Tracker/BMITracker'
+import BMITracker from './Components/Health_Tracker/BMITracker'
 import FindHospital from './Components/User/FindHospital/FindHospital'
 import HospitalCard from './Components/User/FindHospital/HospitalCard'
 import HospitalDetails from './Components/User/FindHospital/HospitalDetails'
@@ -77,7 +77,7 @@ function App() {
         <Route path='/consultant/appointments' element={<ConsultantAppointments />} />
         <Route path="/consultantprofile" element={<ConsultantProfile />} />
 
-        {/* **************** Health Tracker Routes **************** */}
+        {/* **************** Health_Tracker Routes **************** */}
         <Route path="/dailycalories" element={<DailyCalories />} />
         <Route path="/exercisecalories" element={<Exercisecalories />} />
         <Route path="/foodsearch" element={<FoodSearch />} />
