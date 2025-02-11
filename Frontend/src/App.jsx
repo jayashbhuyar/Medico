@@ -44,12 +44,12 @@ import ClinicProfile from './Components/Clinic/ClinicProfile'
 import SiteMap from './Components/User/SiteMap'
 import Detection from './Components/User/Detection'
 import DetectButton from "./Components/User/Buttons/DetectButton";
-import DailyCalories from "./Health Tracker/DailyCalories";
-import Exercisecalories from "./Health Tracker/ExerciseCalories";
-import FoodSearch from "./Health Tracker/FoodSearch";
-import InstantFoodDetails from "./Health Tracker/instantFoodDetails";
+import DailyCalories from "./Components/Health Tracker/DailyCalories";
+import Exercisecalories from "./Components/Health Tracker/ExerciseCalories";
+import FoodSearch from "./Components/Health Tracker/FoodSearch";
+import InstantFoodDetails from "./Components/Health Tracker/instantFoodDetails";
 import HealthTrackerButton from './Components/User/Buttons/HealthTrackerButtons'
-import BMITracker from './Health Tracker/BMITracker'
+import BMITracker from './Components/Health Tracker/BMITracker'
 
 
 function App() {
