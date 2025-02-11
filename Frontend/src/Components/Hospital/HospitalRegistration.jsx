@@ -256,7 +256,7 @@ function HospitalRegistration() {
 
         if (response.data.success) {
           toast.success('Registration successful!');
-          localStorage.setItem('hospitalToken', response.data.token);
+          // localStorage.setItem('hospitalToken', response.data.token);
         }
 
       } catch (error) {

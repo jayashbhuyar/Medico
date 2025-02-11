@@ -8,7 +8,7 @@ import AppointmentCard from '../../common/AppointmentCard';
 
 const DoctorProfile = ({ doctor, distance, onClose }) => {
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
-  const userToken = Cookies.get('userToken');
+  const userToken = Cookies.get('token');
   const userData = JSON.parse(localStorage.getItem('userData'));
 
   const handleBookAppointment = () => {

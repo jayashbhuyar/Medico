@@ -52,7 +52,7 @@ const UserNav = () => {
 
 
   useEffect(() => {
-    const token = Cookies.get("userToken");
+    const token = Cookies.get("token");
     const storedUserData = localStorage.getItem("userData");
 
     if (token && storedUserData) {
@@ -87,7 +87,7 @@ const UserNav = () => {
   };
 
   const handleLogout = () => {
-    Cookies.remove("userToken");
+    Cookies.remove("token");
     localStorage.removeItem("userData");
     setIsAuthenticated(false);
     setUserData(null);

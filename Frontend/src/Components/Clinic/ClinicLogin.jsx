@@ -17,7 +17,7 @@ const ClinicLogin = () => {
 
   useEffect(() => {
     const validateToken = async () => {
-      const token = Cookies.get('clinicToken');
+      const token = Cookies.get('token');
       if(!token) {
         localStorage.removeItem('clinicData');
         return;
@@ -35,7 +35,7 @@ const ClinicLogin = () => {
           navigate("/clinic/dashboard");
         }
       } catch (error) {
-        Cookies.remove("clinicToken");
+        Cookies.remove("token");
         localStorage.removeItem('clinicData');
       }
     };

@@ -235,7 +235,7 @@ const handleSubmit = async (e) => {
 
       if (response.data.success) {
         toast.success('Registration successful!');
-        localStorage.setItem('clinicToken', response.data.token);
+        // localStorage.setItem('clinicToken', response.data.token);
         // Optional: Redirect to login or dashboard
         // window.location.href = '/clinic/login';
       } else {

@@ -33,7 +33,7 @@ const ConsultantNav = () => {
     }, []);
 
     const handleLogout = () => {
-        Cookies.remove('consultantToken');
+        Cookies.remove('token');
         localStorage.removeItem('doctorData');
         navigate('/consultantlogin');
     };

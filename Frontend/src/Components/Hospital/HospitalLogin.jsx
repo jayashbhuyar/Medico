@@ -18,7 +18,7 @@ function HospitalLogin() {
   useEffect(() => {
     const validateToken = async () => {
       // Get the token from cookies
-      const token = Cookies.get("hospitalToken");
+      const token = Cookies.get("token");
       if (!token) {
         localStorage.removeItem("hospitalData");
       }
@@ -35,12 +35,12 @@ function HospitalLogin() {
           if (response.data.success) {
             navigate("/hospital/dashboard");
           } else {
-            Cookies.remove("hospitalToken");
+            Cookies.remove("token");
             localStorage.removeItem("hospitalData");
             navigate("/hospitallogin"); // Redirect to login if invalid token
           }
         } catch (error) {
-          Cookies.remove("hospitalToken");
+          Cookies.remove("token");
           localStorage.removeItem("hospitalData");
           navigate("/hospitallogin"); // Redirect to login if token validation fails
         }

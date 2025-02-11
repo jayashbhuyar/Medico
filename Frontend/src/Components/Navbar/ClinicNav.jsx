@@ -24,7 +24,7 @@ const ClinicNav = () => {
   const clinicData = JSON.parse(localStorage.getItem("clinicData"));
 
   const handleLogout = () => {
-    Cookies.remove("clinicToken");
+    Cookies.remove("token");
     localStorage.removeItem("clinicData");
     navigate("/cliniclogin");
   };
