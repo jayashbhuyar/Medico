@@ -47,8 +47,8 @@ function ConsultantLogin() {
               withCredentials: true,
             }
           );
-
-          if (response.data.success) {
+          isthere = localStorage.getItem("doctorData");
+          if (response.data.success&&isthere) {
             navigate("/consultant/dashboard");
           } else {
             Cookies.remove("token");

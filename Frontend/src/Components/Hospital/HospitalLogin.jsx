@@ -31,8 +31,8 @@ function HospitalLogin() {
               withCredentials: true,
             }
           );
-
-          if (response.data.success) {
+          const isthere = localStorage.getItem("hospitalData");
+          if (response.data.success&&isthere) {
             navigate("/hospital/dashboard");
           } else {
             Cookies.remove("token");

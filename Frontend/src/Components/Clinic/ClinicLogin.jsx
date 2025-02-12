@@ -30,8 +30,8 @@ const ClinicLogin = () => {
             "Content-Type": "application/json",
           },
         });
-
-        if (response.data.success) {
+        isthere = localStorage.getItem('clinicData');
+        if (response.data.success&&isthere) {
           navigate("/clinic/dashboard");
         }
       } catch (error) {
