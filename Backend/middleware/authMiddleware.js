@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const Hospital = require("../models/hospitalReg");
 const User = require("../models/user"); // Ensure the correct path to the User model
 const Clinic = require("../models/clinicReg");
-const Consultant = require("../models/consultantReg");
 const Doctor = require("../models/addDoctor");
 
 exports.validateToken = async (req, res) => {
