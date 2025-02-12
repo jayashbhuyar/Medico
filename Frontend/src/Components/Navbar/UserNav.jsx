@@ -5,13 +5,9 @@ import {
   FaHome,
   FaHospital,
   FaUserMd,
-  FaStethoscope,
   FaClinicMedical,
   FaInfoCircle,
-  FaRegQuestionCircle,
   FaAmbulance,
-  FaPills,
-  FaHeartbeat,
   FaBars,
   FaTimes,
   FaSignInAlt,
@@ -22,7 +18,6 @@ import {
   FaPhoneVolume,
   FaUser,
   FaSignOutAlt,
-  FaCog,
   FaSitemap,
 } from "react-icons/fa";
 import Cookies from 'js-cookie';
@@ -37,7 +32,6 @@ const UserNav = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -52,54 +46,25 @@ const UserNav = () => {
 
 
   useEffect(() => {
-    const token = Cookies.get("token");
-    const storedUserData = localStorage.getItem("userData");
-
+    const token = Cookies.get('userToken');
+    const storedUserData = localStorage.getItem('userData');
+    
     if (token && storedUserData) {
       setIsAuthenticated(true);
       setUserData(JSON.parse(storedUserData));
     }
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleSignOut = () => {
-    // Clear all auth related data from localStorage
-    localStorage.removeItem("token");
-    localStorage.removeItem("userData");
-    localStorage.removeItem("userEmail");
-
-    // Update state
-
-    // Redirect to home page
-    navigate("/");
-  };
-
   const handleLogout = () => {
-    Cookies.remove("token");
-    localStorage.removeItem("userData");
+    Cookies.remove('userToken');
+    localStorage.removeItem('userData');
     setIsAuthenticated(false);
     setUserData(null);
-    navigate("/patientpage");
+    navigate('/patientpage');
   };
 
   const navItems = [
-    {
-      name: "Home",
-      path: "/patientpage",
-      icon: <FaHome className="w-5 h-5" />,
-    },
+    { name: "Home", path: "/patientpage", icon: <FaHome className="w-5 h-5" /> },
     {
       name: "Hospitals",
       path: "/usernavhospitals",
@@ -115,7 +80,7 @@ const UserNav = () => {
       path: "/usernavdoctors",
       icon: <FaUserMd className="w-5 h-5" />,
     },
-
+   
     {
       name: "About Us",
       path: "/usernavabout",
@@ -155,37 +120,26 @@ const UserNav = () => {
   ];
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
-      ${
-        isScrolled
-          ? "bg-white/80 backdrop-blur-md shadow-md border-b border-gray-100"
-          : "bg-transparent"
-      }`}
-    >
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-md border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4">
-        <div className={`flex justify-between items-center h-14 -ml-10`}>
-          {/* Logo - Updated with conditional background */}
-          <Link to="/" className="flex items-center gap-2 px-2 sm:px-4">
-  <motion.div
-    whileHover={{ scale: 1.05 }}
-    className={`flex items-center px-3 py-1.5 rounded-lg ${
-      isScrolled
-        ? "bg-white shadow-lg border border-gray-300"
-        : "bg-white/90"
-    } ml-2 sm:ml-0 mr-6`} // Add space only in mobile view
-  >
-    <span className="text-xl sm:text-2xl font-bold text-[#2C3E50] tracking-wide">
-      Medico
-    </span>
-    <span className="ml-2 text-sm text-[#16A085] uppercase font-medium tracking-wider">
-      Healthcare
-    </span>
-  </motion.div>
-</Link>
+        <div className="flex justify-between items-center h-14 -ml-10">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 ">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="flex items-center bg-white px-3 py-1.5 rounded-lg shadow-lg border border-gray-300 mr-6"
+            >
+              {/* Logo Text */}
+              <span className="text-2xl font-bold text-[#2C3E50] tracking-wide">
+                Medico
+              </span>
+              <span className="ml-2 text-sm text-[#16A085] uppercase font-medium tracking-wider">
+                Healthcare
+              </span>
+            </motion.div>
+          </Link>
 
-
-          {/* Desktop Navigation - Updated with conditional styles */}
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-2">
             {navItems.map((item) => (
               <motion.div
@@ -203,10 +157,8 @@ const UserNav = () => {
                     className={`flex items-center px-4 py-2 rounded-xl group relative
                               ${
                                 location.pathname === item.path
-                                  ? "bg-gradient-to-r from-blue-500/90 to-indigo-600/90 text-white shadow-md"
-                                  : isScrolled
-                                  ? "text-gray-700 hover:bg-gray-50/90"
-                                  : "text-black hover:bg-white/20"
+                                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md"
+                                  : "text-gray-700 hover:bg-gray-50"
                               }
                               transition-all duration-300`}
                   >
@@ -233,10 +185,8 @@ const UserNav = () => {
                     className={`flex items-center px-4 py-2 rounded-xl relative
                               ${
                                 location.pathname === item.path
-                                  ? "bg-gradient-to-r from-blue-500/90 to-indigo-600/90 text-black shadow-md"
-                                  : isScrolled
-                                  ? "text-gray-700 hover:bg-gray-50/90"
-                                  : "text-black hover:bg-white/20"
+                                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md"
+                                  : "text-gray-700 hover:bg-gray-50"
                               }
                               transition-all duration-300`}
                   >
@@ -303,42 +253,30 @@ const UserNav = () => {
               </motion.div>
             ))}
 
-            {/* Login/Logout Button - Updated with conditional styles */}
+            {/* Login/Logout Button */}
             <div className="relative">
               {isAuthenticated ? (
                 <div>
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className={`flex items-center gap-2 h-10 px-3 rounded-md
-                    ${
-                      isScrolled
-                        ? "hover:bg-gray-100/90 text-gray-700"
-                        : "hover:bg-white/20 text-gray-100"
-                    } transition-colors`}
+                    className="flex items-center gap-2 h-10 px-3 hover:bg-gray-100 
+                               transition-colors rounded-md"
                   >
-                    <div
-                      className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 
-                                  flex items-center justify-center text-white font-semibold"
-                    >
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 
+                                  flex items-center justify-center text-white font-semibold">
                       {userData?.firstName?.charAt(0)}
                     </div>
-                    <span className="text-gray-700 font-medium">
-                      {userData?.firstName}
-                    </span>
+                    <span className="text-gray-700 font-medium">{userData?.firstName}</span>
                   </button>
 
                   {showProfileMenu && (
-                    <div
-                      className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl 
-                                  border border-gray-100 overflow-hidden"
-                    >
+                    <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl 
+                                  border border-gray-100 overflow-hidden">
                       {/* User Info Section */}
                       <div className="p-6 bg-gradient-to-r from-blue-50 to-blue-100 flex items-center gap-4">
                         <div className="w-14 h-14 rounded-full bg-white p-1 shadow-md">
-                          <div
-                            className="w-full h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 
-                                      flex items-center justify-center text-white font-bold text-xl"
-                          >
+                          <div className="w-full h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 
+                                      flex items-center justify-center text-white font-bold text-xl">
                             {userData?.firstName?.charAt(0)}
                           </div>
                         </div>
@@ -360,9 +298,7 @@ const UserNav = () => {
                                    rounded-xl transition-colors"
                         >
                           <FaUser className="text-blue-600 w-5 h-5" />
-                          <span className="text-gray-700 font-medium">
-                            My Profile
-                          </span>
+                          <span className="text-gray-700 font-medium">My Profile</span>
                         </Link>
                         <Link
                           to="/user/appointments"
@@ -370,9 +306,7 @@ const UserNav = () => {
                                    rounded-xl transition-colors"
                         >
                           <FaUser className="text-blue-600 w-5 h-5" />
-                          <span className="text-gray-700 font-medium">
-                            My Appointments
-                          </span>
+                          <span className="text-gray-700 font-medium">My Appointments</span>
                         </Link>
 
                         <button
@@ -390,12 +324,8 @@ const UserNav = () => {
               ) : (
                 <Link
                   to="/userlogin"
-                  className={`h-10 px-4 rounded-md flex items-center gap-2
-                    ${
-                      isScrolled
-                        ? "text-gray-700 hover:bg-gray-100/90"
-                        : "text-gray-100 hover:bg-white/20"
-                    } transition-colors`}
+                  className="h-10 px-4 text-gray-700 hover:bg-gray-100 transition-colors 
+                             rounded-md flex items-center gap-2"
                 >
                   <FaSignInAlt />
                   Login
@@ -404,7 +334,7 @@ const UserNav = () => {
             </div>
           </div>
 
-          {/* Mobile Menu Button - Updated with conditional styles */}
+          {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center space-x-2">
             {/* Mobile Login/Logout Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

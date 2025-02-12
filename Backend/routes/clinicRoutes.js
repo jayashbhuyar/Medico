@@ -7,10 +7,10 @@ const { getAllClinics,getNearestClinics } = require("../controllers/usernavclini
 
 router.post("/register", register);//
 router.post("/login", login);//
-router.get('/all', getAllClinics);//
-router.get('/nearest',getNearestClinics);
-router.post('/add', addClinicDoctor);
-router.get('/:clinicId',getClinicDoctors);
+// router.get('/all', getAllClinics);//
+// router.get('/nearest',getNearestClinics);
+// router.post('/add', addClinicDoctor);
+// router.get('/:clinicId',getClinicDoctors);
 
 // Public routes
 // router.get('/:id',getClinicById);

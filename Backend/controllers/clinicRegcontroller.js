@@ -82,64 +82,6 @@ exports.register = async (req, res) => {
   }
 };
 
-// exports.login = async (req, res) => {
-//     try {
-//       const { email, password } = req.body;
-  
-//       // Validate input
-//       if (!email || !password) {
-//         return res.status(400).json({
-//           success: false,
-//           message: 'Email and password are required'
-//         });
-//       }
-  
-//       // Find clinic
-//       const clinic = await Clinic.findOne({ email });
-//       if (!clinic) {
-//         return res.status(401).json({
-//           success: false,
-//           message: 'Invalid credentials'
-//         });
-//       }
-  
-//       // Compare password
-//       const isMatch = await bcrypt.compare(password, clinic.password);
-//       if (!isMatch) {
-//         return res.status(401).json({
-//           success: false,
-//           message: 'Invalid credentials'
-//         });
-//       }
-  
-//       // Generate token
-//       const token = jwt.sign(
-//         { clinicId: clinic._id },
-//         process.env.JWT_SECRET,
-//         { expiresIn: '24h' }
-//       );
-  
-//       // Success response
-//       res.status(200).json({
-//         success: true,
-//         message: 'Login successful',
-//         token,
-//         clinic: {
-//           id: clinic._id,
-//           name: clinic.clinicName,
-//           email: clinic.email
-//         }
-//       });
-  
-//     } catch (error) {
-//       console.error('Login error:', error);
-//       res.status(500).json({
-//         success: false,
-//         message: 'Login failed'
-//       });
-//     }
-//   };
-  
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;

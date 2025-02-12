@@ -6,7 +6,7 @@ const fileUpload = require('express-fileupload');
 require("dotenv").config();
 
 // Import Routes
-const { validateToken, authenticateToken } = require('./middleware/authMiddleware');
+const { validateToken, authenticateToken, authenticateOrganization, authenticateClinicToken, authenticateConsultantToken, authenticateHospitalToken } = require('./middleware/authMiddleware');
 const hospitalRoutes = require('./routes/hospitalRoutes');
 const clinicRoutes = require('./routes/clinicRoutes');
 const doctorRoutes = require("./routes/doctorRoutes");
@@ -59,26 +59,25 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 app.use("/api/token/validate", validateToken);
-app.use("/api/doctors", doctorRoutes);
-app.use("/api/appointments", appointmentRoutes);
-app.use("/api/clinics", clinicRoutes);
-app.use("/api/clinic", clinicDashRoutes);
-app.use("/api/v1/consultant", consultantDashRoutes);
-app.use("/api/consultant", consultantRoute);
-app.use("/api/health/v2", healthRoutes);
-app.use("/api/hospitals", hospitalRoutes);
-app.use("/api/v2/doctors", hospitalDashRoutes);
-app.use("/api/user/clinics", clinicRoutes);
-app.use("/api/v1/reviews", reviewRoutes);
-app.use("/api/user/v2", usernavRoutes);
-app.use("/api/user/hospitals", usernavRoutes);
-app.use("/api/search", nearbyRoutes);
+app.use("/api/doctors", authenticateOrganization, doctorRoutes);
+app.use("/api/appointments", appointmentRoutes);//
+app.use("/api/clinics", clinicRoutes);//
+app.use("/api/clinic", authenticateClinicToken, clinicDashRoutes);
+app.use("/api/v1/consultant",authenticateConsultantToken, consultantDashRoutes);//
+app.use("/api/consultant", consultantRoute);//
+app.use("/api/health/v2", healthRoutes);//
+app.use("/api/hospitals", hospitalRoutes);//
+app.use("/api/v2/doctors",authenticateHospitalToken, hospitalDashRoutes);//
+app.use("/api/user/clinics", clinicRoutes);//
+app.use("/api/v1/reviews", reviewRoutes);//
+app.use("/api/user/v2", usernavRoutes);//
+app.use("/api/user/hospitals", usernavRoutes);//
+app.use("/api/search", nearbyRoutes);//
 app.use("/api/webreviews", webReviewRoutes);
-
-app.use("/api/search", searchRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/clinic/daashboard", clinicRoutes);
-app.use("/api/v2/hospitals", findHospitalRoutes);
+// app.use("/api/search", searchRoutes);
+app.use("/api/users", userRoutes);//
+// app.use("/api/clinic/daashboard", clinicRoutes);
+// app.use("/api/v2/hospitals", findHospitalRoutes);
 
 // Base route
 app.get("/", (req, res) => {

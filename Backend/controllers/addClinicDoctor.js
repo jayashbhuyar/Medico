@@ -1,7 +1,5 @@
 const Doctor = require("../models/addDoctor");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-// const Clinic = require("../models/clinicReg");
 
 const addClinicDoctor = async (req, res) => {
   try {
