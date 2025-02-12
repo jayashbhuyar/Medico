@@ -6,5 +6,6 @@ const nearbyController = require('../controllers/nearbyController');
 router.post('/doctors/nearby', nearbyController.findNearbyDoctors);
 router.post('/hospitals/nearby', nearbyController.findNearbyHospitals);
 router.post('/clinics/nearby', nearbyController.findNearbyClinics);
+router.post('/v1/hospital/nearby', nearbyController.getNearbyHospitals);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import HospitalCard from "./HospitalCard";
 import HospitalDetails from "./HospitalDetails";
@@ -6,170 +6,137 @@ import HospitalDetails from "./HospitalDetails";
 const FindHospital = () => {
   const [hospitals, setHospitals] = useState([]);
   const [selectedHospital, setSelectedHospital] = useState(null);
-  const [searchParams, setSearchParams] = useState({
-    type: "name",
-    query: "",
-  });
   const [loading, setLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
+  const [mapQuery, setMapQuery] = useState(null);
+  const [coordinates, setCoordinates] = useState({
+    latitude: null,
+    longitude: null,
+  });
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const fetchLocation = () => {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+  };
+
+  const fetchNearbyHospitals = async (latitude, longitude) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/v2/hospitals/search`,
-        {
-          params: searchParams,
-        }
-      );
-      setHospitals(response.data);
+      const response = await axios.get("http://localhost:8000/api/search/v1/hospital/nearby", {
+        params: {
+          latitude,
+          longitude,
+        },
+      });
+      setHospitals(response.data.results || []);
     } catch (error) {
+      console.error("Error fetching nearby hospitals:", error);
+      setLocationError("Failed to fetch nearby hospitals.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleNearMe = async () => {
-    setLoading(true);
-    setLocationError("");
+  useEffect(() => {
+    const getLocationAndFetchHospitals = async () => {
+      setLoading(true);
+      setLocationError("");
 
-    try {
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
+      try {
+        const position = await fetchLocation();
+        const { latitude, longitude } = position.coords;
+        setCoordinates({ latitude, longitude });
+        await fetchNearbyHospitals(latitude, longitude);
+      } catch (error) {
+        console.error("Error getting location:", error);
+        setLocationError(
+          "Unable to get your location. Please enable location services."
+        );
+        setLoading(false);
+      }
+    };
 
-      const { latitude, longitude } = position.coords;
+    getLocationAndFetchHospitals();
+  }, []);
 
-      const response = await axios.get(`http://localhost:8000/api/v2/hospitals/nearby`, {
-        params: {
-          lat: latitude,
-          lng: longitude,
-          radius: 10, // 10km radius
-        },
-      });
-
-      setHospitals(response.data);
-    } catch (error) {
-      setLocationError(
-        "Unable to get your location. Please enable location services."
-      );
-    } finally {
-      setLoading(false);
-    }
+  const handleHospitalClick = (hospital) => {
+    setSelectedHospital(hospital);
+    setMapQuery(
+      `${hospital.poi.name}, ${hospital.address.municipality}, ${hospital.address.countrySecondarySubdivision}, ${hospital.address.postalCode}`
+    );
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-            Find Hospitals
-          </h2>
-          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
-            Search for hospitals by name, location or find nearby hospitals
-          </p>
-        </div>
-
-        <div className="mt-8 flex flex-col items-center gap-4">
-          <button
-            onClick={handleNearMe}
-            disabled={loading}
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-          >
-            {loading ? (
-              "Searching..."
-            ) : (
-              <>
-                <svg
-                  className="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                Find Hospitals Near Me
-              </>
-            )}
-          </button>
-
-          {locationError && (
-            <p className="text-red-600 text-sm">{locationError}</p>
-          )}
-
-          <div className="w-full max-w-4xl">
-            <div className="text-center mb-4">
-              <span className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm">
-                OR
-              </span>
+    <div className="bg-cover bg-repeat-y bg-[url('https://i.ibb.co/tJkCLrK/16404766-v870-tang-37.png')]">
+      <div className="min-h-screen">
+        <div className="overflow-hidden mt-11">
+          <div className="bg-green-900 h-[150px] max-h-[150px] bg-opacity-75 text-white flex justify-center items-center">
+            <div className="max-w-5xl mx-auto text-center px-4 md:px-8">
+              <h1 className="text-4xl md:text-5xl font-bold mb-2">
+                Find Hospitals Near You
+              </h1>
+              <p className="text-lg md:text-xl">
+                Explore Healthcare Facilities in Your Area
+              </p>
             </div>
-
-            <form
-              onSubmit={handleSearch}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-            >
-              <select
-                value={searchParams.type}
-                onChange={(e) =>
-                  setSearchParams({ ...searchParams, type: e.target.value })
-                }
-                className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:w-48"
-              >
-                <option value="name">Search by Name</option>
-                <option value="location">Search by Location</option>
-                <option value="pincode">Search by Pincode</option>
-              </select>
-
-              <input
-                type="text"
-                value={searchParams.query}
-                onChange={(e) =>
-                  setSearchParams({ ...searchParams, query: e.target.value })
-                }
-                className="flex-1 max-w-lg rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                placeholder="Enter search term..."
-              />
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                {loading ? "Searching..." : "Search"}
-              </button>
-            </form>
           </div>
         </div>
 
-        <div className="mt-12">
-          {selectedHospital ? (
-            <HospitalDetails
-              hospital={selectedHospital}
-              onBack={() => setSelectedHospital(null)}
-            />
-          ) : (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {hospitals.map((hospital) => (
-                <HospitalCard
-                  key={hospital._sr_no}
-                  hospital={hospital}
-                  onClick={() => setSelectedHospital(hospital)}
-                />
-              ))}
+        {/* Results Section */}
+        <div className="w-[90%] m-auto mt-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="mt-8">
+              {loading ? (
+                <div className="text-center">Loading...</div>
+              ) : hospitals.length > 0 ? (
+                <div className="grid grid-cols-1 gap-6">
+                  {hospitals.map((hospital) => (
+                    <div
+                      key={hospital.id}
+                      onClick={() => handleHospitalClick(hospital)}
+                      className="p-10 transition-transform transform hover:scale-105 hover:cursor-pointer hover:shadow-lg hover:bg-gray-300 bg-white bg-opacity-80 rounded mb-4 shadow-md"
+                    >
+                      <h2 className="text-4xl text-center font-bold mb-8">
+                        {hospital.poi.name}
+                      </h2>
+                      <p className="text-gray-600 text-center font-bold">
+                        {hospital.address.freeformAddress}
+                      </p>
+                      <div className="transition-all flex items-center mt-2 justify-center py-[4px]">
+                        <img src="https://i.ibb.co/hfPjc91/image.png" alt="" />
+                        <div className="transition-all ml-2 text-[15px] font-sans font-semibold text-[#3a3a3a]">
+                          {`${(hospital.dist / 1000).toFixed(2)} km away`}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center">No hospitals found</div>
+              )}
             </div>
-          )}
+
+            {/* Map Section */}
+            {mapQuery && (
+              <div className="flex justify-center items-center pb-10 mt-8">
+                <iframe
+                  className="border border-black rounded-md shadow-lg"
+                  width="600"
+                  height="450"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://www.google.com/maps/embed/v1/place?key=${
+                    process.env.REACT_APP_GOOGLE_MAPS_API_KEY
+                  }&q=${mapQuery.replace(/[^a-z0-9]/gi, "")}`}
+                  title="Hospital Location"
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

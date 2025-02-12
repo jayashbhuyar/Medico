@@ -113,6 +113,28 @@ const nearbyController = {
       });
     }
   }
+,
+  getNearbyHospitals: async (req, res) => {
+    try {
+      const { latitude, longitude } = req.query;
+      
+      // Make request to your hospital data API
+      const response = await axios.get('your_api_endpoint', {
+        params: {
+          lat: latitude,
+          lon: longitude,
+        }
+      });
+
+      return res.json(response.data);
+    } catch (error) {
+      console.error('Error fetching nearby hospitals:', error);
+      return res.status(500).json({ 
+        error: 'Failed to fetch hospitals',
+        details: error.message 
+      });
+    }
+  }
 };
 
 module.exports = nearbyController;
