@@ -18,12 +18,17 @@ exports.validateToken = async (req, res) => {
     // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const hospital = await Hospital.findById(decoded.hospitalId);
+    const clinic = await Clinic.findById(decoded.id);
+    const doctor = await Doctor.findById(decoded.id);
 
-    if (!hospital) {
-      return res.status(401).json({ success: false, message: "Invalid token" });
+    if (hospital || clinic || doctor) {
+      return res.json({ success: true, message: "Token is valid" });
+    }
+  
+    else{
+  return res.status(401).json({ success: false, message: "Invalid token" });
     }
 
-    res.json({ success: true, message: "Token is valid" });
   } catch (error) {
     console.error("Error validating token", error);
     res
@@ -42,9 +47,9 @@ exports.authenticateUserToken = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
+    // console.log(decoded);
     const user = await User.findById(decoded.id);
-    console.log(decoded.id);
+    // console.log(decoded.id);
     if (!user) {
       return res.status(401).json({ success: false, message: "Invalid token" });
     }

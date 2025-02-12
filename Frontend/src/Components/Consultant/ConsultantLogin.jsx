@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaLock, FaUserMd, FaIdCard } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -30,6 +30,42 @@ function ConsultantLogin() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  useEffect(() => {
+    const validateToken = async () => {
+      // Get the token from cookies
+      const token = Cookies.get("token");
+      if (!token) {
+        localStorage.removeItem("doctorData");
+      }
+
+      if (token) {
+        try {
+          const response = await axios.get(
+            "http://localhost:8000/api/token/validate",
+            {
+              withCredentials: true,
+            }
+          );
+
+          if (response.data.success) {
+            navigate("/consultant/dashboard");
+          } else {
+            Cookies.remove("token");
+            localStorage.removeItem("doctorData");
+            navigate("/consultantlogin"); // Redirect to login if invalid token
+          }
+        } catch (error) {
+          Cookies.remove("token");
+          localStorage.removeItem("doctorData");
+          navigate("/consultantlogin"); // Redirect to login if token validation fails
+        }
+      }
+    };
+
+    validateToken();
+  }, [navigate]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
