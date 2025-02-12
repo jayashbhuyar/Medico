@@ -1,22 +1,20 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEnvelope, FaLock, FaUserMd, FaIdCard } from "react-icons/fa";
+import { FaLock, FaUserMd, FaIdCard } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { Switch } from "@headlessui/react";
 
 function ConsultantLogin() {
-  const [loginMethod, setLoginMethod] = useState("email"); // 'email' or 'userId'
   const [formData, setFormData] = useState({
-    email: "",
     userId: "",
     password: "",
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -25,23 +23,9 @@ function ConsultantLogin() {
     }));
   };
 
-  const toggleLoginMethod = () => {
-    setLoginMethod((prev) => (prev === "email" ? "userId" : "email"));
-    setFormData((prev) => ({
-      ...prev,
-      email: "",
-      userId: "",
-    }));
-    setErrors({});
-  };
-
   const validateForm = () => {
     const newErrors = {};
-    if (loginMethod === "email") {
-      if (!formData.email) newErrors.email = "Email is required";
-    } else {
-      if (!formData.userId) newErrors.userId = "User ID is required";
-    }
+    if (!formData.userId) newErrors.userId = "User ID is required";
     if (!formData.password) newErrors.password = "Password is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -56,9 +40,7 @@ function ConsultantLogin() {
 
       try {
         const loginData = {
-          ...(loginMethod === "email"
-            ? { email: formData.email }
-            : { userId: formData.userId }),
+          userId: formData.userId,
           password: formData.password,
         };
 
@@ -118,80 +100,27 @@ function ConsultantLogin() {
           </h2>
         </div>
 
-        <div className="flex items-center justify-center gap-3 px-4">
-          <span
-            className={`text-sm ${
-              loginMethod === "email" ? "text-blue-600" : "text-gray-500"
-            }`}
-          >
-            Email
-          </span>
-          <Switch
-            checked={loginMethod === "userId"}
-            onChange={toggleLoginMethod}
-            className={`${
-              loginMethod === "userId" ? "bg-blue-600" : "bg-gray-200"
-            } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none`}
-          >
-            <span className="sr-only">Toggle login method</span>
-            <span
-              className={`${
-                loginMethod === "userId" ? "translate-x-6" : "translate-x-1"
-              } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
-            />
-          </Switch>
-          <span
-            className={`text-sm ${
-              loginMethod === "userId" ? "text-blue-600" : "text-gray-500"
-            }`}
-          >
-            User ID
-          </span>
-        </div>
-
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
-            {loginMethod === "email" ? (
-              <div>
-                <label className="flex items-center text-gray-600 mb-1">
-                  <FaEnvelope className="mr-2 text-blue-500" />
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${
-                    errors.email ? "border-red-500" : "border-gray-300"
-                  } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-                  placeholder="Enter your email"
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                )}
-              </div>
-            ) : (
-              <div>
-                <label className="flex items-center text-gray-600 mb-1">
-                  <FaIdCard className="mr-2 text-blue-500" />
-                  User ID
-                </label>
-                <input
-                  type="text"
-                  name="userId"
-                  value={formData.userId}
-                  onChange={handleInputChange}
-                  className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${
-                    errors.userId ? "border-red-500" : "border-gray-300"
-                  } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-                  placeholder="Enter your User ID"
-                />
-                {errors.userId && (
-                  <p className="text-red-500 text-sm mt-1">{errors.userId}</p>
-                )}
-              </div>
-            )}
+            <div>
+              <label className="flex items-center text-gray-600 mb-1">
+                <FaIdCard className="mr-2 text-blue-500" />
+                User ID
+              </label>
+              <input
+                type="text"
+                name="userId"
+                value={formData.userId}
+                onChange={handleInputChange}
+                className={`appearance-none rounded-lg relative block w-full px-4 py-3 border ${
+                  errors.userId ? "border-red-500" : "border-gray-300"
+                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                placeholder="Enter your User ID"
+              />
+              {errors.userId && (
+                <p className="text-red-500 text-sm mt-1">{errors.userId}</p>
+              )}
+            </div>
 
             <div>
               <label className="flex items-center text-gray-600 mb-1">
@@ -219,9 +148,10 @@ function ConsultantLogin() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
+              disabled={loading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform transition-all duration-150"
             >
-              Sign in
+              {loading ? "Signing in..." : "Sign in"}
             </motion.button>
           </div>
 
