@@ -259,10 +259,10 @@ const AddDoctor = () => {
     }
 
     // Validate description
-    if (!formData.description || formData.description.length < 50) {
-      toast.error("Description must be at least 50 characters long");
-      return;
-    }
+    // if (!formData.description || formData.description.length < 50) {
+    //   toast.error("Description must be at least 50 characters long");
+    //   return;
+    // }
 
     setIsSubmitting(true); // Start loading state
     const formDataToSend = new FormData();
@@ -300,9 +300,14 @@ const AddDoctor = () => {
         // Show specific error messages
         if (data.message.includes("duplicate")) {
           toast.error("This user ID or email is already in use");
+        } else if (data.message.includes("validation")) {
+          toast.error("Please check all required fields");
+        } else {
+          toast.error(data.message || "Failed to add doctor");
+        }
       }
     } catch (error) {
-      // console.error("Error adding doctor:", error);
+      setIsSubmitting(false); // Reset loading state on error
       if (error.message.includes("NetworkError")) {
         toast.error("Network error. Please check your connection");
       } else if (error.message.includes("Unauthorized")) {
@@ -815,11 +820,41 @@ const AddDoctor = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-400 
+                  disabled={isSubmitting}
+                  className={`px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-400 
                            text-white rounded-lg hover:from-blue-700 hover:to-blue-500 
-                           transition-all duration-200 shadow-lg hover:shadow-xl ml-auto"
+                           transition-all duration-200 shadow-lg hover:shadow-xl ml-auto
+                           ${
+                             isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+                           }`}
                 >
-                  Submit
+                  {isSubmitting ? (
+                    <div className="flex items-center">
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Submitting...
+                    </div>
+                  ) : (
+                    "Submit"
+                  )}
                 </motion.button>
               )}
             </div>
