@@ -59,7 +59,7 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       required: [true, "Description is required"],
       trim: true,
-      minlength: [50, "Description must be at least 50 characters"],
+      minlength: [5, "Description must be at least 50 characters"],
       maxlength: [1000, "Description cannot exceed 1000 characters"],
     },
     profileImage: {

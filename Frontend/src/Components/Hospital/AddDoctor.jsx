@@ -49,6 +49,7 @@ const AddDoctor = () => {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({}); // Add error state
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     // Organization data from localStorage
     organizationId: hospitalData?.id || "",
@@ -263,6 +264,7 @@ const AddDoctor = () => {
       return;
     }
 
+    setIsSubmitting(true); // Start loading state
     const formDataToSend = new FormData();
 
     try {
@@ -290,16 +292,14 @@ const AddDoctor = () => {
 
       if (data.success) {
         toast.success("Doctor added successfully!");
-        navigate("/hospital/dashboard");
+        setTimeout(() => {
+          navigate("/hospital/dashboard");
+        }, 1000); // Add a small delay before redirecting
       } else {
+        setIsSubmitting(false); // Reset loading state on error
         // Show specific error messages
         if (data.message.includes("duplicate")) {
           toast.error("This user ID or email is already in use");
-        } else if (data.message.includes("validation")) {
-          toast.error("Please check all required fields");
-        } else {
-          toast.error(data.message || "Failed to add doctor");
-        }
       }
     } catch (error) {
       // console.error("Error adding doctor:", error);
