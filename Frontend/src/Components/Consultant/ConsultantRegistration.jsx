@@ -241,13 +241,10 @@ function ConsultantRegistration() {
 
         if (response.data.success) {
           toast.success('Registration successful!');
-          // localStorage.setItem('hospitalToken', response.data.token);
         }
 
       } catch (error) {
         toast.dismiss();
-        // console.log('Full error:', error);
-        // console.log('Error response:', error.response?.data);
 
         const errorMessage = error.response?.data?.message
           || error.message

@@ -165,7 +165,7 @@ exports.getConsultantAppointments = async (req, res) => {
       data: appointments,
     });
   } catch (error) {
-    console.error("Error fetching consultant appointments:", error);
+    // console.error("Error fetching consultant appointments:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching appointments",
@@ -180,7 +180,7 @@ exports.updateAppointmentStatus = async (req, res) => {
     const { appointmentId } = req.params;
     var { status } = req.body;
     status = status.charAt(0).toUpperCase() + status.slice(1);
-    console.log("Updating appointment:", appointmentId, "to status:", status);
+    // console.log("Updating appointment:", appointmentId, "to status:", status);
 
     if (!["Confirmed", "Cancelled", "Completed"].includes(status)) {
       return res.status(400).json({
@@ -202,13 +202,13 @@ exports.updateAppointmentStatus = async (req, res) => {
       });
     }
 
-    console.log("Appointment updated successfully:", appointment);
+    // console.log("Appointment updated successfully:", appointment);
     res.status(200).json({
       success: true,
       data: appointment,
     });
   } catch (error) {
-    console.error("Error updating appointment status:", error);
+    // console.error("Error updating appointment status:", error);
     res.status(500).json({
       success: false,
       message: "Error updating appointment status",

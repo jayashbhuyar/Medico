@@ -5,9 +5,10 @@ const cloudinary = require("../config/cloudinary");
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+    expiresIn: "7d", // Token will expire in 7 days
   });
 };
+
 
 exports.signup = async (req, res) => {
   try {

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock, FaUserMd, FaIdCard } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { toast, Toaster } from "react-hot-toast";
@@ -49,15 +49,12 @@ function ConsultantLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log("🔹 Form submitted");
 
     if (validateForm()) {
-      // console.log("✅ Form validation passed");
       setLoading(true);
       toast.dismiss();
 
       try {
-        // console.log("📡 Sending request to API...");
         const loginData = {
           ...(loginMethod === "email"
             ? { email: formData.email }
@@ -67,29 +64,19 @@ function ConsultantLogin() {
 
         const response = await axios.post(
           "http://localhost:8000/api/consultant/login",
-          loginData,{
-            withCredentials: true
+          loginData,
+          {
+            withCredentials: true,
           }
         );
 
-        // console.log("✅ API Response received:", response);
-
         const { message, token, hospital } = response.data;
-        // console.log("📦 Extracted data:", { message, token, hospital });
-         // Store user data in localStorage
-  const doctorData = response.data.data.user;
-  localStorage.setItem("doctorData", JSON.stringify(doctorData));
-  
-        // console.log("📦 Extracted data:", { message, token, hospital });
-
+        const doctorData = response.data.data.user;
+        localStorage.setItem("doctorData", JSON.stringify(doctorData));
 
         if (token) {
-          // console.log(
-          //   "🔐 Token received, storing in cookies and localStorage..."
-          // );
           Cookies.set("token", token, {
             expires: 7,
-            // secure: true,
             sameSite: "Strict",
           });
           toast.success("Login successful!", {
@@ -97,17 +84,13 @@ function ConsultantLogin() {
             position: "top-right",
           });
 
-          // console.log("🚀 Navigating to dashboard...");
           navigate("/consultant/dashboard");
         } else {
-          // console.warn("⚠️ No token received:", message);
           toast.error(message || "Login failed!");
         }
       } catch (error) {
-        // console.error("❌ Login error:", error);
         toast.error(error.response?.data?.message || "Invalid credentials");
       } finally {
-        // console.log("🔄 Setting loading to false");
         setLoading(false);
       }
     }

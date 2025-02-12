@@ -1,16 +1,19 @@
-const jwt = require('jsonwebtoken');
-const Hospital = require('../models/hospitalReg');
-const User = require('../models/user'); // Ensure the correct path to the User model
-const Clinic = require('../models/clinicReg');
-const Consultant = require('../models/consultantReg');
+const jwt = require("jsonwebtoken");
+const Hospital = require("../models/hospitalReg");
+const User = require("../models/user"); // Ensure the correct path to the User model
+const Clinic = require("../models/clinicReg");
+const Consultant = require("../models/consultantReg");
+const Doctor = require("../models/addDoctor");
 
 exports.validateToken = async (req, res) => {
   try {
-    const token = req.cookies.hospitalToken;
+    const token =
+      req.cookies.token || req.headers["authorization"]?.split(" ")[1];
     // console.log("🔐 Token from cookies:", token);
     if (!token) {
-
-      return res.status(401).json({ success: false, message: "No token provided" });
+      return res
+        .status(401)
+        .json({ success: false, message: "No token provided" });
     }
 
     // Verify the token
@@ -24,40 +27,47 @@ exports.validateToken = async (req, res) => {
     res.json({ success: true, message: "Token is valid" });
   } catch (error) {
     console.error("Error validating token", error);
-    res.status(401).json({ success: false, message: "Invalid or expired token" });
+    res
+      .status(401)
+      .json({ success: false, message: "Invalid or expired token" });
   }
 };
 
 exports.authenticateUserToken = async (req, res, next) => {
-  const token = req.cookies.userToken || req.headers['authorization']?.split(' ')[1];
-  
+  const token =
+    req.cookies.token || req.headers["authorization"]?.split(" ")[1];
+  console.log(token);
   if (!token) {
     return res.status(401).json({ message: "No token provided" });
   }
-  
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
     const user = await User.findById(decoded.id);
-
+    console.log(decoded.id);
     if (!user) {
       return res.status(401).json({ success: false, message: "Invalid token" });
     }
 
-    req.user = user;  // Attach user info to request
-    next();  // Proceed to next middleware or route handler
+    req.user = user; // Attach user info to request
+    next(); // Proceed to next middleware or route handler
   } catch (error) {
-    console.error("Error validating token", error);
-    res.status(401).json({ success: false, message: "Invalid or expired token" });
+    console.log("Error validating token", error);
+    res
+      .status(401)
+      .json({ success: false, message: "Invalid or expired token" });
   }
 };
 
 exports.authenticateHospitalToken = async (req, res, next) => {
-  const token = req.cookies.hospitalToken || req.headers['authorization']?.split(' ')[1];
-  
+  const token =
+    req.cookies.token || req.headers["authorization"]?.split(" ")[1];
+
   if (!token) {
     return res.status(401).json({ message: "No token provided" });
   }
-  
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const hospital = await Hospital.findById(decoded.hospitalId);
@@ -70,20 +80,23 @@ exports.authenticateHospitalToken = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Error validating token", error);
-    res.status(401).json({ success: false, message: "Invalid or expired token" });
+    res
+      .status(401)
+      .json({ success: false, message: "Invalid or expired token" });
   }
 };
 
 exports.authenticateClinicToken = async (req, res, next) => {
-  const token = req.cookies.clinicToken || req.headers['authorization']?.split(' ')[1];
-  
+  const token =
+    req.cookies.token || req.headers["authorization"]?.split(" ")[1];
+  // console.log(token);
   if (!token) {
     return res.status(401).json({ message: "No token provided" });
   }
-  
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const clinic = await Clinic.findById(decoded.clinicId);
+    const clinic = await Clinic.findById(decoded.id);
 
     if (!clinic) {
       return res.status(401).json({ success: false, message: "Invalid token" });
@@ -93,22 +106,30 @@ exports.authenticateClinicToken = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Error validating clinic token", error);
-    res.status(401).json({ success: false, message: "Invalid or expired token" });
+    res
+      .status(401)
+      .json({ success: false, message: "Invalid or expired token" });
   }
 };
 
 exports.authenticateConsultantToken = async (req, res, next) => {
-  const token = req.cookies.consultantToken || req.headers['authorization']?.split(' ')[1];
-  
+  const token =
+    req.cookies.token || req.headers["authorization"]?.split(" ")[1];
+  console.log("Consultant token:", token);
   if (!token) {
+    console.log("No token provided");
     return res.status(401).json({ message: "No token provided" });
   }
-  
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const consultant = await Consultant.findById(decoded.consultantId);
+    // console.log("Decoded consultant token:", decoded);
+    const consultant = await Doctor.findById(decoded.id);
+    // console.log("Consultant:", consultant);
+    // console.log(decoded.id)
 
     if (!consultant) {
+      console.log("Invalid token");
       return res.status(401).json({ success: false, message: "Invalid token" });
     }
 
@@ -116,89 +137,60 @@ exports.authenticateConsultantToken = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Error validating consultant token", error);
-    res.status(401).json({ success: false, message: "Invalid or expired token" });
+    res
+      .status(401)
+      .json({ success: false, message: "Invalid or expired token" });
   }
 };
 exports.authenticateOrganization = async (req, res, next) => {
-  const hospitalToken = req.cookies.hospitalToken;
-  const clinicToken = req.cookies.clinicToken;
-  
-  if (!hospitalToken && !clinicToken) {
+  const token = req.cookies.token;
+
+  if (!token) {
     return res.status(401).json({ message: "No token provided" });
   }
-  
   try {
-    if (hospitalToken) {
-      const decoded = jwt.verify(hospitalToken, process.env.JWT_SECRET);
-      const hospital = await Hospital.findById(decoded.hospitalId);
-      if (hospital) {
-        req.organization = hospital;
-        req.organizationType = 'hospital';
-        return next();
-      }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const hospital = await Hospital.findById(decoded.id);
+    const clinic = await Clinic.findById(decoded.id);
+
+    if (hospital || clinic) {
+      return next();
     }
-    
-    if (clinicToken) {
-      const decoded = jwt.verify(clinicToken, process.env.JWT_SECRET);
-      const clinic = await Clinic.findById(decoded.clinicId);
-      if (clinic) {
-        req.organization = clinic;
-        req.organizationType = 'clinic';
-        return next();
-      }
-    }
-    
     return res.status(401).json({ success: false, message: "Invalid token" });
-    
   } catch (error) {
     console.error("Error validating token", error);
-    res.status(401).json({ success: false, message: "Invalid or expired token" });
+    res
+      .status(401)
+      .json({ success: false, message: "Invalid or expired token" });
   }
 };
 exports.authenticateMultipleRoles = async (req, res, next) => {
-  const clinicToken = req.cookies.clinicToken;
-  const consultantToken = req.cookies.consultantToken;
-  const userToken = req.cookies.userToken;
-  
-  if (!clinicToken && !consultantToken && !userToken) {
+  const token =
+    req.cookies.token || req.headers["authorization"]?.split(" ")[1];
+  console.log("Token:", token);
+
+  if (!token) {
     return res.status(401).json({ message: "No token provided" });
   }
-  
+
   try {
-    if (clinicToken) {
-      const decoded = jwt.verify(clinicToken, process.env.JWT_SECRET);
-      const clinic = await Clinic.findById(decoded.clinicId);
-      if (clinic) {
-        req.user = clinic;
-        req.userType = 'clinic';
-        return next();
-      }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // console.log("Decoded: ", decoded);
+    const clinic = await Clinic.findById(decoded.id);
+    const doctor = await Doctor.findById(decoded.id);
+    const user = await User.findById(decoded.id);
+    // console.log("Doctor:", doctor);
+
+    ///
+    if (doctor || user || clinic) {
+      return next();
     }
-    
-    if (consultantToken) {
-      const decoded = jwt.verify(consultantToken, process.env.JWT_SECRET);
-      const consultant = await Consultant.findById(decoded.consultantId);
-      if (consultant) {
-        req.user = consultant;
-        req.userType = 'consultant';
-        return next();
-      }
-    }
-    
-    if (userToken) {
-      const decoded = jwt.verify(userToken, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id);
-      if (user) {
-        req.user = user;
-        req.userType = 'user';
-        return next();
-      }
-    }
-    
+
     return res.status(401).json({ success: false, message: "Invalid token" });
-    
   } catch (error) {
     console.error("Error validating token", error);
-    res.status(401).json({ success: false, message: "Invalid or expired token" });
+    res
+      .status(401)
+      .json({ success: false, message: "Invalid or expired token" });
   }
 };

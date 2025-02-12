@@ -95,11 +95,13 @@ const ConsultantAppointments = () => {
     try {
       const response = await axios.patch(
         `http://localhost:8000/api/appointments/${appointmentId}/status`,
-        { withCredentials: true, status: newStatus }
+        { status: newStatus }, // Send only status in body
+        {
+          withCredentials: true,  // This should be inside config, NOT body
+        }
       );
-
+  
       if (response.data.success) {
-        // Update local state to reflect the change
         setDoctors(
           doctors.map((doctor) => ({
             ...doctor,
@@ -114,9 +116,10 @@ const ConsultantAppointments = () => {
       }
     } catch (error) {
       toast.error("Failed to update appointment status");
-      // console.error(error);
+      console.error("Error updating status:", error);
     }
   };
+  
 
   const filteredAppointments = (appointments) => {
     return appointments.filter((apt) => {

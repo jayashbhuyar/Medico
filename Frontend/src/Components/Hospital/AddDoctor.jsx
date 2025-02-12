@@ -46,11 +46,6 @@ const AddDoctor = () => {
   }, []);
 
   // Protect against null hospitalData
-  useEffect(() => {
-    if (!hospitalData) {
-      navigate("/login");
-    }
-  }, [hospitalData, navigate]);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({}); // Add error state

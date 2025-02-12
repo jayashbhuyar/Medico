@@ -29,13 +29,13 @@ const ClinicAppointment = () => {
       try {
         const clinicData = JSON.parse(localStorage.getItem("clinicData"));
         let response;
-        
-          // For doctors, fetch appointments matching both doctor's email and organization email
-          response = await axios.get(
-            `http://localhost:8000/api/appointments/all?email=${clinicData.email}`,
-            { withCredentials: true }
-          );
-        
+
+        // For doctors, fetch appointments matching both doctor's email and organization email
+        response = await axios.get(
+          `http://localhost:8000/api/appointments/all?email=${clinicData.email}`,
+          { withCredentials: true }
+        );
+
         if (response.data.success) {
           // Group appointments by doctor
           const appointmentsByDoctor = response.data.data.reduce(
@@ -90,10 +90,9 @@ const ClinicAppointment = () => {
     try {
       const response = await axios.patch(
         `http://localhost:8000/api/appointments/${appointmentId}/status`,
-        
-        { status: newStatus,
-          withCredentials: true
-         }
+
+        { status: newStatus },
+        { withCredentials: true }
       );
 
       if (response.data.success) {
@@ -121,8 +120,8 @@ const ClinicAppointment = () => {
         selectedDate === "all" ||
         apt.appointmentDate === new Date(selectedDate).toLocaleDateString();
 
-      const statusMatches = 
-        selectedStatus === "all" || 
+      const statusMatches =
+        selectedStatus === "all" ||
         apt.status.toLowerCase() === selectedStatus.toLowerCase();
 
       return dateMatches && statusMatches;
@@ -373,4 +372,4 @@ const ClinicAppointment = () => {
   );
 };
 
-export default ClinicAppointment
+export default ClinicAppointment;

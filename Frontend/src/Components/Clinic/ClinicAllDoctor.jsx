@@ -230,9 +230,6 @@ const ClinicAllDoctors = () => {
         const response = await fetch(
           `http://localhost:8000/api/doctors/organization/${clinicData.id}`,
           {
-            headers: {
-              // 'Authorization': `Bearer ${localStorage.getItem('hospitalToken')}`
-            },
             credentials: "include",
           }
         );
