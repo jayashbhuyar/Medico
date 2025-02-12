@@ -3,7 +3,6 @@ import Landingpage from './Pages/LandingPage'
 import DoctorPage from './Pages/DoctorRegPage'
 import HospitalRegistration from './Components/Hospital/HospitalRegistration'
 import ClinicRegistration from './Components/Clinic/ClinicRegistration'
-import ConsultantRegistration from './Components/Consultant/ConsultantRegistration'
 import ConsultantLogin from "./Components/Consultant/ConsultantLogin";
 import ClinicLogin from './Components/Clinic/ClinicLogin'
 import DoctorProfile from './Components/User/NavResults/DoctorProfile'
@@ -72,7 +71,6 @@ function App() {
 
         {/* *************consultant Routes**********************  */}
         <Route path="/consultantlogin" element={<ConsultantLogin />} />
-        <Route path="/consultantregistration" element={<ConsultantRegistration />} />
         <Route path='/consultant/dashboard' element={<ConsultantDashboard />} />
         <Route path='/consultant/appointments' element={<ConsultantAppointments />} />
         <Route path="/consultantprofile" element={<ConsultantProfile />} />
