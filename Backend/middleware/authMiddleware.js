@@ -4,11 +4,51 @@ const User = require("../models/user"); // Ensure the correct path to the User m
 const Clinic = require("../models/clinicReg");
 const Doctor = require("../models/addDoctor");
 
+// exports.validateToken = async (req, res) => {
+//   try {
+//     const token =
+//       req.cookies.token || req.headers["authorization"]?.split(" ")[1];
+//     // console.log("🔐 Token from cookies:", token);
+//     if (!token) {
+//       return res
+//         .status(401)
+//         .json({ success: false, message: "No token provided" });
+//     }
+
+//     // Verify the token
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     const hospital = await Hospital.findById(decoded.hospitalId);
+//     const clinic = await Clinic.findById(decoded.id);
+//     const doctor = await Doctor.findById(decoded.id);
+//     // console.log("decode", decoded);
+
+//     if (hospital) {
+//       return res.json({ success: true, message: "Token is valid" });
+//     }
+//     if (clinic) { 
+//       return res.json({ success: true, message: "Token is valid" });
+//     }
+//     if (doctor) {
+//       return res.json({ success: true, message: "Token is valid" });
+//     }
+  
+//     else{
+//   return res.status(401).json({ success: false, message: "Invalid token" });
+//     }
+
+//   } catch (error) {
+//     console.error("Error validating token", error);
+//     res
+//       .status(401)
+//       .json({ success: false, message: "Invalid or expired token" });
+//   }
+// };
+
 exports.validateToken = async (req, res) => {
   try {
     const token =
       req.cookies.token || req.headers["authorization"]?.split(" ")[1];
-    // console.log("🔐 Token from cookies:", token);
+
     if (!token) {
       return res
         .status(401)
@@ -17,17 +57,23 @@ exports.validateToken = async (req, res) => {
 
     // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const hospital = await Hospital.findById(decoded.hospitalId);
-    const clinic = await Clinic.findById(decoded.id);
-    const doctor = await Doctor.findById(decoded.id);
 
-    if (hospital || clinic || doctor) {
-      return res.json({ success: true, message: "Token is valid" });
+    let user = await Hospital.findById(decoded.hospitalId);
+    if (user) {
+      return res.json({ success: true, message: "Token is valid", user });
     }
-  
-    else{
-  return res.status(401).json({ success: false, message: "Invalid token" });
+
+    user = await Clinic.findById(decoded.id);
+    if (user) {
+      return res.json({ success: true, message: "Token is valid", user });
     }
+
+    user = await Doctor.findById(decoded.id);
+    if (user) {
+      return res.json({ success: true, message: "Token is valid", user });
+    }
+
+    return res.status(401).json({ success: false, message: "Invalid token" });
 
   } catch (error) {
     console.error("Error validating token", error);

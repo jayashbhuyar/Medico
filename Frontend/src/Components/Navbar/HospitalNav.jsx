@@ -73,9 +73,14 @@ const HospitalNavbar = () => {
         <div className="flex justify-between h-16">
           {/* Logo/Brand */}
           <div className="flex items-center">
-            <Link to="/hospital/dashboard" className="flex items-center space-x-2">
+            <Link
+              to="/hospital/dashboard"
+              className="flex items-center space-x-2"
+            >
               <FaHospital className="h-8 w-8 text-blue-600" />
-              <span className="font-bold text-xl text-gray-800">HospitalCare</span>
+              <span className="font-bold text-xl text-gray-800">
+                HospitalCare
+              </span>
             </Link>
           </div>
 
@@ -83,7 +88,7 @@ const HospitalNavbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             {/* Search Bar */}
             <div className="relative">
-              <input 
+              <input
                 type="text"
                 placeholder="Search patients, doctors..."
                 className="w-64 px-4 py-2 rounded-lg bg-gray-100 focus:outline-none"
@@ -95,9 +100,9 @@ const HospitalNavbar = () => {
             <Link
               to="/hospital/dashboard"
               className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                location.pathname === '/hospital/dashboard' 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                location.pathname === "/hospital/dashboard"
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
               }`}
             >
               <FaChartLine className="mr-2" />
@@ -107,7 +112,7 @@ const HospitalNavbar = () => {
             {/* Doctors Dropdown */}
             <div ref={dropdownRefs.doctors} className="relative">
               <button
-                onClick={() => toggleDropdown('doctors')}
+                onClick={() => toggleDropdown("doctors")}
                 className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50"
               >
                 <FaUserNurse className="mr-2" />
@@ -123,10 +128,12 @@ const HospitalNavbar = () => {
                   <Link
                     to="/hospital/alldoctors"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    onClick={() => setDropdownStates((prev) => ({
-                      ...prev,
-                      doctors: false,
-                    }))}
+                    onClick={() =>
+                      setDropdownStates((prev) => ({
+                        ...prev,
+                        doctors: false,
+                      }))
+                    }
                   >
                     <FaUserMd className="mr-2" />
                     All Doctors
@@ -134,10 +141,12 @@ const HospitalNavbar = () => {
                   <Link
                     to="/hospital/adddoctor"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    onClick={() => setDropdownStates((prev) => ({
-                      ...prev,
-                      doctors: false,
-                    }))}
+                    onClick={() =>
+                      setDropdownStates((prev) => ({
+                        ...prev,
+                        doctors: false,
+                      }))
+                    }
                   >
                     <FaUserPlus className="mr-2" />
                     Add Doctor
@@ -150,9 +159,9 @@ const HospitalNavbar = () => {
             <Link
               to="/hospital/appointments"
               className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                location.pathname === '/hospital/appointments' 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                location.pathname === "/hospital/appointments"
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
               }`}
             >
               <FaCalendarCheck className="mr-2" />
@@ -162,7 +171,7 @@ const HospitalNavbar = () => {
             {/* Departments Dropdown */}
             <div ref={dropdownRefs.departments} className="relative">
               <button
-                onClick={() => toggleDropdown('departments')}
+                onClick={() => toggleDropdown("departments")}
                 className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50"
               >
                 <FaHospital className="mr-2" />
@@ -178,10 +187,12 @@ const HospitalNavbar = () => {
                   <Link
                     to="/hospital/departments/emergency"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    onClick={() => setDropdownStates((prev) => ({
-                      ...prev,
-                      departments: false,
-                    }))}
+                    onClick={() =>
+                      setDropdownStates((prev) => ({
+                        ...prev,
+                        departments: false,
+                      }))
+                    }
                   >
                     <FaAmbulance className="mr-2" />
                     Emergency
@@ -189,10 +200,12 @@ const HospitalNavbar = () => {
                   <Link
                     to="/hospital/departments/icu"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    onClick={() => setDropdownStates((prev) => ({
-                      ...prev,
-                      departments: false,
-                    }))}
+                    onClick={() =>
+                      setDropdownStates((prev) => ({
+                        ...prev,
+                        departments: false,
+                      }))
+                    }
                   >
                     <FaBed className="mr-2" />
                     ICU
@@ -200,10 +213,12 @@ const HospitalNavbar = () => {
                   <Link
                     to="/hospital/departments/opd"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    onClick={() => setDropdownStates((prev) => ({
-                      ...prev,
-                      departments: false,
-                    }))}
+                    onClick={() =>
+                      setDropdownStates((prev) => ({
+                        ...prev,
+                        departments: false,
+                      }))
+                    }
                   >
                     <FaStethoscope className="mr-2" />
                     OPD
@@ -215,7 +230,7 @@ const HospitalNavbar = () => {
             {/* Patients Dropdown */}
             <div ref={dropdownRefs.patients} className="relative">
               <button
-                onClick={() => toggleDropdown('patients')}
+                onClick={() => toggleDropdown("patients")}
                 className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50"
               >
                 <FaUsers className="mr-2" />
@@ -231,10 +246,12 @@ const HospitalNavbar = () => {
                   <Link
                     to="/hospital/patients"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    onClick={() => setDropdownStates((prev) => ({
-                      ...prev,
-                      patients: false,
-                    }))}
+                    onClick={() =>
+                      setDropdownStates((prev) => ({
+                        ...prev,
+                        patients: false,
+                      }))
+                    }
                   >
                     <FaUsers className="mr-2" />
                     All Patients
@@ -242,10 +259,12 @@ const HospitalNavbar = () => {
                   <Link
                     to="/hospital/patients/add"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    onClick={() => setDropdownStates((prev) => ({
-                      ...prev,
-                      patients: false,
-                    }))}
+                    onClick={() =>
+                      setDropdownStates((prev) => ({
+                        ...prev,
+                        patients: false,
+                      }))
+                    }
                   >
                     <FaUserPlus className="mr-2" />
                     Add Patient
@@ -253,10 +272,12 @@ const HospitalNavbar = () => {
                   <Link
                     to="/hospital/patients/records"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    onClick={() => setDropdownStates((prev) => ({
-                      ...prev,
-                      patients: false,
-                    }))}
+                    onClick={() =>
+                      setDropdownStates((prev) => ({
+                        ...prev,
+                        patients: false,
+                      }))
+                    }
                   >
                     <FaFileMedical className="mr-2" />
                     Medical Records
@@ -280,7 +301,10 @@ const HospitalNavbar = () => {
                 className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100"
               >
                 <img
-                  src={data.image||"https://via.placeholder.com/32"}
+                  src={
+                    data.image ||
+                    "https://media.istockphoto.com/id/2099357117/vector/heart-pulse-and-heartbeat-heartbeat-lone-cardiogram-beautiful-healthcare-medical-background.jpg?s=612x612&w=0&k=20&c=5agokqkO2Ls-JGCXC5eYl8mH_EO1ZnihZc-pEYtVBOI="
+                  }
                   alt="Profile"
                   className="h-8 w-8 rounded-full border-2 border-blue-500"
                 />
@@ -291,23 +315,26 @@ const HospitalNavbar = () => {
                     <p className="font-semibold">{data.hospitalName}</p>
                     <p className="text-sm text-gray-500">{data.email}</p>
                   </div>
-                  <Link 
-                    to="/hospital/profile" 
+                  <Link
+                    to="/hospital/profile"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setShowProfileMenu(false)}
                   >
                     <FaUserCircle className="mr-2" />
                     Profile
                   </Link>
-                  <Link 
-                    to="/hospital/settings" 
+                  <Link
+                    to="/hospital/settings"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setShowProfileMenu(false)}
                   >
                     <FaCog className="mr-2" />
                     Settings
                   </Link>
-                  <button className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100" onClick={handleLogout}>
+                  <button
+                    className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                    onClick={handleLogout}
+                  >
                     <FaSignOutAlt className="mr-2" />
                     Sign out
                   </button>
@@ -332,7 +359,11 @@ const HospitalNavbar = () => {
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-md text-gray-600 hover:bg-gray-100"
             >
-              {isOpen ? <FaTimes className="h-6 w-6" /> : <FaBars className="h-6 w-6" />}
+              {isOpen ? (
+                <FaTimes className="h-6 w-6" />
+              ) : (
+                <FaBars className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -376,8 +407,8 @@ const HospitalNavbar = () => {
                     onClick={() => setIsOpen(false)}
                     className={`block px-3 py-2 rounded-md text-base font-medium ${
                       location.pathname === item.path
-                        ? 'text-blue-600 bg-blue-50'
-                        : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                        ? "text-blue-600 bg-blue-50"
+                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                     }`}
                   >
                     <span className="mr-2">{item.icon}</span>
