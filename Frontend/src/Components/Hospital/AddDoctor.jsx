@@ -163,121 +163,114 @@ const AddDoctor = () => {
 
   // Update validateFields function with more specific error messages
   const validateFields = () => {
-    const errors = [];
+    const newErrors = {};
+    let isValid = true;
 
     // Basic Information validation
     if (!formData.name?.trim()) {
-      errors.push("Doctor's name is required");
+      newErrors.name = "Doctor's name is required";
+      isValid = false;
     }
     if (!formData.email?.trim()) {
-      errors.push("Doctor's email is required");
+      newErrors.email = "Doctor's email is required";
+      isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.push("Invalid email format");
+      newErrors.email = "Invalid email format";
+      isValid = false;
     }
     if (!formData.phone?.trim() || !/^\d{10}$/.test(formData.phone)) {
-      errors.push("Valid 10-digit phone number is required");
-    }
-
-    // Description validation
-    if (!formData.description?.trim()) {
-      errors.push("Description is required");
-    } else if (formData.description.length < 50) {
-      errors.push("Description must be at least 50 characters");
+      newErrors.phone = "Valid 10-digit phone number is required";
+      isValid = false;
     }
 
     // Education & Experience validation
     if (!formData.degrees?.length) {
-      errors.push("Select at least one degree");
+      newErrors.degrees = "Select at least one degree";
+      isValid = false;
     }
     if (!formData.specialties?.length) {
-      errors.push("Select at least one specialty");
+      newErrors.specialties = "Select at least one specialty";
+      isValid = false;
     }
     if (!formData.experience) {
-      errors.push("Years of experience is required");
+      newErrors.experience = "Years of experience is required";
+      isValid = false;
     }
     if (!formData.consultationFees) {
-      errors.push("Consultation fees is required");
+      newErrors.consultationFees = "Consultation fees is required";
+      isValid = false;
     }
 
     // Availability validation
     if (!formData.availableDays?.length) {
-      errors.push("Select available days");
+      newErrors.availableDays = "Select available days";
+      isValid = false;
     }
     if (!formData.timeSlots.start || !formData.timeSlots.end) {
-      errors.push("Time slots are required");
+      newErrors.timeSlots = "Time slots are required";
+      isValid = false;
     }
 
     // Account validation
     if (!formData.userId?.trim()) {
-      errors.push("User ID is required");
+      newErrors.userId = "User ID is required";
+      isValid = false;
     }
     if (!formData.password?.trim()) {
-      errors.push("Password is required");
-    } else if (formData.password.length < 6) {
-      errors.push("Password must be at least 6 characters");
+      newErrors.password = "Password is required";
+      isValid = false;
     }
     if (formData.password !== formData.confirmPassword) {
-      errors.push("Passwords don't match");
+      newErrors.confirmPassword = "Passwords don't match";
+      isValid = false;
     }
 
-    if (errors.length > 0) {
-      // Show all errors in a single toast
-      toast.error(
-        <div>
-          <strong>Please fix the following errors:</strong>
-          <ul className="list-disc pl-4 mt-2">
-            {errors.map((error, index) => (
-              <li key={index}>{error}</li>
-            ))}
-          </ul>
-        </div>,
-        {
-          duration: 5000, // Show for 5 seconds
-          style: {
-            maxWidth: "500px",
-          },
-        }
-      );
-      return false;
+    if (!isValid) {
+      setErrors(newErrors);
+      toast.error("Please fill all required fields correctly");
     }
 
-    return true;
+    return isValid;
   };
 
   // Update the handleSubmit function with better error handling
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate all required fields first
     if (!validateFields()) {
+      setIsSubmitting(false);
       return;
     }
 
-    // Validate image
-    if (!formData.profileImage) {
-      toast.error("Profile image is required");
-      return;
-    }
-
-    // Validate description
-    // if (!formData.description || formData.description.length < 50) {
-    //   toast.error("Description must be at least 50 characters long");
-    //   return;
-    // }
-
-    setIsSubmitting(true); // Start loading state
-    const formDataToSend = new FormData();
+    setIsSubmitting(true);
 
     try {
-      // Append all form data
+      const formDataToSend = new FormData();
+
+      // Validate image
+      if (!formData.profileImage) {
+        toast.error("Profile image is required");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Handle arrays and objects properly
       Object.keys(formData).forEach((key) => {
         if (key === "profileImage" && formData[key] instanceof File) {
           formDataToSend.append("profileImage", formData[key]);
+        } else if (Array.isArray(formData[key])) {
+          // Convert arrays to strings
+          formDataToSend.append(key, JSON.stringify(formData[key]));
         } else if (
+          formData[key] !== null &&
           typeof formData[key] === "object" &&
           !(formData[key] instanceof File)
         ) {
+          // Convert objects to strings
           formDataToSend.append(key, JSON.stringify(formData[key]));
         } else {
+          // Handle primitive values
           formDataToSend.append(key, formData[key]);
         }
       });
@@ -294,25 +287,22 @@ const AddDoctor = () => {
         toast.success("Doctor added successfully!");
         setTimeout(() => {
           navigate("/hospital/dashboard");
-        }, 1000); // Add a small delay before redirecting
+        }, 1000);
       } else {
-        setIsSubmitting(false); // Reset loading state on error
-        // Show specific error messages
-        if (data.message.includes("duplicate")) {
-          toast.error("This user ID or email is already in use");
-        } else if (data.message.includes("validation")) {
-          toast.error("Please check all required fields");
-        } else {
-          toast.error(data.message || "Failed to add doctor");
-        }
+        throw new Error(data.message);
       }
     } catch (error) {
-      setIsSubmitting(false); // Reset loading state on error
-      if (error.message.includes("NetworkError")) {
+      setIsSubmitting(false);
+      if (error.response?.data?.message) {
+        if (error.response.data.message.includes("duplicate")) {
+          toast.error("This user ID or email is already in use");
+        } else if (error.response.data.message.includes("validation")) {
+          toast.error("Please check all required fields");
+        } else {
+          toast.error(error.response.data.message || "Failed to add doctor");
+        }
+      } else if (error.message.includes("Network Error")) {
         toast.error("Network error. Please check your connection");
-      } else if (error.message.includes("Unauthorized")) {
-        toast.error("Session expired. Please login again");
-        navigate("/login");
       } else {
         toast.error("Something went wrong. Please try again");
       }
@@ -716,7 +706,7 @@ const AddDoctor = () => {
     <div
       className="min-h-screen py-12 px-4 sm:px-6 lg:px-8"
       style={{
-        backgroundImage: `url('https://i.pinimg.com/736x/05/61/6b/05616b208ff9c38393e4debca000137e.jpg')`,
+        backgroundImage: `url('https://img.freepik.com/free-vector/healthcare-blue-color-medical-concept-background_1055-10291.jpghttps://img.freepik.com/free-vector/medical-background-bright-blue-color_1017-11127.jpg')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

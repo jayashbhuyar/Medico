@@ -6,11 +6,15 @@ const addDoctor = async (req, res) => {
   try {
     const { password, confirmPassword, ...doctorData } = req.body;
 
-    // Parse JSON strings back to objects
+    // Parse JSON strings back to objects/arrays
     ["degrees", "specialties", "availableDays", "timeSlots"].forEach(
       (field) => {
-        if (typeof doctorData[field] === "string") {
-          doctorData[field] = JSON.parse(doctorData[field]);
+        if (doctorData[field] && typeof doctorData[field] === "string") {
+          try {
+            doctorData[field] = JSON.parse(doctorData[field]);
+          } catch (error) {
+            console.error(`Error parsing ${field}:`, error);
+          }
         }
       }
     );

@@ -615,7 +615,7 @@ const ClinicAddDoctor = () => {
     <div
       className="min-h-screen py-12 px-4 sm:px-6 lg:px-8"
       style={{
-        backgroundImage: `url('https://i.pinimg.com/736x/05/61/6b/05616b208ff9c38393e4debca000137e.jpg')`,
+        backgroundImage: `url('https://img.freepik.com/free-vector/medical-background-bright-blue-color_1017-11127.jpg')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

@@ -144,16 +144,18 @@ exports.authenticateConsultantToken = async (req, res, next) => {
 };
 exports.authenticateOrganization = async (req, res, next) => {
   const token = req.cookies.token;
-
+  
   if (!token) {
     return res.status(401).json({ message: "No token provided" });
   }
+  // console.log("Token:", token);
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const hospital = await Hospital.findById(decoded.id);
+    const hospital = await Hospital.findById(decoded.hospitalId);
     const clinic = await Clinic.findById(decoded.id);
 
     if (hospital || clinic) {
+      console.log("Hospital or Clinic found");
       return next();
     }
     return res.status(401).json({ success: false, message: "Invalid token" });
