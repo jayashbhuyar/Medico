@@ -137,7 +137,7 @@ const HealthcareSearch = () => {
       }
 
       const response = await fetch(
-        `http://localhost:8000${endpoint}?${params}`
+        `https://medico-care-theta.vercel.app${endpoint}?${params}`
       );
       const data = await response.json();
 
