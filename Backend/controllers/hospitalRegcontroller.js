@@ -114,7 +114,7 @@ exports.login = async (req, res) => {
     // console.log("🔐 Generated token:", token);
 
     // Set HTTP-only cookie for token storage
-    res.cookie("hospitalToken", token, {
+    res.cookie("token", token, {
       httpOnly: true, // Prevent JavaScript access for security
       secure: process.env.NODE_ENV === "production", // Secure in production
       sameSite: "None", // Prevent CSRF attacks
