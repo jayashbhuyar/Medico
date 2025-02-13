@@ -27,7 +27,7 @@ const findHospitalRoutes = require('./routes/FindHospital/findHospitalRoutes');
 
 const app = express();
 // Middleware
-const cors = require("cors");
+// const cors = require("cors");
 
 const corsOptions = {
   origin: "https://medico-healthcare.vercel.app", // Your frontend URL
