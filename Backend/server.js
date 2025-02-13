@@ -27,10 +27,16 @@ const findHospitalRoutes = require('./routes/FindHospital/findHospitalRoutes');
 
 const app = express();
 // Middleware
+const cors = require("cors");
+
 const corsOptions = {
-  origin: true, // This will reflect the request origin
-  credentials: true, // Allow credentials (cookies, headers, etc.)
+  origin: "https://medico-healthcare.vercel.app", // Your frontend URL
+  credentials: true, // Allow cookies and authentication headers
+  methods: "GET,POST,PUT,PATCH,DELETE", 
+  allowedHeaders: "Content-Type,Authorization", // Allow necessary headers
 };
+
+app.use(cors(corsOptions));
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
