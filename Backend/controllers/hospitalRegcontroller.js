@@ -9,7 +9,7 @@ exports.register = async (req, res) => {
     if (!req.body.hospitalName || !req.body.email || !req.body.password) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields'
+        message: "Missing required fields",
       });
     }
 
@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
     if (existingHospital) {
       return res.status(400).json({
         success: false,
-        message: 'Hospital already registered'
+        message: "Hospital already registered",
       });
     }
 
@@ -29,18 +29,21 @@ exports.register = async (req, res) => {
     if (isNaN(latitude) || isNaN(longitude)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid coordinates'
+        message: "Invalid coordinates",
       });
     }
 
     // Process image if exists
     let imageUrl = null;
     if (req.files && req.files.image) {
-      const result = await cloudinary.uploader.upload(req.files.image.tempFilePath, {
-        folder: 'hospitals',
-        width: 300,
-        crop: "scale"
-      });
+      const result = await cloudinary.uploader.upload(
+        req.files.image.tempFilePath,
+        {
+          folder: "hospitals",
+          width: 300,
+          crop: "scale",
+        }
+      );
       imageUrl = result.secure_url;
     }
 
@@ -50,7 +53,7 @@ exports.register = async (req, res) => {
       image: imageUrl,
       latitude,
       longitude,
-      password: await bcrypt.hash(req.body.password, 12)
+      password: await bcrypt.hash(req.body.password, 12),
     });
 
     await hospital.save();
@@ -58,26 +61,25 @@ exports.register = async (req, res) => {
     const token = jwt.sign(
       { hospitalId: hospital._id },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: "7d" }
     );
 
     res.status(201).json({
       success: true,
-      message: 'Hospital registered successfully',
+      message: "Hospital registered successfully",
       token,
       hospital: {
         id: hospital._id,
         name: hospital.hospitalName,
         email: hospital.email,
-        image: imageUrl
-      }
+        image: imageUrl,
+      },
     });
-
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error("Registration error:", error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Registration failed'
+      message: error.message || "Registration failed",
     });
   }
 };
@@ -106,17 +108,17 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { hospitalId: hospital._id },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' } // Token expires in 24 hours
+      { expiresIn: "7d" } // Token expires in 24 hours
     );
 
     // console.log("🔐 Generated token:", token);
 
     // Set HTTP-only cookie for token storage
-    res.cookie('hospitalToken', token, {
+    res.cookie("hospitalToken", token, {
       httpOnly: true, // Prevent JavaScript access for security
-      secure: process.env.NODE_ENV === 'production', // Secure in production
-      sameSite: 'strict', // Prevent CSRF attacks
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      secure: process.env.NODE_ENV === "production", // Secure in production
+      sameSite: "None", // Prevent CSRF attacks
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     console.log("✅ Cookie set successfully!");
@@ -144,10 +146,9 @@ exports.login = async (req, res) => {
         longitude: hospital.longitude,
         createdAt: hospital.createdAt,
         updatedAt: hospital.updatedAt,
-        role: 'Hospital'
-      }
+        role: "Hospital",
+      },
     });
-
   } catch (error) {
     console.error("❌ Login error:", error);
     res.status(500).json({ message: "Login failed", error: error.message });

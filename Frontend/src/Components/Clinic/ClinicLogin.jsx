@@ -85,7 +85,7 @@ const ClinicLogin = () => {
           Cookies.set("token", response.data.token, {
             expires: 7,
             // secure: true,
-            sameSite: "Strict",
+            sameSite: "None",
           });
   
           localStorage.setItem(

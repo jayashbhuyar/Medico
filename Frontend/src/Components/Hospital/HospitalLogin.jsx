@@ -87,7 +87,7 @@ function HospitalLogin() {
           Cookies.set("token", token, {
             expires: 7,
             // secure: true,
-            sameSite: "Strict",
+            sameSite: "None",
           });
 
           localStorage.setItem("hospitalData", JSON.stringify(hospital));

@@ -95,7 +95,7 @@ function ConsultantLogin() {
         if (token) {
           Cookies.set("token", token, {
             expires: 7,
-            sameSite: "Strict",
+            sameSite: "None",
           });
           toast.success("Login successful!", {
             duration: 2000,

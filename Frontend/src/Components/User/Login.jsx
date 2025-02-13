@@ -39,10 +39,10 @@ const Auth = () => {
         }
       });
       if (response.data.status === 'success') {
-        Cookies.set('token', response.data.token, { 
+        Cookies.set("token", response.data.token, {
           expires: 7, // 7 days
           secure: true,
-          sameSite: 'strict'
+          sameSite: "None",
         });
         localStorage.setItem('userData', JSON.stringify(response.data.user));
         toast.success(isLogin ? 'Login successful!' : 'Registration successful!');
