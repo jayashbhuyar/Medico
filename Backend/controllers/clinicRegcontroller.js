@@ -58,9 +58,9 @@ exports.register = async (req, res) => {
     const token = jwt.sign(
       { clinicId: clinic._id },
       process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '7d' } // Token expires in 7 days
     );
-
+    
     res.status(201).json({
       success: true,
       message: 'Clinic registered successfully',
@@ -108,7 +108,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { id: clinic._id, email: clinic.email },
       process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '7d' }
     );
 
     res.cookie('hospitalToken', token, {

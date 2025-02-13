@@ -58,7 +58,7 @@ exports.register = async (req, res) => {
     const token = jwt.sign(
       { hospitalId: hospital._id },
       process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '7d' }
     );
 
     res.status(201).json({
@@ -106,7 +106,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { hospitalId: hospital._id },
       process.env.JWT_SECRET,
-      { expiresIn: "24h" } // Token expires in 24 hours
+      { expiresIn: '7d' } // Token expires in 24 hours
     );
 
     // console.log("🔐 Generated token:", token);
