@@ -24,7 +24,7 @@ const ClinicLogin = () => {
       }
 
       try {
-        const response = await axios.get('http://localhost:8000/api/token/validate', {
+        const response = await axios.get('https://medico-care-theta.vercel.app/api/token/validate', {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
@@ -68,7 +68,7 @@ const ClinicLogin = () => {
 
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/clinics/login",
+          "https://medico-care-theta.vercel.app/api/clinics/login",
           formData,
           {
             withCredentials: true,

@@ -45,7 +45,7 @@ const NavDoctors = () => {
   const fetchDoctors = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/user/v2/doctors/all"
+        "https://medico-care-theta.vercel.app/api/user/v2/doctors/all"
       );
       setDoctors(response.data.data);
       setLoading(false);

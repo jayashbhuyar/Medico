@@ -203,7 +203,7 @@ const ClinicAllDoctors = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/doctors/delete/${doctorId}`,
+        `https://medico-care-theta.vercel.app/api/doctors/delete/${doctorId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -228,7 +228,7 @@ const ClinicAllDoctors = () => {
       try {
         const clinicData = JSON.parse(localStorage.getItem("clinicData"));
         const response = await fetch(
-          `http://localhost:8000/api/doctors/organization/${clinicData.id}`,
+          `https://medico-care-theta.vercel.app/api/doctors/organization/${clinicData.id}`,
           {
             credentials: "include",
           }

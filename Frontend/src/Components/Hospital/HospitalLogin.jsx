@@ -26,7 +26,7 @@ function HospitalLogin() {
       if (token) {
         try {
           const response = await axios.get(
-            "http://localhost:8000/api/token/validate",
+            "https://medico-care-theta.vercel.app/api/token/validate",
             {
               withCredentials: true,
             }
@@ -75,7 +75,7 @@ function HospitalLogin() {
 
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/hospitals/login",
+          "https://medico-care-theta.vercel.app/api/hospitals/login",
           formData,
           {
             withCredentials: true,

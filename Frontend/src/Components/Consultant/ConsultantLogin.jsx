@@ -42,7 +42,7 @@ function ConsultantLogin() {
       if (token) {
         try {
           const response = await axios.get(
-            "http://localhost:8000/api/token/validate",
+            "https://medico-care-theta.vercel.app/api/token/validate",
             {
               withCredentials: true,
             }
@@ -81,7 +81,7 @@ function ConsultantLogin() {
         };
 
         const response = await axios.post(
-          "http://localhost:8000/api/consultant/login",
+          "https://medico-care-theta.vercel.app/api/consultant/login",
           loginData,
           {
             withCredentials: true,

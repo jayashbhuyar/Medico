@@ -153,7 +153,7 @@ const AllDoctors = () => {
     if (window.confirm("Are you sure you want to delete this doctor?")) {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/doctors/delete/${doctorId}`,
+          `https://medico-care-theta.vercel.app/api/doctors/delete/${doctorId}`,
           {
             method: "DELETE",
             credentials: "include",
@@ -181,7 +181,7 @@ const AllDoctors = () => {
       try {
         const hospitalData = JSON.parse(localStorage.getItem("hospitalData"));
         const response = await fetch(
-          `http://localhost:8000/api/doctors/organization/${hospitalData.id}`,
+          `https://medico-care-theta.vercel.app/api/doctors/organization/${hospitalData.id}`,
           {
             credentials: "include",
           }

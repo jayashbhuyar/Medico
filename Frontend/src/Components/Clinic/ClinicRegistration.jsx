@@ -221,7 +221,7 @@ const handleSubmit = async (e) => {
       }
 
       const response = await axios.post(
-        'http://localhost:8000/api/clinics/register',
+        'https://medico-care-theta.vercel.app/api/clinics/register',
         clinicData,
         {  
           withCredentials: true,

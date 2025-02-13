@@ -78,7 +78,7 @@ const AppointmentCard = ({ doctor, onClose }) => {
       };
 
       const response = await axios.post(
-        'http://localhost:8000/api/appointments/create',
+        'https://medico-care-theta.vercel.app/api/appointments/create',
         appointmentData,{
           withCredentials: true
         }

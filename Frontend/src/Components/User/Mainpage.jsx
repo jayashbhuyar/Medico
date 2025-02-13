@@ -307,7 +307,7 @@ const HealthcareSearch = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/webreviews/create",
+        "https://medico-care-theta.vercel.app/api/webreviews/create",
         {
           email: userEmail,
           userType,

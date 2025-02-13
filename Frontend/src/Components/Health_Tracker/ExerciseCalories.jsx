@@ -9,7 +9,7 @@ import {
   FaRunning,
 } from "react-icons/fa";
 
-const API_URL = "http://localhost:8000/api/health/v2/exercise/calories";
+const API_URL = "https://medico-care-theta.vercel.app/api/health/v2/exercise/calories";
 
 const ExerciseCalories = () => {
   const [query, setQuery] = useState("");

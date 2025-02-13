@@ -275,7 +275,7 @@ const AddDoctor = () => {
         }
       });
 
-      const response = await fetch("http://localhost:8000/api/doctors/add", {
+      const response = await fetch("https://medico-care-theta.vercel.app/api/doctors/add", {
         method: "POST",
         credentials: "include",
         body: formDataToSend,

@@ -101,7 +101,7 @@ const NavClinic = () => {
   const fetchClinics = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/user/clinics/all"
+        "https://medico-care-theta.vercel.app/api/user/clinics/all"
       );
       setClinics(response.data.data);
       setLoading(false);
@@ -115,7 +115,7 @@ const NavClinic = () => {
     try {
       setSelectedClinic(clinic);
       const response = await axios.get(
-        `http://localhost:8000/api/v1/reviews/clinic/${clinic.email}`
+        `https://medico-care-theta.vercel.app/api/v1/reviews/clinic/${clinic.email}`
       );
       setClinicReviews(response.data.data);
       setShowReviews(true);
@@ -143,7 +143,7 @@ const NavClinic = () => {
       };
 
       const response = await axios.post(
-        'http://localhost:8000/api/v1/reviews/create',
+        'https://medico-care-theta.vercel.app/api/v1/reviews/create',
         reviewData
       );
 

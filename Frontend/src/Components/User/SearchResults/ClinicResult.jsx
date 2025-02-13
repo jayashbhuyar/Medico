@@ -75,7 +75,7 @@ const ClinicResults = () => {
       };
   
       const response = await axios.post(  
-        "http://localhost:8000/api/v1/reviews/create",
+        "https://medico-care-theta.vercel.app/api/v1/reviews/create",
         reviewData
       );
   
@@ -94,7 +94,7 @@ const ClinicResults = () => {
     try {
       setSelectedClinic(clinic);
       const response = await axios.get(
-        `http://localhost:8000/api/v1/reviews/clinic/${clinic.email}`
+        `https://medico-care-theta.vercel.app/api/v1/reviews/clinic/${clinic.email}`
       );
       setClinicReviews(response.data.data);
       setShowReviews(true);
