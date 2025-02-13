@@ -31,9 +31,9 @@ const cors = require("cors");
 
 const corsOptions = {
   origin: "https://medico-healthcare.vercel.app", // Your frontend URL
-  credentials: true, // Allow cookies and authentication headers
-  methods: "GET,POST,PUT,PATCH,DELETE", 
-  allowedHeaders: "Content-Type,Authorization", // Allow necessary headers
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions));
