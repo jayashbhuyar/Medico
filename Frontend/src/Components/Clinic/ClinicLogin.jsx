@@ -17,31 +17,33 @@ const ClinicLogin = () => {
 
   useEffect(() => {
     const validateToken = async () => {
-      const token = Cookies.get('token');
-      if(!token) {
-        localStorage.removeItem('clinicData');
-        return;
-      }
-
       try {
-        const response = await axios.get('https://medico-care-theta.vercel.app/api/token/validate', {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        isthere = localStorage.getItem('clinicData');
-        if (response.data.success&&isthere) {
+        const response = await axios.get(
+          "https://medico-care-theta.vercel.app/api/token/validate",
+          {
+            withCredentials: true, // Ensures cookies are sent automatically
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+  
+        const isthere = localStorage.getItem("clinicData");
+        if (response.data.success && isthere) {
           navigate("/clinic/dashboard");
+        } else {
+          localStorage.removeItem("clinicData");
+          navigate("/cliniclogin"); // Redirect if token is invalid
         }
       } catch (error) {
-        Cookies.remove("token");
-        localStorage.removeItem('clinicData');
+        localStorage.removeItem("clinicData");
+        navigate("/cliniclogin"); // Redirect if validation fails
       }
     };
-
+  
     validateToken();
   }, [navigate]);
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
