@@ -42,7 +42,7 @@ const SiteMap = () => {
       description: "Access healthcare services",
       items: [
         { name: "User Login", path: "/userlogin", badge: "Required" },
-        { name: "User Dashboard", path: "/usermainpage" },
+        { name: "User Dashboard", path: "/patientpage" },
         { name: "My Appointments", path: "/user/appointments" },
         { name: "My Profile", path: "/userprofile" },
         { name: "Search Doctors", path: "/usernavdoctors" },
