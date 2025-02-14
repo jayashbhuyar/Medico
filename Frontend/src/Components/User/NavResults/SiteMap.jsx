@@ -45,7 +45,7 @@ const SiteMap = () => {
         { name: "User Dashboard", path: "/patientpage" },
         { name: "My Appointments", path: "/user/appointments" },
         { name: "My Profile", path: "/userprofile" },
-        { name: "Search Doctors", path: "/usernavdoctors" },
+        { name: "Search Doctors", path: "/patientpage" },
       ],
     },
     {
