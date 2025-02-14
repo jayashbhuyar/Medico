@@ -55,7 +55,7 @@ const SiteMap = () => {
       items: [
         { name: "Hospital Registration", path: "/hospitalregistration" },
         { name: "Hospital Login", path: "/hospitallogin" },
-        { name: "Dashboard", path: "/hospital/dashboard" },
+        { name: "Dashboard", path: "/hospitallogin" },
         { name: "Manage Doctors", path: "/hospital/alldoctors" },
         { name: "Add Doctor", path: "/hospital/adddoctor" },
         { name: "Hospital Profile", path: "/hospital/profile" },
