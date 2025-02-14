@@ -20,6 +20,7 @@ function HospitalLogin() {
       // Get the token from cookies
       const token = Cookies.get("token");
       if (!token) {
+        console.log("No token found");
         localStorage.removeItem("hospitalData");
       }
 
