@@ -17,39 +17,30 @@ function HospitalLogin() {
 
   useEffect(() => {
     const validateToken = async () => {
-      // Get the token from cookies
-      const token = Cookies.get("token");
-      if (!token) {
-        console.log("No token found");
-        localStorage.removeItem("hospitalData");
-      }
-
-      if (token) {
-        try {
-          const response = await axios.get(
-            "https://medico-care-theta.vercel.app/api/token/validate",
-            {
-              withCredentials: true,
-            }
-          );
-          const isthere = localStorage.getItem("hospitalData");
-          if (response.data.success&&isthere) {
-            navigate("/hospital/dashboard");
-          } else {
-            Cookies.remove("token");
-            localStorage.removeItem("hospitalData");
-            navigate("/hospitallogin"); // Redirect to login if invalid token
+      try {
+        const response = await axios.get(
+          "https://medico-care-theta.vercel.app/api/token/validate",
+          {
+            withCredentials: true, // Ensures cookies are sent automatically
           }
-        } catch (error) {
-          Cookies.remove("token");
+        );
+  
+        const isthere = localStorage.getItem("hospitalData");
+        if (response.data.success && isthere) {
+          navigate("/hospital/dashboard");
+        } else {
           localStorage.removeItem("hospitalData");
-          navigate("/hospitallogin"); // Redirect to login if token validation fails
+          navigate("/hospitallogin"); // Redirect if invalid token
         }
+      } catch (error) {
+        localStorage.removeItem("hospitalData");
+        navigate("/hospitallogin"); // Redirect on failure
       }
     };
-
+  
     validateToken();
   }, [navigate]);
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
