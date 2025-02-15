@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FaHospital,
   FaUserMd,
@@ -8,12 +8,86 @@ import {
   FaSearch,
   FaQuestionCircle,
   FaHome,
-  FaArrowRight,
+  FaChevronRight,
+  FaChevronDown,
   FaStethoscope,
   FaHeartbeat,
-  FaAmbulance,
 } from "react-icons/fa";
 import UserNav from "../../Navbar/UserNav";
+
+const TreeNode = ({ node, level = 0 }) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const indent = level * 24;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      style={{ marginLeft: `${indent}px` }}
+    >
+      <motion.div
+        className="flex items-center py-2 cursor-pointer group"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {node.items && (
+          <motion.span
+            animate={{ rotate: isOpen ? 90 : 0 }}
+            className="mr-2 text-blue-500"
+          >
+            <FaChevronRight />
+          </motion.span>
+        )}
+        <div className="flex items-center gap-2 hover:text-blue-600 transition-colors">
+          <span className="text-xl">{node.icon}</span>
+          <span className="font-medium">{node.title}</span>
+          {node.description && (
+            <span className="text-sm text-gray-500 hidden md:inline">
+              - {node.description}
+            </span>
+          )}
+        </div>
+      </motion.div>
+
+      <AnimatePresence>
+        {isOpen && node.items && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="border-l-2 border-gray-200 ml-2 pl-4">
+              {node.items.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="py-1"
+                >
+                  <Link
+                    to={item.path}
+                    className="flex items-center group hover:bg-blue-50 rounded-lg p-2 transition-all"
+                  >
+                    <FaStethoscope className="text-gray-400 group-hover:text-blue-500 mr-2" />
+                    <span className="text-gray-700 group-hover:text-blue-600">
+                      {item.name}
+                    </span>
+                    {item.badge && (
+                      <span className="ml-2 px-2 py-0.5 text-xs bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
 
 const SiteMap = () => {
   const platformOverview = {
@@ -116,24 +190,6 @@ const SiteMap = () => {
     },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-    },
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <UserNav />
@@ -142,40 +198,30 @@ const SiteMap = () => {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden py-20 px-4"
+        className="relative py-12 px-4"
       >
         <div className="max-w-7xl mx-auto text-center">
           <motion.h1
-            className="text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6"
+            className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6"
             initial={{ scale: 0.5 }}
             animate={{ scale: 1 }}
-            transition={{ duration: 0.5 }}
           >
-            Medico Platform Map
+            Medico Navigation Tree
           </motion.h1>
-          <motion.p
-            className="text-xl text-gray-600 max-w-3xl mx-auto mb-12"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            {platformOverview.description}
-          </motion.p>
 
           {/* Feature Pills */}
-          <motion.div
-            className="flex flex-wrap justify-center gap-4"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
+          <motion.div className="flex flex-wrap justify-center gap-3 mb-12">
             {platformOverview.features.map((feature, index) => (
               <motion.span
                 key={index}
-                variants={itemVariants}
-                className="px-6 py-3 bg-white rounded-full shadow-md text-gray-700 hover:shadow-lg transition-shadow cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.1 }}
+                className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full 
+                         shadow-sm hover:shadow-md transition-all duration-300
+                         text-sm text-gray-600 flex items-center gap-2"
               >
-                <FaHeartbeat className="inline mr-2 text-blue-500" />
+                <FaHeartbeat className="text-blue-500" />
                 {feature}
               </motion.span>
             ))}
@@ -183,61 +229,14 @@ const SiteMap = () => {
         </div>
       </motion.div>
 
-      {/* Navigation Grid */}
-      <motion.div
-        className="max-w-7xl mx-auto px-4 pb-20"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* Tree Structure */}
+      <div className="max-w-6xl mx-auto px-4 pb-20 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl mb-12">
+        <div className="p-8">
           {navigationTree.map((section, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{
-                scale: 1.02,
-                transition: { duration: 0.2 },
-              }}
-              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20 hover:shadow-2xl transition-all duration-300"
-            >
-              <div className="flex items-center gap-4 mb-6">
-                <div className="p-4 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl">
-                  {section.icon}
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    {section.title}
-                  </h2>
-                  <p className="text-sm text-gray-600">{section.description}</p>
-                </div>
-              </div>
-
-              <ul className="space-y-3">
-                {section.items.map((item, itemIndex) => (
-                  <motion.li key={itemIndex} whileHover={{ x: 5 }}>
-                    <Link
-                      to={item.path}
-                      className="flex items-center justify-between p-3 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 group transition-all duration-300"
-                    >
-                      <span className="text-gray-700 group-hover:text-blue-600 font-medium">
-                        {item.name}
-                      </span>
-                      {item.badge ? (
-                        <span className="px-3 py-1 text-sm bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full">
-                          {item.badge}
-                        </span>
-                      ) : (
-                        <FaArrowRight className="opacity-0 group-hover:opacity-100 text-blue-500 transition-opacity" />
-                      )}
-                    </Link>
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
+            <TreeNode key={index} node={section} />
           ))}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
