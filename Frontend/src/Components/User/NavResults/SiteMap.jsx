@@ -29,6 +29,92 @@ const SiteMap = () => {
     ],
   };
 
+  const navigationTree = [
+    {
+      title: "Main Portal",
+      icon: <FaHome className="text-blue-600" />,
+      description: "Start your healthcare journey",
+      items: [
+        { name: "Landing Page", path: "/", badge: "Start Here" },
+        { name: "Healthcare Search", path: "/patientpage", badge: "Popular" },
+        { name: "Doctor Registration", path: "/doctorpage" },
+        { name: "Reviews", path: "/reviewpage" },
+      ],
+    },
+    {
+      title: "Patient Services",
+      icon: <FaUser className="text-green-600" />,
+      description: "Access healthcare services",
+      items: [
+        { name: "User Login", path: "/userlogin", badge: "Required" },
+        { name: "User Dashboard", path: "/patientpage" },
+        { name: "My Appointments", path: "/user/appointments" },
+        { name: "My Profile", path: "/userprofile" },
+        { name: "Search Doctors", path: "/patientpage" },
+      ],
+    },
+    {
+      title: "Hospital Hub",
+      icon: <FaHospital className="text-red-600" />,
+      description: "Hospital management portal",
+      items: [
+        { name: "Hospital Registration", path: "/hospitalregistration" },
+        { name: "Hospital Login", path: "/hospitallogin" },
+        { name: "Dashboard", path: "/hospitallogin" },
+        { name: "Manage Doctors", path: "/hospital/alldoctors" },
+        { name: "Add Doctor", path: "/hospital/adddoctor" },
+        { name: "Hospital Profile", path: "/hospital/profile" },
+        { name: "Appointments", path: "/hospital/appointments" },
+      ],
+    },
+    {
+      title: "Clinic Center",
+      icon: <FaHospital className="text-purple-600" />,
+      description: "Clinic management system",
+      items: [
+        { name: "Clinic Registration", path: "/clinicregistration" },
+        { name: "Clinic Login", path: "/cliniclogin" },
+        { name: "Dashboard", path: "/clinic/dashboard" },
+        { name: "Add Doctor", path: "/clinicadddoctor" },
+        { name: "All Doctors", path: "/clinicalldoctors" },
+        { name: "Profile", path: "/clinicprofile" },
+        { name: "Appointments", path: "/clinic/appointments" },
+      ],
+    },
+    {
+      title: "Consultant Portal",
+      icon: <FaUserMd className="text-yellow-600" />,
+      description: "For medical consultants",
+      items: [
+        { name: "Registration", path: "/consultantregistration" },
+        { name: "Login", path: "/consultantlogin" },
+        { name: "Dashboard", path: "/consultant/dashboard" },
+        { name: "Appointments", path: "/consultant/appointments" },
+        { name: "Profile", path: "/consultantprofile" },
+      ],
+    },
+    {
+      title: "Search & Discovery",
+      icon: <FaSearch className="text-indigo-600" />,
+      description: "Find healthcare services",
+      items: [
+        { name: "Specialty Search", path: "/specialtyresults" },
+        { name: "Find Doctors", path: "/doctorresults" },
+        { name: "Find Hospitals", path: "/hospitalresults" },
+        { name: "Find Clinics", path: "/clinicresults" },
+      ],
+    },
+    {
+      title: "Help & Support",
+      icon: <FaQuestionCircle className="text-teal-600" />,
+      description: "Get assistance",
+      items: [
+        { name: "About Us", path: "/usernavabout" },
+        { name: "Help Center", path: "/usernavhelp" },
+        { name: "Navigation Guide", path: "/sitemap" },
+      ],
+    },
+  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
