@@ -116,7 +116,24 @@ const About = () => {
       </div>
 
       {/* Stats Section with Hover Effects */}
-    
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              className={`bg-gradient-to-r ${stat.color} rounded-2xl shadow-lg p-8 text-white transform transition-all duration-300`}
+            >
+              <div className="text-5xl mb-4">{stat.icon}</div>
+              <div className="text-4xl font-bold mb-2">{stat.number}</div>
+              <div className="text-lg">{stat.label}</div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
 
       {/* Features Section with Grid */}
       <div className="container mx-auto px-4 py-16">
