@@ -66,7 +66,23 @@ const About = () => {
     },
   ];
 
-
+  const features = [
+    {
+      title: "Smart Appointments",
+      description: "Book appointments instantly with real-time availability",
+      icon: <FaRegClock className="text-4xl text-blue-500" />,
+    },
+    {
+      title: "Secure Platform",
+      description: "Your medical data is protected with top-tier security",
+      icon: <FaShieldAlt className="text-4xl text-purple-500" />,
+    },
+    {
+      title: "Quality Healthcare",
+      description: "Access to the best healthcare professionals",
+      icon: <FaStethoscope className="text-4xl text-green-500" />,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
@@ -100,24 +116,7 @@ const About = () => {
       </div>
 
       {/* Stats Section with Hover Effects */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.05 }}
-              className={`bg-gradient-to-r ${stat.color} rounded-2xl shadow-lg p-8 text-white transform transition-all duration-300`}
-            >
-              <div className="text-5xl mb-4">{stat.icon}</div>
-              <div className="text-4xl font-bold mb-2">{stat.number}</div>
-              <div className="text-lg">{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
+    
 
       {/* Features Section with Grid */}
       <div className="container mx-auto px-4 py-16">
