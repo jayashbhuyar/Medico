@@ -15,7 +15,32 @@ import {
 import UserNav from "../../Navbar/UserNav";
 
 const About = () => {
- 
+  const stats = [
+    {
+      number: "1000+",
+      label: "Doctors",
+      icon: <FaUserMd />,
+      color: "from-blue-400 to-blue-600",
+    },
+    {
+      number: "500+",
+      label: "Hospitals",
+      icon: <FaHospital />,
+      color: "from-purple-400 to-purple-600",
+    },
+    {
+      number: "50000+",
+      label: "Patients Served",
+      icon: <FaUsers />,
+      color: "from-green-400 to-green-600",
+    },
+    {
+      number: "4.8/5",
+      label: "User Rating",
+      icon: <FaAward />,
+      color: "from-yellow-400 to-yellow-600",
+    },
+  ];
 
   const values = [
     {
@@ -41,23 +66,7 @@ const About = () => {
     },
   ];
 
-  const features = [
-    {
-      title: "Smart Appointments",
-      description: "Book appointments instantly with real-time availability",
-      icon: <FaRegClock className="text-4xl text-blue-500" />,
-    },
-    {
-      title: "Secure Platform",
-      description: "Your medical data is protected with top-tier security",
-      icon: <FaShieldAlt className="text-4xl text-purple-500" />,
-    },
-    {
-      title: "Quality Healthcare",
-      description: "Access to the best healthcare professionals",
-      icon: <FaStethoscope className="text-4xl text-green-500" />,
-    },
-  ];
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
