@@ -11,6 +11,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import HospitalNavbar from '../Navbar/HospitalNav';
 
 const Section = ({ title, children }) => (
   <div>
@@ -204,21 +205,29 @@ const AllDoctors = () => {
 
   if (loading) {
     return (
+      <>
+      <HospitalNavbar />
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
       </div>
+      </>
     );
   }
 
   if (error) {
     return (
+      <>
+      <HospitalNavbar />
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-red-500">Error: {error}</div>
       </div>
+      </>
     );
   }
 
   return (
+    <>
+      <HospitalNavbar />
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
@@ -239,8 +248,8 @@ const AllDoctors = () => {
                     "Actions",
                   ].map((header) => (
                     <th
-                      key={header}
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    key={header}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
                       {header}
                     </th>
@@ -250,7 +259,7 @@ const AllDoctors = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {doctors.map((doctor) => (
                   <motion.tr
-                    key={doctor._id}
+                  key={doctor._id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="hover:bg-gray-50 transition-colors"
@@ -260,15 +269,15 @@ const AllDoctors = () => {
                         <div className="flex-shrink-0 h-10 w-10 rounded-full overflow-hidden">
                           {doctor.profileImage ? (
                             <img
-                              src={doctor.profileImage}
+                            src={doctor.profileImage}
                               alt={doctor.name}
                               className="h-10 w-10 object-cover"
                               onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src =
                                   "https://via.placeholder.com/40?text=Dr";
-                              }}
-                            />
+                                }}
+                                />
                           ) : (
                             <div className="h-full w-full bg-blue-100 flex items-center justify-center">
                               <FaUserMd className="text-blue-600" />
@@ -297,8 +306,8 @@ const AllDoctors = () => {
                       <div className="flex flex-wrap gap-1">
                         {doctor.specialties.map((specialty, index) => (
                           <span
-                            key={index}
-                            className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full"
+                          key={index}
+                          className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full"
                           >
                             {specialty}
                           </span>
@@ -324,13 +333,13 @@ const AllDoctors = () => {
                             setShowModal(true);
                           }}
                           className="text-blue-600 hover:text-blue-900 flex items-center gap-2"
-                        >
+                          >
                           <FaEye /> View
                         </button>
                         <button
                           onClick={() => deleteDoctor(doctor._id)}
                           className="text-red-600 hover:text-red-900 flex items-center gap-2"
-                        >
+                          >
                           <FaTrash /> Delete
                         </button>
                       </div>
@@ -355,6 +364,7 @@ const AllDoctors = () => {
         )}
       </AnimatePresence>
     </div>
+            </>
   );
 };
 
