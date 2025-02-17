@@ -35,8 +35,6 @@ const InputField = React.memo(({ icon, label, error, required, ...props }) => (
 
 const AddDoctor = () => {
   const navigate = useNavigate();
-
-  // Move all hooks inside component
   const hospitalData = useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem("hospitalData"));
