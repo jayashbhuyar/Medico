@@ -9,6 +9,51 @@ import {
 } from 'react-icons/fa';
 import Cookies from 'js-cookie';
 
+// Add this navigation array after the initial imports and before the component
+const navigation = [
+  {
+    name: "Dashboard",
+    path: "/hospital/dashboard",
+    icon: <FaChartLine />,
+    dropdown: false
+  },
+  {
+    name: "Doctors",
+    icon: <FaUserNurse />,
+    dropdown: true,
+    items: [
+      { name: "All Doctors", path: "/hospital/alldoctors", icon: <FaUserMd /> },
+      { name: "Add Doctor", path: "/hospital/adddoctor", icon: <FaUserPlus /> }
+    ]
+  },
+  {
+    name: "Appointments",
+    path: "/hospital/appointments",
+    icon: <FaCalendarCheck />,
+    dropdown: false
+  },
+  {
+    name: "Departments",
+    icon: <FaHospital />,
+    dropdown: true,
+    items: [
+      { name: "Emergency", path: "/hospital/departments/emergency", icon: <FaAmbulance /> },
+      { name: "ICU", path: "/hospital/departments/icu", icon: <FaBed /> },
+      { name: "OPD", path: "/hospital/departments/opd", icon: <FaStethoscope /> }
+    ]
+  },
+  {
+    name: "Patients",
+    icon: <FaUsers />,
+    dropdown: true,
+    items: [
+      { name: "All Patients", path: "/hospital/patients", icon: <FaUsers /> },
+      { name: "Add Patient", path: "/hospital/patients/add", icon: <FaUserPlus /> },
+      { name: "Medical Records", path: "/hospital/patients/records", icon: <FaFileMedical /> }
+    ]
+  }
+];
+
 const HospitalNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -371,31 +416,43 @@ const HospitalNavbar = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden">
+        <div className="md:hidden bg-white border-t border-gray-200">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navigation.map((item) => (
-              <div key={item.name}>
+              <div key={item.name} className="relative">
                 {item.dropdown ? (
                   <>
                     <button
                       onClick={() => toggleDropdown(item.name.toLowerCase())}
-                      className="w-full flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                     >
-                      <span className="mr-2">{item.icon}</span>
-                      {item.name}
-                      <FaCaretDown className="ml-2" />
+                      <div className="flex items-center">
+                        {item.icon}
+                        <span className="ml-2">{item.name}</span>
+                      </div>
+                      <FaCaretDown
+                        className={`transition-transform duration-200 ${
+                          dropdownStates[item.name.toLowerCase()] ? "rotate-180" : ""
+                        }`}
+                      />
                     </button>
                     {dropdownStates[item.name.toLowerCase()] && (
-                      <div className="pl-6 space-y-1">
+                      <div className="pl-6 space-y-1 bg-gray-50 rounded-md mt-1">
                         {item.items.map((subItem) => (
                           <Link
                             key={subItem.name}
                             to={subItem.path}
-                            onClick={() => setIsOpen(false)}
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                            onClick={() => {
+                              setIsOpen(false);
+                              setDropdownStates(prev => ({
+                                ...prev,
+                                [item.name.toLowerCase()]: false
+                              }));
+                            }}
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md"
                           >
-                            <span className="mr-2">{subItem.icon}</span>
-                            {subItem.name}
+                            {subItem.icon}
+                            <span className="ml-2">{subItem.name}</span>
                           </Link>
                         ))}
                       </div>
@@ -405,14 +462,14 @@ const HospitalNavbar = () => {
                   <Link
                     to={item.path}
                     onClick={() => setIsOpen(false)}
-                    className={`block px-3 py-2 rounded-md text-base font-medium ${
+                    className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
                       location.pathname === item.path
                         ? "text-blue-600 bg-blue-50"
                         : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                     }`}
                   >
-                    <span className="mr-2">{item.icon}</span>
-                    {item.name}
+                    {item.icon}
+                    <span className="ml-2">{item.name}</span>
                   </Link>
                 )}
               </div>
