@@ -9,7 +9,7 @@ import {
 } from 'react-icons/fa';
 import Cookies from 'js-cookie';
 
-// Add this navigation array after the initial imports and before the component
+// Update the navigation array at the top of the file
 const navigation = [
   {
     name: "Dashboard",
@@ -22,7 +22,7 @@ const navigation = [
     icon: <FaUserNurse />,
     dropdown: true,
     items: [
-      { name: "All Doctors", path: "/hospital/alldoctors", icon: <FaUserMd /> },
+      { name: "View Doctors", path: "/hospital/viewdoctors", icon: <FaUserMd /> },
       { name: "Add Doctor", path: "/hospital/adddoctor", icon: <FaUserPlus /> }
     ]
   },
@@ -171,27 +171,17 @@ const HospitalNavbar = () => {
               {dropdownStates.doctors && (
                 <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                   <Link
-                    to="/hospital/alldoctors"
+                    to="/hospital/viewdoctors"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    onClick={() =>
-                      setDropdownStates((prev) => ({
-                        ...prev,
-                        doctors: false,
-                      }))
-                    }
+                    onClick={() => setDropdownStates(prev => ({ ...prev, doctors: false }))}
                   >
                     <FaUserMd className="mr-2" />
-                    All Doctors
+                    View Doctors
                   </Link>
                   <Link
                     to="/hospital/adddoctor"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    onClick={() =>
-                      setDropdownStates((prev) => ({
-                        ...prev,
-                        doctors: false,
-                      }))
-                    }
+                    onClick={() => setDropdownStates(prev => ({ ...prev, doctors: false }))}
                   >
                     <FaUserPlus className="mr-2" />
                     Add Doctor
