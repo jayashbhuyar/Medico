@@ -122,9 +122,12 @@ const UserNav = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-md border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-14 -ml-10">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 ">
+        <div className="flex justify-between items-center h-14">
+          {/* Logo - Updated with responsive margins */}
+          <Link
+            to="/"
+            className="flex items-center gap-2 lg:-ml-10 ml-[-8px]" // Updated this line
+          >
             <motion.div
               whileHover={{ scale: 1.05 }}
               className="flex items-center bg-white px-3 py-1.5 rounded-lg shadow-lg border border-gray-300 mr-6"
@@ -262,21 +265,29 @@ const UserNav = () => {
                     className="flex items-center gap-2 h-10 px-3 hover:bg-gray-100 
                                transition-colors rounded-md"
                   >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 
-                                  flex items-center justify-center text-white font-semibold">
+                    <div
+                      className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 
+                                  flex items-center justify-center text-white font-semibold"
+                    >
                       {userData?.firstName?.charAt(0)}
                     </div>
-                    <span className="text-gray-700 font-medium">{userData?.firstName}</span>
+                    <span className="text-gray-700 font-medium">
+                      {userData?.firstName}
+                    </span>
                   </button>
 
                   {showProfileMenu && (
-                    <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl 
-                                  border border-gray-100 overflow-hidden">
+                    <div
+                      className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl 
+                                  border border-gray-100 overflow-hidden"
+                    >
                       {/* User Info Section */}
                       <div className="p-6 bg-gradient-to-r from-blue-50 to-blue-100 flex items-center gap-4">
                         <div className="w-14 h-14 rounded-full bg-white p-1 shadow-md">
-                          <div className="w-full h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 
-                                      flex items-center justify-center text-white font-bold text-xl">
+                          <div
+                            className="w-full h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 
+                                      flex items-center justify-center text-white font-bold text-xl"
+                          >
                             {userData?.firstName?.charAt(0)}
                           </div>
                         </div>
@@ -298,7 +309,9 @@ const UserNav = () => {
                                    rounded-xl transition-colors"
                         >
                           <FaUser className="text-blue-600 w-5 h-5" />
-                          <span className="text-gray-700 font-medium">My Profile</span>
+                          <span className="text-gray-700 font-medium">
+                            My Profile
+                          </span>
                         </Link>
                         <Link
                           to="/user/appointments"
@@ -306,7 +319,9 @@ const UserNav = () => {
                                    rounded-xl transition-colors"
                         >
                           <FaUser className="text-blue-600 w-5 h-5" />
-                          <span className="text-gray-700 font-medium">My Appointments</span>
+                          <span className="text-gray-700 font-medium">
+                            My Appointments
+                          </span>
                         </Link>
 
                         <button
