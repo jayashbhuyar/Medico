@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import HospitalNavbar from '../Navbar/HospitalNav';
 
 const InputField = React.memo(({ icon, label, error, required, ...props }) => (
   <div className="space-y-2">
@@ -412,6 +413,7 @@ const AddDoctor = () => {
 
     return (
       <div className="relative">
+        {/* <HospitalNavbar /> */}
         <label className="block text-lg font-medium text-gray-700 mb-2">
           {label}
         </label>
@@ -703,6 +705,8 @@ const AddDoctor = () => {
   );
 
   return (
+    <>
+    <HospitalNavbar />
     <div
       className="min-h-screen py-12 px-4 sm:px-6 lg:px-8"
       style={{
@@ -852,6 +856,7 @@ const AddDoctor = () => {
         </motion.div>
       </div>
     </div>
+    </>
   );
 };
 
