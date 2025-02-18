@@ -31,8 +31,6 @@ const Auth = () => {
       if (profilePicture) {
         formData.append('image', profilePicture); // Changed from 'profilePicture' to 'image'
       }
-
-
       const response = await axios.post(`https://medico-care-theta.vercel.app${endpoint}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
