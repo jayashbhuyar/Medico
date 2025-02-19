@@ -165,8 +165,9 @@ const ClinicResults = () => {
                 setSelectedClinic(clinic);
                 setShowProfile(true);
               }}
-              className="flex items-center gap-1 px-4 py-1.5 bg-green-600 text-white text-sm font-medium 
-                       rounded-full hover:bg-green-700 transition-all"
+              className="w-auto bg-blue-50 text-blue-600 py-1.5 px-3 
+              rounded hover:bg-blue-100 transition-all duration-200
+              flex items-center justify-center gap-2 text-sm"
             >
               <FaInfo className="w-4 h-4" />
               Details
@@ -175,8 +176,9 @@ const ClinicResults = () => {
               href={`https://www.google.com/maps?q=${clinic.latitude},${clinic.longitude}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 px-4 py-1.5 border border-gray-300 text-gray-700 text-sm font-medium 
-                       rounded-full hover:bg-gray-100 transition-all"
+              className="w-auto flex items-center gap-2 px-3 py-1.5 border border-gray-300 
+            text-gray-700 text-sm font-medium rounded hover:bg-gray-100 
+            transition-all"
             >
               <FaDirections className="w-4 h-4" />
               Directions
