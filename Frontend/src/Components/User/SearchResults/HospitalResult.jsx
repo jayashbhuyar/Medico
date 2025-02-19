@@ -221,11 +221,13 @@ const HospitalResults = () => {
               <Star className="w-4 h-4" />
               Add Review
             </button>
-            
+
             <button
               onClick={() => fetchHospitalReviews(hospital)}
-              className="flex items-center gap-2 px-5 py-2 bg-blue-600 text-white 
-                       rounded-full hover:bg-blue-700 transition-all shadow-md"
+              className="px-6 py-3 bg-blue-600 text-white rounded-xl 
+              hover:bg-blue-700 transition-all shadow-sm 
+              hover:shadow-md font-medium flex items-center 
+              justify-center gap-2"
             >
               <MessageSquare className="w-4 h-4" />
               Show Reviews
