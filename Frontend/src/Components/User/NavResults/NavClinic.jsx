@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   Star,
   MessageSquare,
+  Navigation
 } from "lucide-react";
 import UserNav from '../../Navbar/UserNav';
 
@@ -333,7 +334,7 @@ const NavClinic = () => {
                text-gray-700 text-sm font-medium rounded hover:bg-gray-100 
                transition-all"
                       >
-                        <FaDirections className="w-4 h-4" />
+                        <Navigation className="w-4 h-4" />
                         Directions
                       </a>
 

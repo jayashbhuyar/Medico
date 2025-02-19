@@ -5,7 +5,7 @@ import {
   FaClinicMedical, FaMapMarkerAlt, FaPhone, 
   FaDirections, FaInfo, FaGlobe,  
 } from 'react-icons/fa';
-import { Star, MessageSquare } from "lucide-react";
+import { Star, MessageSquare,Navigation } from "lucide-react";
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
@@ -180,7 +180,7 @@ const ClinicResults = () => {
             text-gray-700 text-sm font-medium rounded hover:bg-gray-100 
             transition-all"
             >
-              <FaDirections className="w-4 h-4" />
+              <Navigation className="w-4 h-4" />
               Directions
             </a>
             <button

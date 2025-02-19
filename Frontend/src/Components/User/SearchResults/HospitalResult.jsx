@@ -208,7 +208,7 @@ const HospitalResults = () => {
               transition-all"
             >
               <Navigation className="w-4 h-4" />
-              Get Directions
+              Directions
             </a>
             <button
               onClick={() => {
