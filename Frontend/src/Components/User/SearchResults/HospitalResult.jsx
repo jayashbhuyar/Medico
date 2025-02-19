@@ -192,9 +192,9 @@ const HospitalResults = () => {
           <div className="mt-4 flex gap-3 justify-center md:justify-start">
             <button
               onClick={() => fetchHospitalDetails(hospital._id)}
-              className="w-auto flex items-center gap-2 px-3 py-1.5 border border-gray-300 
-              text-gray-700 text-sm font-medium rounded hover:bg-gray-100 
-              transition-all"
+              className="w-auto bg-blue-50 text-blue-600 py-1.5 px-3 
+              rounded hover:bg-blue-100 transition-all duration-200
+              flex items-center justify-center gap-2 text-sm"
             >
               <Info className="w-4 h-4" />
               View Details
@@ -203,8 +203,9 @@ const HospitalResults = () => {
               href={`https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-5 py-2 border-2 border-gray-300 
-                       text-gray-700 rounded-full hover:bg-gray-50 transition-all"
+              className="w-auto flex items-center gap-2 px-3 py-1.5 border border-gray-300 
+              text-gray-700 text-sm font-medium rounded hover:bg-gray-100 
+              transition-all"
             >
               <Navigation className="w-4 h-4" />
               Get Directions
