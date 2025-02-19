@@ -186,8 +186,9 @@ const ClinicResults = () => {
                 setSelectedClinic(clinic);
                 setShowReviewModal(true);
               }}
-              className="flex items-center gap-2 px-5 py-2 bg-green-600 text-white 
-                       rounded-full hover:bg-green-700 transition-all shadow-md"
+              className="w-auto bg-green-50 text-green-600 py-1.5 px-3 
+            rounded hover:bg-green-100 transition-all duration-200
+            flex items-center justify-center gap-2 text-sm"
             >
               <Star className="w-4 h-4" />
               Add Review
@@ -195,8 +196,9 @@ const ClinicResults = () => {
             
             <button
               onClick={() => fetchClinicReviews(clinic)}
-              className="flex items-center gap-2 px-5 py-2 bg-blue-600 text-white 
-                       rounded-full hover:bg-blue-700 transition-all shadow-md"
+              className="w-auto bg-blue-50 text-blue-600 py-1.5 px-3 
+              rounded hover:bg-blue-100 transition-all duration-200
+              flex items-center justify-center gap-2 text-sm"
             >
               <MessageSquare className="w-4 h-4" />
               Show Reviews
