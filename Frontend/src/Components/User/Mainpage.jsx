@@ -39,6 +39,8 @@ import {
   FaCapsules,
   FaHeartbeat,
   FaRobot,
+  FaUsers,
+  FaArrowRight,
 } from "react-icons/fa";
 
 import UserNav from "../Navbar/UserNav";
@@ -185,7 +187,6 @@ const HealthcareSearch = () => {
     } catch (error) {
       toast.error(error.message || "Search failed");
     } finally {
-
       setIsLoading(false);
       toast.dismiss();
     }
@@ -516,59 +517,117 @@ const HealthcareSearch = () => {
         </motion.a>
       </div>
 
-      <div className="bg-blue-600 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              className="stat-card"
-            >
-              <h3 className="text-4xl font-bold mb-2">{count.doctors}+</h3>
-              <p>Qualified Doctors</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              className="stat-card"
-            >
-              <h3 className="text-4xl font-bold mb-2">{count.patients}+</h3>
-              <p>Satisfied Patients</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              className="stat-card"
-            >
-              <h3 className="text-4xl font-bold mb-2">{count.hospitals}+</h3>
-              <p>Hospitals</p>
-            </motion.div>
+      {/* Statistics Section */}
+      <div className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-pattern opacity-10"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Our Impact in Numbers
+            </h2>
+            <p className="text-blue-100 text-lg">
+              Making healthcare accessible to everyone
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <FaUserMd />,
+                count: count.doctors,
+                label: "Qualified Doctors",
+                color: "from-blue-400 to-blue-300",
+              },
+              {
+                icon: <FaUsers />,
+                count: count.patients,
+                label: "Satisfied Patients",
+                color: "from-green-400 to-green-300",
+              },
+              {
+                icon: <FaHospital />,
+                count: count.hospitals,
+                label: "Partner Hospitals",
+                color: "from-purple-400 to-purple-300",
+              },
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                className="relative group"
+              >
+                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 transform transition-all duration-300 group-hover:scale-105">
+                  <div
+                    className={`inline-block p-4 rounded-full bg-gradient-to-r ${stat.color} mb-6`}
+                  >
+                    <div className="text-3xl">{stat.icon}</div>
+                  </div>
+                  <h3 className="text-5xl font-bold mb-2 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                    {stat.count}+
+                  </h3>
+                  <p className="text-blue-100 text-lg">{stat.label}</p>
+                </div>
+                <div className="absolute inset-0 bg-white/5 rounded-2xl transform transition-transform duration-300 group-hover:scale-95 -z-10"></div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>
 
-      <section className="bg-blue-50 py-16">
+      {/* Health Tips Section */}
+      <section className="relative bg-gradient-to-b from-blue-50 to-white py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-800 mb-8">
-            Daily Health Tips
-          </h2>
-          <div className="flex overflow-x-auto gap-6 pb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Daily Health Tips
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Simple yet effective ways to maintain your health and wellness
+            </p>
+          </motion.div>
+
+          <div className="flex overflow-x-auto gap-8 pb-8 px-4 -mx-4 scrollbar-hide">
             {healthTips.map((tip, index) => (
               <motion.div
                 key={index}
-                whileHover={{ scale: 1.05 }}
-                className="bg-white rounded-xl shadow-lg p-6 min-w-[300px] flex-shrink-0"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                whileHover={{ y: -10 }}
+                className="bg-white rounded-2xl shadow-xl p-8 min-w-[320px] flex-shrink-0 
+                          transform transition-all duration-300 hover:shadow-2xl border border-gray-100"
               >
-                <div className="text-4xl mb-4">{tip.icon}</div>
-                <h3 className="text-xl font-semibold mb-2">{tip.title}</h3>
-                <p className="text-gray-600">{tip.description}</p>
+                <div className="bg-gradient-to-r from-blue-100 to-blue-50 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                  <span className="text-4xl">{tip.icon}</span>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  {tip.title}
+                </h3>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  {tip.description}
+                </p>
+                <button className="flex items-center text-blue-600 font-semibold group">
+                  Learn more
+                  <FaArrowRight className="ml-2 transform transition-transform duration-300 group-hover:translate-x-2" />
+                </button>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
       <Toaster position="top-right" />
-      
 
       {/* Floating Review Button */}
       <motion.button
@@ -673,3 +732,16 @@ const HealthcareSearch = () => {
 };
 
 export default HealthcareSearch;
+
+<style jsx>{`
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .bg-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+`}</style>;
