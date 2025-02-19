@@ -197,7 +197,7 @@ const HospitalResults = () => {
               flex items-center justify-center gap-2 text-sm"
             >
               <Info className="w-4 h-4" />
-              View Details
+              Details
             </button>
             <a
               href={`https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`}
