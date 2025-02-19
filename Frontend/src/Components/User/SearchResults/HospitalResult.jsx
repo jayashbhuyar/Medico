@@ -223,10 +223,9 @@ const HospitalResults = () => {
 
             <button
               onClick={() => fetchHospitalReviews(hospital)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl 
-              hover:bg-blue-700 transition-all shadow-sm 
-              hover:shadow-md font-medium flex items-center 
-              justify-center gap-2"
+              className="w-auto bg-blue-50 text-blue-600 py-1.5 px-3 
+            rounded hover:bg-blue-100 transition-all duration-200
+            flex items-center justify-center gap-2 text-sm"
             >
               <MessageSquare className="w-4 h-4" />
               Show Reviews
