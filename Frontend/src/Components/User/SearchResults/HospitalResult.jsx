@@ -192,8 +192,9 @@ const HospitalResults = () => {
           <div className="mt-4 flex gap-3 justify-center md:justify-start">
             <button
               onClick={() => fetchHospitalDetails(hospital._id)}
-              className="flex items-center gap-2 px-5 py-2 bg-blue-600 text-white 
-                         rounded-full hover:bg-blue-700 transition-all shadow-md"
+              className="w-auto flex items-center gap-2 px-3 py-1.5 border border-gray-300 
+              text-gray-700 text-sm font-medium rounded hover:bg-gray-100 
+              transition-all"
             >
               <Info className="w-4 h-4" />
               View Details
