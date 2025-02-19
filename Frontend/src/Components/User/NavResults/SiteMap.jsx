@@ -198,7 +198,7 @@ const SiteMap = () => {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative py-12 px-4"
+        className="relative py-12 px-4 mt-10"
       >
         <div className="max-w-7xl mx-auto text-center">
           <motion.h1
@@ -210,7 +210,7 @@ const SiteMap = () => {
           </motion.h1>
 
           {/* Feature Pills */}
-          <motion.div className="flex flex-wrap justify-center gap-3 mb-12">
+          <motion.div className="flex flex-wrap justify-center gap-3 mb-12 ">
             {platformOverview.features.map((feature, index) => (
               <motion.span
                 key={index}
