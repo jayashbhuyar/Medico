@@ -213,8 +213,10 @@ const HospitalResults = () => {
                 setSelectedHospital(hospital);
                 setShowReviewModal(true);
               }}
-              className="flex items-center gap-2 px-5 py-2 bg-green-600 text-white 
-                       rounded-full hover:bg-green-700 transition-all shadow-md"
+              className="px-6 py-3 bg-green-600 text-white rounded-xl 
+              hover:bg-green-700 transition-all shadow-sm 
+              hover:shadow-md font-medium flex items-center 
+              justify-center gap-2"
             >
               <Star className="w-4 h-4" />
               Add Review
