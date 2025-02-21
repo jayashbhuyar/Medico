@@ -4,11 +4,11 @@ const appointmentController = require('../controllers/appointmentController');
 const { authenticateConsultantToken, authenticateUserToken, authenticateOrganization, authenticateMultipleRoles } = require('../middleware/authMiddleware');
 
 // CRUD Routes
-router.post('/create', authenticateUserToken, appointmentController.createAppointment);//
-router.patch('/:appointmentId/status', authenticateMultipleRoles, appointmentController.updateAppointmentStatus);//
-router.get('/doctor', authenticateConsultantToken, appointmentController.getDoctorAppointments);//
-router.get('/user/:email', authenticateUserToken, appointmentController.getUserAppointments);//
-router.get('/all', authenticateOrganization, appointmentController.getAppointmentsByEmail);//
+router.post('/create', appointmentController.createAppointment);//
+router.patch('/:appointmentId/status', appointmentController.updateAppointmentStatus);//
+router.get('/doctor', appointmentController.getDoctorAppointments);//
+router.get('/user/:email', appointmentController.getUserAppointments);//
+router.get('/all', appointmentController.getAppointmentsByEmail);//
 // router.get('/:id', appointmentController.getAppointment);
 // router.delete('/delete/:id', appointmentController.deleteAppointment);
 

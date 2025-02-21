@@ -40,26 +40,7 @@ async def recommend_doctor(input_data: SymptomInput):
         
         # Ensure the input is medically relevant
         
-        prompt = f"""You are a **medical referral assistant**. Your only task is to analyze the provided symptoms and recommend **the most appropriate medical specialist** for treatment.
-
-### **Strict Rules:**
-1. **Process only valid medical symptoms.** If the input contains casual talk, greetings, or non-medical content, respond with:
-   - *"Please provide clear medical symptoms for evaluation."*
-2. **Do NOT provide explanations, engage in conversations, or offer multiple specialists unless absolutely necessary.**  
-3. **If symptoms are vague or could belong to multiple fields, prioritize the most relevant specialist.**  
-4. **For each input, respond with only the specialist's title in this format:**  
-   - *"Consult a [Specialist Name]."*
-   - Example: *"Consult a Dermatologist."*
-5. **If the input is not medically relevant, do not guess—just follow Rule 1.**  
-
-### **Input:**
-*"User reports: {user_input}"*
-
-### **Expected Response:**
-- **If symptoms are valid, return only one specialist.**
-- **If symptoms are unclear, follow Rule 1.**
-- **Your response must be short, professional, and medically accurate.**
-"""
+        prompt = f"""{user_input}"""
 
 
         

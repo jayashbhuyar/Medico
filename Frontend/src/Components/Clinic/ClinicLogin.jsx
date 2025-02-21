@@ -16,32 +16,32 @@ const ClinicLogin = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const validateToken = async () => {
-      try {
-        const response = await axios.get(
-          "https://medico-care-theta.vercel.app/api/token/validate",
-          {
-            withCredentials: true, // Ensures cookies are sent automatically
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+    // const validateToken = async () => {
+    //   try {
+    //     const response = await axios.get(
+    //       "https://medico-care-theta.vercel.app/api/token/validate",
+    //       {
+    //         withCredentials: true, // Ensures cookies are sent automatically
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //       }
+    //     );
   
-        const isthere = localStorage.getItem("clinicData");
-        if (response.data.success && isthere) {
-          navigate("/clinic/dashboard");
-        } else {
-          localStorage.removeItem("clinicData");
-          navigate("/cliniclogin"); // Redirect if token is invalid
-        }
-      } catch (error) {
-        localStorage.removeItem("clinicData");
-        navigate("/cliniclogin"); // Redirect if validation fails
-      }
-    };
+    //     const isthere = localStorage.getItem("clinicData");
+    //     if (response.data.success && isthere) {
+    //       navigate("/clinic/dashboard");
+    //     } else {
+    //       localStorage.removeItem("clinicData");
+    //       navigate("/cliniclogin"); // Redirect if token is invalid
+    //     }
+    //   } catch (error) {
+    //     localStorage.removeItem("clinicData");
+    //     navigate("/cliniclogin"); // Redirect if validation fails
+    //   }
+    // };
   
-    validateToken();
+    // validateToken();
   }, [navigate]);
   
 

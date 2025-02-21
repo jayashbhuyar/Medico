@@ -16,29 +16,29 @@ function HospitalLogin() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const validateToken = async () => {
-      try {
-        const response = await axios.get(
-          "https://medico-care-theta.vercel.app/api/token/validate",
-          {
-            withCredentials: true, // Ensures cookies are sent automatically
-          }
-        );
+    // const validateToken = async () => {
+    //   try {
+    //     const response = await axios.get(
+    //       "https://medico-care-theta.vercel.app/api/token/validate",
+    //       {
+    //         withCredentials: true, // Ensures cookies are sent automatically
+    //       }
+    //     );
   
-        const isthere = localStorage.getItem("hospitalData");
-        if (response.data.success && isthere) {
-          navigate("/hospital/dashboard");
-        } else {
-          localStorage.removeItem("hospitalData");
-          navigate("/hospitallogin"); // Redirect if invalid token
-        }
-      } catch (error) {
-        localStorage.removeItem("hospitalData");
-        navigate("/hospitallogin"); // Redirect on failure
-      }
-    };
+    //     const isthere = localStorage.getItem("hospitalData");
+    //     if (response.data.success && isthere) {
+    //       navigate("/hospital/dashboard");
+    //     } else {
+    //       localStorage.removeItem("hospitalData");
+    //       navigate("/hospitallogin"); // Redirect if invalid token
+    //     }
+    //   } catch (error) {
+    //     localStorage.removeItem("hospitalData");
+    //     navigate("/hospitallogin"); // Redirect on failure
+    //   }
+    // };
   
-    validateToken();
+    // validateToken();
   }, [navigate]);
   
 

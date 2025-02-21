@@ -32,38 +32,38 @@ function ConsultantLogin() {
   };
 
   useEffect(() => {
-    const validateToken = async () => {
-      // Get the token from cookies
-      const token = Cookies.get("token");
-      if (!token) {
-        localStorage.removeItem("doctorData");
-      }
+    // const validateToken = async () => {
+    //   // Get the token from cookies
+    //   const token = Cookies.get("token");
+    //   if (!token) {
+    //     localStorage.removeItem("doctorData");
+    //   }
 
-      if (token) {
-        try {
-          const response = await axios.get(
-            "https://medico-care-theta.vercel.app/api/token/validate",
-            {
-              withCredentials: true,
-            }
-          );
-          isthere = localStorage.getItem("doctorData");
-          if (response.data.success&&isthere) {
-            navigate("/consultant/dashboard");
-          } else {
-            Cookies.remove("token");
-            localStorage.removeItem("doctorData");
-            navigate("/consultantlogin"); // Redirect to login if invalid token
-          }
-        } catch (error) {
-          Cookies.remove("token");
-          localStorage.removeItem("doctorData");
-          navigate("/consultantlogin"); // Redirect to login if token validation fails
-        }
-      }
-    };
+    //   if (token) {
+    //     try {
+    //       const response = await axios.get(
+    //         "https://medico-care-theta.vercel.app/api/token/validate",
+    //         {
+    //           withCredentials: true,
+    //         }
+    //       );
+    //       isthere = localStorage.getItem("doctorData");
+    //       if (response.data.success&&isthere) {
+    //         navigate("/consultant/dashboard");
+    //       } else {
+    //         Cookies.remove("token");
+    //         localStorage.removeItem("doctorData");
+    //         navigate("/consultantlogin"); // Redirect to login if invalid token
+    //       }
+    //     } catch (error) {
+    //       Cookies.remove("token");
+    //       localStorage.removeItem("doctorData");
+    //       navigate("/consultantlogin"); // Redirect to login if token validation fails
+    //     }
+    //   }
+    // };
 
-    validateToken();
+    // validateToken();
   }, [navigate]);
 
 
