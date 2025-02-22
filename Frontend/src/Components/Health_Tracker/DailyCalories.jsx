@@ -202,19 +202,19 @@ const DailyCalories = () => {
                   <div className="text-center p-4 bg-white rounded-lg shadow-sm">
                     <p className="text-sm text-gray-600">Weight Loss</p>
                     <p className="text-2xl font-bold text-blue-600">
-                      {result.weight_goals.weight_loss} kcal
+                      {result.weight_goals.weight_loss} cal
                     </p>
                   </div>
                   <div className="text-center p-4 bg-white rounded-lg shadow-sm border-2 border-blue-500">
                     <p className="text-sm text-gray-600">Maintenance</p>
                     <p className="text-2xl font-bold text-blue-600">
-                      {result.weight_goals.maintenance} kcal
+                      {result.weight_goals.maintenance} cal
                     </p>
                   </div>
                   <div className="text-center p-4 bg-white rounded-lg shadow-sm">
                     <p className="text-sm text-gray-600">Weight Gain</p>
                     <p className="text-2xl font-bold text-blue-600">
-                      {result.weight_goals.weight_gain} kcal
+                      {result.weight_goals.weight_gain} cal
                     </p>
                   </div>
                 </div>
@@ -232,7 +232,7 @@ const DailyCalories = () => {
                       {result.macronutrient_goals.protein.grams}g
                     </p>
                     <p className="text-sm text-gray-500">
-                      {result.macronutrient_goals.protein.calories} kcal
+                      {result.macronutrient_goals.protein.calories} cal
                     </p>
                   </div>
                   <div className="text-center p-4 bg-white rounded-lg shadow-sm">
@@ -241,7 +241,7 @@ const DailyCalories = () => {
                       {result.macronutrient_goals.carbs.grams}g
                     </p>
                     <p className="text-sm text-gray-500">
-                      {result.macronutrient_goals.carbs.calories} kcal
+                      {result.macronutrient_goals.carbs.calories} cal
                     </p>
                   </div>
                   <div className="text-center p-4 bg-white rounded-lg shadow-sm">
@@ -250,7 +250,7 @@ const DailyCalories = () => {
                       {result.macronutrient_goals.fats.grams}g
                     </p>
                     <p className="text-sm text-gray-500">
-                      {result.macronutrient_goals.fats.calories} kcal
+                      {result.macronutrient_goals.fats.calories} cal
                     </p>
                   </div>
                 </div>
